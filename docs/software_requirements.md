@@ -1,115 +1,128 @@
-# ToolVault Software Requirements Document (SRD)
+# Software Requirements Document (SRD) — ToolVault
 
-## 1. Overview
-ToolVault is a portable, self-contained service providing a curated set of analysis tools.
-It ships as either:
-- A standalone server (Flask/FastAPI with embedded Jupyter server), or
-- A VS Code extension (for Debrief integration).
+## Overview
 
-ToolVault consumes **zip bundles** containing Python tools, dependencies, metadata, and notebooks.
-Bundles are indexed and browsable via a **metadata-driven UI**, allowing analysts to discover, run, and review tools.
+ToolVault is a portable, self-contained service delivering curated collections of analysis tools, with an interactive UI, versioning, and multiple deployment modes (standalone server, VS Code extension).
 
-## 2. Phases
-
-### Phase 1 — Bare Static UI (Metadata-Driven)
-**Goal:** Deliver a basic Single Page Application (SPA) that consumes an `index.json` file and provides minimal tool browsing.
-
-**Features:**
-- Load `index.json` from local file (no backend).
-- Browsable list of tools.
-- Tool detail page with:
-  - Display of tool name, description, inputs, outputs.
-  - UI for defining inputs and outputs.
-  - “Run” button (non-functional at this stage).
-  - Placeholder for execution history.
-- Fixed styling/layout to validate basic structure.
+The initial implementation will be delivered in several phases, each building on the previous.
 
 ---
 
-### Phase 2 — Mock Tool Calls
-**Goal:** Demonstrate full execution UI flow using simulated backend responses.
+## Phase 1 — Bare Static UI
 
-**Features:**
-- REST mock server providing canned responses for:
-  - Tool list.
-  - Tool execution results.
-  - Tool history.
-- SPA wired to mock API:
-  - “Run” triggers fake execution, returns sample outputs.
-  - Outputs displayed in placeholder components.
-- Enables iterative UI refinement without real tool execution.
+- Static single-page application (SPA) served via GitHub Pages.
+- Reads a provided `index.json` describing available tools.
+- Displays:
+  - List of tools.
+  - Tool detail page (description, input/output parameters).
+  - Placeholder form for entering inputs.
+  - "Run" button with mock execution.
+- No real execution — all outputs are mocked.
 
----
-
-### Phase 3 — Full Browsing UI with Output Rendering
-**Goal:** Deliver production-grade UI, with LeafletJS visualisation for spatial outputs.
-
-**Features:**
-- Search and filter tools (e.g., by type, category, “new”, “updated”).
-- “New” and “Updated” badges based on metadata timestamps.
-- Detailed output viewers:
-  - **Spatial outputs:** LeafletJS map rendering from GeoJSON.
-  - **Tabular outputs:** Interactive tables with sorting/filtering.
-  - **Charts:** Basic plots for numeric outputs.
-- History viewer UI populated with mock or real data.
-- Responsive layout for desktop and dual-monitor workflows.
+**Deliverables:**
+- Static HTML/CSS/JS UI.
+- `index.json` sample with at least 3 tools.
+- Fully navigable browsing experience.
 
 ---
 
-### Phase 4 — Indexer Development
-**Goal:** Build the indexer to generate ToolVault bundles.
+## Phase 2 — Mock Tool Calls
 
-**Features:**
-- Parse a Git repository of Python tools.
-- Auto-generate `index.json` matching Phase 3’s metadata schema.
-- Include:
-  - Tool definitions.
-  - Input/output schema.
-  - Commit SHA + commit DTG.
-  - Notebook paths.
-  - Execution history placeholders.
-- Package all dependencies (including notebooks, data samples) into a single zip bundle.
-- Support multiple repositories (separate bundles per repo).
+- UI "Run" button triggers simulated tool execution.
+- Inputs are collected from the form based on parameter types.
+- Outputs are generated via deterministic mock logic (e.g., fixed strings or computed from inputs)
+
+**Deliverables:**
+- Mock execution logic.
+- Validation of required parameters and types.
+- Updated `index.json` to include types and descriptions for parameters and outputs.
 
 ---
 
-### Phase 5 — Flask/FastAPI ToolVault Service with Embedded Jupyter
-**Goal:** Provide live tool execution and notebook viewing.
+## Phase 3 — Working JS Implementation
 
-**Features:**
-- Load zip bundle produced by indexer.
-- Serve `index.json` and metadata via REST.
-- Execute tools on demand:
-  - Pass input parameters to Python modules.
-  - Return outputs in agreed format.
-  - Include PROV metadata in all responses.
-- On-demand embedded Jupyter server for viewing/running `demo.ipynb` for each tool.
-- Capable of running offline with no internet connection.
+**Goal:** Execute real tools implemented in JavaScript/TypeScript, without any Python infrastructure.
+
+- Tools are written in TypeScript, compiled to ES modules (single-file JS per tool).
+- For now, tool implementations (`*.ts` source and compiled `*.js`) and `index.json` will be located in the **client's `src/` folder**.
+- The SPA will:
+  - Load `index.json`.
+  - Dynamically `import()` the specified module for a tool.
+  - Call its exported `run()` function with validated input parameters.
+  - Render returned outputs in the UI.
+- Execution occurs in a **Web Worker** to avoid blocking the UI.
+- No network or Python runtime — all processing happens client-side.
+- Input/output types are kept minimal but descriptive in `index.json`:
+  ```json
+  {
+    "id": "change-color-to-red",
+    "name": "Change feature color to red",
+    "description": "Sets properties.color on a GeoJSON Feature (immutable).",
+    "module": "./tools/change-color-to-red/dist/index.js",
+    "params": [
+      { "name": "feature", "type": "geojson:Feature", "required": true },
+      { "name": "color", "type": "string", "default": "#ff0000" }
+    ],
+    "outputs": [
+      { "name": "feature", "type": "geojson:Feature" },
+      { "name": "changed", "type": "boolean" }
+    ]
+  }
+  ```
+- SPA validates inputs per `params` and outputs per `outputs`.
+- Later phases will replace the embedded tools with dynamically indexed ones from a dedicated JS repository.
+
+**Deliverables:**
+- Minimal tool catalog in `index.json`.
+- At least two working tools implemented in TypeScript (e.g., `word-count`, `change-color-to-red`).
+- Worker-based execution pipeline.
+- Basic error handling.
 
 ---
 
-### Phase 6 — VS Code Extension Integration
-**Goal:** Integrate ToolVault into Debrief (VS Code themed distribution).
+## Phase 4 — Full Browsing UI with Output Rendering
 
-**Features:**
-- ToolVault panel in VS Code for browsing and running tools.
-- Uses same REST API as standalone service.
-- Supports loading local bundles or connecting to running service.
-- Allows Debrief to:
-  - Pass selected GeoJSON features to tools.
-  - Receive updated features and mark editor as “modified”.
+- Expand UI to fully render tool outputs in relevant formats (tables, maps, charts, GeoJSON FC).
+- Allow export of results (JSON, CSV, PNG where relevant).
 
 ---
 
-## 3. Constraints
-- **Offline capability**: All dependencies packaged in bundle.
-- **No authentication** in early phases (may be added later).
-- **50 MB cap** for initial bundles.
-- **LeafletJS** preferred for spatial rendering in UI.
-- **Metadata-first design**: Metadata schema fixed in early phases before backend work.
+## Phase 5 — Python Runtime Integration
 
-## 4. Deliverables
-1. Metadata-driven SPA (Phases 1–3).
-2. Indexer for bundle creation (Phase 4).
-3. Flask/FastAPI service with embedded Jupyter (Phase 5).
-4. VS Code extension integration (Phase 6).
+- Introduce server or serverless Python runtime (Flask/FastAPI).
+- Tools can declare `"runtime": "python"` in `index.json`.
+- SPA dispatches such tools to the Python backend, passing validated inputs and receiving outputs in the same format.
+- Preserve JS execution path for `"runtime": "js"`.
+
+---
+
+## Phase 6 — Remote Tool Indexing and Hosting
+
+- Remove embedded tool implementations from the SPA.
+- Implement an indexing service that scans a JS/Python tool repository and produces the `index.json` plus built tool artifacts.
+- SPA fetches `index.json` and tool modules from the hosted artifact store.
+
+---
+
+## Phase 7 — Deployment Modes
+
+- Standalone server mode (serving SPA + backend from one process).
+- VS Code extension mode.
+- Continue supporting static GH Pages mode for JS-only tools.
+
+---
+
+## Non-Goals (for now)
+
+- Authentication/authorization.
+- Persistent storage of execution history.
+- Real-time collaboration.
+
+---
+
+## Glossary
+
+- **Tool** — a functional unit that takes structured inputs, processes them, and returns structured outputs.
+- **`index.json`** — a manifest describing available tools, their parameters, and outputs.
+- **SPA** — Single Page Application.
+- **Web Worker** — a browser feature for running JS in background threads.
