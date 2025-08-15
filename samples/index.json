@@ -1,0 +1,63 @@
+{
+  "name": "ToolVault Starter Index",
+  "version": "1.0.0",
+  "description": "Curated collection of analysis tools for demonstration purposes.",
+  "updated": "2025-08-15T12:00:00Z",
+  "tools": [
+    {
+      "id": "wordcount",
+      "name": "Word Count",
+      "description": "Counts the number of words, characters, and sentences in text.",
+      "category": "Text Analysis",
+      "tags": ["text", "analysis", "count"],
+      "inputs": [
+        {
+          "name": "text",
+          "label": "Text to analyse",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "word_count",
+          "label": "Word count",
+          "type": "integer"
+        },
+        {
+          "name": "char_count",
+          "label": "Character count",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "id": "geo-buffer",
+      "name": "Geospatial Buffer",
+      "description": "Creates a buffer polygon around a given GeoJSON geometry.",
+      "category": "Geospatial",
+      "tags": ["geo", "buffer", "geometry"],
+      "inputs": [
+        {
+          "name": "geometry",
+          "label": "Input geometry (GeoJSON)",
+          "type": "geojson",
+          "required": true
+        },
+        {
+          "name": "distance",
+          "label": "Buffer distance (meters)",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "buffered_geometry",
+          "label": "Buffered geometry",
+          "type": "geojson"
+        }
+      ]
+    }
+  ]
+}
