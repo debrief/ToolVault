@@ -34,6 +34,7 @@ const ChartViewer = lazy(() => import('./ChartViewer'));
 const ImageViewer = lazy(() => import('./ImageViewer'));
 const TextViewer = lazy(() => import('./TextViewer'));
 const JsonViewer = lazy(() => import('./JsonViewer'));
+const HtmlViewer = lazy(() => import('./HtmlViewer'));
 
 // Generic fallback viewer for unsupported types
 const GenericViewer: React.FC<{ data: any; maxHeight?: number }> = ({ 
@@ -170,7 +171,7 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({
 
   // Available output types for manual selection
   const availableTypes: OutputType[] = [
-    'geojson', 'table', 'chart', 'image', 'text', 'json', 'generic'
+    'geojson', 'table', 'chart', 'image', 'text', 'json', 'html', 'generic'
   ];
 
   // Get type-specific metadata
@@ -203,6 +204,12 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({
       case 'json':
         if (typeof data === 'object') {
           meta.keyCount = Object.keys(data || {}).length;
+        }
+        break;
+      case 'html':
+        if (typeof data === 'string') {
+          meta.charCount = data.length;
+          meta.isValidHtml = /<[^>]*>/.test(data);
         }
         break;
     }
@@ -291,6 +298,15 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({
               {...commonProps}
               expandable={interactive}
               searchable={interactive}
+            />
+          );
+
+        case 'html':
+          return (
+            <HtmlViewer
+              data={typeof data === 'string' ? data : JSON.stringify(data)}
+              title={title}
+              maxHeight={height - 100}
             />
           );
 

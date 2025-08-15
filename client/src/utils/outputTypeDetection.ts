@@ -25,6 +25,7 @@ export function detectOutputType(data: any, metadata?: OutputMetadata): OutputTy
     detectTable(data),
     detectChart(data),
     detectImage(data),
+    detectHTML(data),
     detectText(data),
     detectJSON(data),
   ].filter(result => result.confidence > 0);
@@ -280,6 +281,58 @@ export function detectText(data: any): FeatureDetectionResult {
 }
 
 /**
+ * Detect HTML content
+ */
+export function detectHTML(data: any): FeatureDetectionResult {
+  if (typeof data !== 'string') {
+    return { type: 'html', confidence: 0 };
+  }
+
+  let confidence = 0;
+
+  // Check for HTML tags
+  const htmlTagRegex = /<[^>]*>/;
+  if (htmlTagRegex.test(data)) {
+    confidence += 0.5;
+  }
+
+  // Check for common HTML elements
+  const commonHtmlTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'a', 'img', 'table', 'tr', 'td'];
+  const foundTags = commonHtmlTags.filter(tag => {
+    const tagRegex = new RegExp(`<${tag}\\b[^>]*>`, 'i');
+    return tagRegex.test(data);
+  });
+
+  confidence += foundTags.length * 0.1;
+
+  // Check for HTML document structure
+  if (data.includes('<!DOCTYPE html>') || data.includes('<html>')) {
+    confidence += 0.3;
+  }
+
+  // Check for style attributes (inline styles)
+  if (/style\s*=\s*["'][^"']*["']/i.test(data)) {
+    confidence += 0.2;
+  }
+
+  // Reduce confidence if it looks more like XML or other markup
+  if (data.includes('<?xml')) {
+    confidence -= 0.3;
+  }
+
+  return {
+    type: 'html',
+    confidence: Math.min(confidence, 1.0),
+    metadata: {
+      type: 'html',
+      charCount: data.length,
+      tagCount: (data.match(/<[^>]*>/g) || []).length,
+      hasInlineStyles: /style\s*=/.test(data),
+    },
+  };
+}
+
+/**
  * Detect JSON object structure
  */
 export function detectJSON(data: any): FeatureDetectionResult {
@@ -410,5 +463,13 @@ export function isChartData(data: any): boolean {
  */
 export function isImageUrl(str: string): boolean {
   const result = detectImage(str);
+  return result.confidence > 0.5;
+}
+
+/**
+ * Check if string contains HTML content
+ */
+export function isHTML(str: string): boolean {
+  const result = detectHTML(str);
   return result.confidence > 0.5;
 }

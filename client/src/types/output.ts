@@ -14,6 +14,7 @@ export type OutputType =
   | 'image'
   | 'text'
   | 'json'
+  | 'html'
   | 'generic';
 
 // Chart types supported by Chart.js

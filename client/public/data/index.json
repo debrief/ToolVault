@@ -5,11 +5,12 @@
   "updated": "2025-08-15T12:00:00Z",
   "tools": [
     {
-      "id": "wordcount",
+      "id": "word-count",
       "name": "Word Count",
       "description": "Counts the number of words, characters, and sentences in text.",
       "category": "Text Analysis",
       "tags": ["text", "analysis", "count"],
+      "module": "/src/tools/word-count/index.ts",
       "inputs": [
         {
           "name": "text",
@@ -20,14 +21,62 @@
       ],
       "outputs": [
         {
-          "name": "word_count",
+          "name": "count",
           "label": "Word count",
-          "type": "integer"
+          "type": "number"
         },
         {
-          "name": "char_count",
-          "label": "Character count",
-          "type": "integer"
+          "name": "characters",
+          "label": "Character count (with spaces)",
+          "type": "number"
+        },
+        {
+          "name": "charactersNoSpaces",
+          "label": "Character count (without spaces)",
+          "type": "number"
+        },
+        {
+          "name": "sentences",
+          "label": "Sentence count",
+          "type": "number"
+        },
+        {
+          "name": "words",
+          "label": "Word list",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "change-color-to-red",
+      "name": "Change Color to Red",
+      "description": "Converts any color words in text to red styling in HTML output.",
+      "category": "Text Processing",
+      "tags": ["text", "html", "color", "transform"],
+      "module": "/src/tools/change-color-to-red/index.ts",
+      "inputs": [
+        {
+          "name": "text",
+          "label": "Text with color words",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "html",
+          "label": "HTML with red styling",
+          "type": "html"
+        },
+        {
+          "name": "originalText",
+          "label": "Original input text",
+          "type": "string"
+        },
+        {
+          "name": "colorChanges",
+          "label": "Number of color words changed",
+          "type": "number"
         }
       ]
     },

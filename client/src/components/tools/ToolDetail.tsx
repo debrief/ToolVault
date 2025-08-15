@@ -1,10 +1,11 @@
-import { Container, Paper, Box, Skeleton, Alert, Typography } from '@mui/material';
+import { Container, Paper, Box, Skeleton, Alert, Typography, Stack, Divider } from '@mui/material';
 import { useToolById } from '../../hooks/useToolById';
 import { ToolBreadcrumbs } from './ToolBreadcrumbs';
 import { ToolHeader } from './ToolHeader';
 import { InputsList } from './InputsList';
 import { OutputsList } from './OutputsList';
 import { ExecutionPanel } from './ExecutionPanel';
+import { DynamicExecutionPanel } from './DynamicExecutionPanel';
 
 interface ToolDetailProps {
   toolId: string;
@@ -137,12 +138,29 @@ export function ToolDetail({
         </Paper>
       </Box>
 
-      {/* Execution Panel */}
-      <Box id="execution-panel" data-testid="execution-panel">
-        <ExecutionPanel
-          tool={tool}
-        />
-      </Box>
+      {/* Execution Panels */}
+      <Stack spacing={3} id="execution-panel" data-testid="execution-panel">
+        {/* Dynamic Execution (Real Tools) */}
+        {tool.module && (
+          <DynamicExecutionPanel tool={tool} />
+        )}
+
+        {/* Legacy/Mock Execution Panel */}
+        {!tool.module && (
+          <>
+            <Divider />
+            <ExecutionPanel tool={tool} />
+          </>
+        )}
+        
+        {/* Show both for testing/comparison if available */}
+        {tool.module && process.env.NODE_ENV === 'development' && (
+          <>
+            <Divider />
+            <ExecutionPanel tool={tool} />
+          </>
+        )}
+      </Stack>
     </Container>
   );
 }
