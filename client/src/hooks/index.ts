@@ -3,6 +3,14 @@ export { useDebouncedValue } from './useDebouncedValue';
 export { useToolById } from './useToolById';
 export { useToolVaultData } from './useToolVaultData';
 
+// Tool execution hooks
+export { 
+  useToolExecution, 
+  type ExecutionHookState,
+  type ExecutionHookActions,
+  type UseToolExecutionReturn
+} from './useToolExecution';
+
 // Error handling and retry hooks
 export { 
   useRetry, 

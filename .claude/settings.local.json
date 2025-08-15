@@ -92,7 +92,11 @@
       "Bash(pnpm generate-types:*)",
       "Bash(pnpm build:*)",
       "Bash(pnpm test:*)",
-      "Bash(pnpm typecheck:*)"
+      "Bash(pnpm typecheck:*)",
+      "Bash(npm run lint:*)",
+      "Bash(timeout 10s npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(pnpm list:*)"
     ]
   }
 }

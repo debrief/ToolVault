@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { KEYBOARD_KEYS, isKeyPressed } from '../../utils/focusManagement';
+import { ToolBadges } from './ToolBadges';
+import { highlightMatches, type SearchMatch, type ToolMetadata } from '../../utils/searchUtils';
 import type { Tool } from '../../types/index';
 
 interface ToolCardProps {
@@ -15,13 +17,19 @@ interface ToolCardProps {
   onViewDetails: (tool: Tool) => void;
   elevation?: number;
   variant?: 'default' | 'compact';
+  metadata?: ToolMetadata;
+  searchMatches?: SearchMatch[];
+  showBadges?: boolean;
 }
 
 export const ToolCard = memo<ToolCardProps>(({ 
   tool, 
   onViewDetails, 
   elevation = 1,
-  variant = 'default'
+  variant = 'default',
+  metadata,
+  searchMatches,
+  showBadges = true,
 }: ToolCardProps) => {
   const prefersReducedMotion = useReducedMotion();
   
@@ -49,6 +57,17 @@ export const ToolCard = memo<ToolCardProps>(({
     if (!tool.tags || tool.tags.length <= 3) return 0;
     return tool.tags.length - 3;
   }, [tool.tags]);
+
+  // Memoize highlighted content
+  const highlightedName = useMemo(() => {
+    const nameMatch = searchMatches?.find(match => match.field === 'name');
+    return nameMatch ? highlightMatches(tool.name, nameMatch.indices) : tool.name;
+  }, [tool.name, searchMatches]);
+
+  const highlightedDescription = useMemo(() => {
+    const descMatch = searchMatches?.find(match => match.field === 'description');
+    return descMatch ? highlightMatches(tool.description, descMatch.indices) : tool.description;
+  }, [tool.description, searchMatches]);
 
   // Memoize the card styles based on variant
   const cardStyles = useMemo(() => ({
@@ -94,6 +113,18 @@ export const ToolCard = memo<ToolCardProps>(({
       aria-describedby={`tool-desc-${tool.id}`}
     >
       <CardContent sx={{ flexGrow: 1, p: contentPadding }}>
+        {/* Badges */}
+        {showBadges && (
+          <Box sx={{ mb: 1 }}>
+            <ToolBadges 
+              tool={tool} 
+              metadata={metadata}
+              size={variant === 'compact' ? 'small' : 'small'}
+              maxBadges={variant === 'compact' ? 2 : 3}
+            />
+          </Box>
+        )}
+
         <Typography 
           id={`tool-title-${tool.id}`}
           variant={titleVariant} 
@@ -109,7 +140,7 @@ export const ToolCard = memo<ToolCardProps>(({
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {tool.name}
+          {highlightedName}
         </Typography>
         
         <Typography 
@@ -126,7 +157,7 @@ export const ToolCard = memo<ToolCardProps>(({
             WebkitBoxOrient: 'vertical',
           }}
         >
-          {tool.description}
+          {highlightedDescription}
         </Typography>
 
         <Box 

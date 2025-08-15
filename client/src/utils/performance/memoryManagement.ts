@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, DependencyList } from 'react';
+import React, { useEffect, useCallback, useRef, DependencyList } from 'react';
 
 // Memory usage information interface
 export interface MemoryInfo {
@@ -226,7 +226,7 @@ export function withMemoryProfiler<T extends object>(
       };
     }, []);
 
-    return <Component {...props} />;
+    return React.createElement(Component, props);
   };
 
   WrappedComponent.displayName = `withMemoryProfiler(${componentName})`;

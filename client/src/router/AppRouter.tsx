@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { PageSkeleton } from '../components/common/PageSkeleton';
+import { Routes, Route } from 'react-router-dom';
 
 // Lazy load all pages for optimal code splitting
 const HomePage = lazy(() => import('../pages/HomePage').then(module => ({ default: module.HomePage })));
@@ -10,16 +9,14 @@ const NotFoundPage = lazy(() => import('../pages/NotFoundPage').then(module => (
 
 export function AppRouter() {
   return (
-    <BrowserRouter>
-      <Suspense fallback={<PageSkeleton />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/tools" element={<ToolListPage />} />
-          <Route path="/tools/:toolId" element={<ToolDetailPage />} />
-          <Route path="/404" element={<NotFoundPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/tools" element={<ToolListPage />} />
+        <Route path="/tools/:toolId" element={<ToolDetailPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 }

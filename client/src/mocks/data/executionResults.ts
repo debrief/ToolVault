@@ -9,6 +9,10 @@ import type {
   ExecutionErrorCode
 } from '../../types/execution';
 
+// Import additional tool results
+import { advancedAnalyticsResults } from './executionResults/advancedAnalytics';
+import { businessIntelligenceResults } from './executionResults/businessIntelligence';
+
 /**
  * Mock execution results for different tool types
  */
@@ -461,7 +465,11 @@ export const mockExecutionResults: Record<string, { success: ExecutionResults; e
   'advanced-analyzer': {
     success: complexAnalysisResults,
     error: executionErrors.INTERNAL_ERROR
-  }
+  },
+  // Advanced Analytics Tools
+  ...advancedAnalyticsResults,
+  // Business Intelligence Tools
+  ...businessIntelligenceResults
 };
 
 // Generate dynamic results based on inputs

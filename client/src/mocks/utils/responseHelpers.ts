@@ -329,9 +329,70 @@ export class ResponseMetrics {
 export const responseCache = new ResponseCache();
 export const responseMetrics = new ResponseMetrics();
 
+// Enhanced response creation with performance optimization
+export function createOptimizedSuccessResponse<T>(
+  data: T,
+  requestKey: string,
+  executionTime?: number,
+  cached: boolean = false
+): SuccessResponse<T> {
+  // Apply performance optimization if available
+  let optimizedData = data;
+  try {
+    const { performanceUtils } = require('./performanceOptimization');
+    optimizedData = performanceUtils.optimizeResponse(data, requestKey);
+    
+    // Record performance metrics
+    performanceUtils.recordMetrics({
+      responseTime: executionTime || 0,
+      memoryUsage: JSON.stringify(optimizedData).length,
+      cacheHitRate: cached ? 1 : 0,
+      throughput: 1, // Single request
+      errorRate: 0
+    });
+  } catch (error) {
+    // Fallback to original data if optimization fails
+    console.debug('Performance optimization not available, using original data');
+  }
+
+  return createSuccessResponse(optimizedData, executionTime, cached);
+}
+
+// Enhanced error response with performance tracking
+export function createOptimizedErrorResponse(
+  code: string,
+  message: string,
+  details?: any,
+  status: number = 500
+): { response: ErrorResponse; status: number } {
+  try {
+    const { performanceUtils } = require('./performanceOptimization');
+    performanceUtils.recordMetrics({
+      responseTime: 0,
+      memoryUsage: JSON.stringify({ code, message, details }).length,
+      cacheHitRate: 0,
+      throughput: 1,
+      errorRate: 1
+    });
+  } catch (error) {
+    // Continue without performance tracking
+  }
+
+  return createErrorResponse(code, message, details, status);
+}
+
 // Cleanup interval to prevent memory leaks
 if (typeof window !== 'undefined') {
   setInterval(() => {
     responseCache.cleanup();
   }, 5 * 60 * 1000); // Cleanup every 5 minutes
+  
+  // Memory pressure cleanup
+  setInterval(() => {
+    const memoryInfo = (performance as any).memory;
+    if (memoryInfo && memoryInfo.usedJSHeapSize > 50 * 1024 * 1024) { // 50MB
+      console.log('🧹 High memory usage detected, clearing cache');
+      responseCache.clear();
+    }
+  }, 10 * 60 * 1000); // Check every 10 minutes
 }

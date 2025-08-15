@@ -36,10 +36,9 @@ export async function startMockServiceWorker(config: MSWConfig = {}): Promise<vo
     await worker.start({
       quiet,
       onUnhandledRequest,
-      serviceWorker: serviceWorker ? {
-        url: serviceWorker.url || '/mockServiceWorker.js',
-        options: serviceWorker.options
-      } : undefined
+      serviceWorker: {
+        url: '/mockServiceWorker.js'
+      }
     });
 
     if (!quiet) {

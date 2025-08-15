@@ -1,4 +1,6 @@
-import { createTheme, Theme, PaletteMode } from '@mui/material/styles';
+import { createTheme, Theme } from '@mui/material/styles';
+
+type PaletteMode = 'light' | 'dark';
 
 export type ThemeMode = 'light' | 'dark' | 'high-contrast';
 

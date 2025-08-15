@@ -1,7 +1,14 @@
 import { CSSProperties, forwardRef, useMemo, useCallback } from 'react';
-import { FixedSizeList as List, VariableSizeList, ListChildComponentProps } from 'react-window';
+import { FixedSizeList as List, VariableSizeList } from 'react-window';
 import { Box, useTheme } from '@mui/material';
 import type { Tool } from '../../types/index';
+
+// Define the props interface for list child components
+interface ListChildProps {
+  index: number;
+  style: CSSProperties;
+  data?: any;
+}
 
 interface VirtualizedListProps {
   items: Tool[];
@@ -30,7 +37,7 @@ interface ItemData {
 }
 
 // Row component for react-window
-const Row = ({ index, style, data }: ListChildComponentProps<ItemData>) => {
+const Row = ({ index, style, data }: ListChildProps & { data: ItemData }) => {
   const { items, renderItem, onItemClick } = data;
   const item = items[index];
   
@@ -47,7 +54,7 @@ const Row = ({ index, style, data }: ListChildComponentProps<ItemData>) => {
 };
 
 // Variable size row component
-const VariableRow = ({ index, style, data }: ListChildComponentProps<ItemData>) => {
+const VariableRow = ({ index, style, data }: ListChildProps & { data: ItemData }) => {
   const { items, renderItem, onItemClick } = data;
   const item = items[index];
   
