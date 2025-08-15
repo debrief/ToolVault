@@ -91,7 +91,8 @@
       "Bash(pnpm exec:*)",
       "Bash(pnpm generate-types:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(pnpm typecheck:*)"
     ]
   }
 }

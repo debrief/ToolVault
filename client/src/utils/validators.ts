@@ -1,8 +1,10 @@
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import schema from '../types/index.schema.json';
 import type { ToolVaultIndex } from '../types/index';
 
 const ajv = new Ajv({ allErrors: true });
+addFormats(ajv);
 
 // Compile the schema validator
 const validateToolVaultIndex = ajv.compile(schema);
