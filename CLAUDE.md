@@ -1,0 +1,152 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+ToolVault is a portable, self-contained service that delivers curated collections of analysis tools for scientists, analysts, and developers. It provides an interactive browser-based interface for discovering, running, and understanding tools with history tracking, version awareness, and spatial output visualization.
+
+The project is currently in the **early UI mockup phase** (Phase 1), with no implementation code yet written.
+
+## Development Phases
+
+The project follows a phased implementation approach:
+1. **Phase 1** - Bare static UI driven by `index.json` (current)
+2. **Phase 2** - Mock tool calls to simulate execution
+3. **Phase 3** - Full browsing UI with LeafletJS output rendering
+4. **Phase 4** - Indexer development for bundle creation
+5. **Phase 5** - Flask/FastAPI backend with embedded Jupyter
+6. **Phase 6** - VS Code extension integration
+
+## Project Structure
+
+### Current Structure
+```
+/docs           # Documentation including software requirements
+/prompts        # APM (Agentic Project Management) framework guides
+/tasks          # Task tracking directory
+```
+
+### Planned Structure
+```
+/client         # SPA frontend (to be created)
+/server         # Flask/FastAPI backend (to be created)
+/indexer        # Bundle creation scripts (to be created)
+/examples       # Example tool bundles (to be created)
+```
+
+## Key Technologies
+
+### Frontend (Planned)
+- Single Page Application (SPA)
+- LeafletJS for spatial data visualization
+- Metadata-driven UI from `index.json`
+
+### Backend (Planned)
+- Flask or FastAPI for REST API
+- Embedded Jupyter server for notebooks
+- Python-based tool execution
+
+## Architecture Decisions
+
+### Metadata-First Design
+The entire UI is driven by an `index.json` metadata file that describes:
+- Available tools
+- Input/output schemas
+- Tool categories and versioning
+- Execution history
+
+### Bundle Architecture
+Tools are packaged as self-contained zip bundles containing:
+- Python modules and dependencies
+- Metadata (`index.json`)
+- Demo notebooks
+- Sample data
+- All dependencies for offline operation
+
+### Key Constraints
+- **Offline capability**: All dependencies must be packaged in bundles
+- **50 MB cap** for initial bundles
+- **No authentication** in early phases
+- **LeafletJS** preferred for spatial rendering
+
+## APM Framework
+
+This project uses an Agentic Project Management (APM) framework for AI-assisted development. Key APM assets include:
+- Implementation plans
+- Memory banks for tracking decisions
+- Task assignment prompts
+- Handover protocols for context transfer
+
+When working with APM artifacts, refer to guides in `/prompts/01_Manager_Agent_Core_Guides/`.
+
+## Development Commands
+
+Since no implementation exists yet, here are the anticipated commands for each component:
+
+### Frontend (Future)
+```bash
+# Install dependencies
+npm install
+
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
+
+# Lint code
+npm run lint
+```
+
+### Backend (Future)
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run development server
+python app.py  # or: uvicorn main:app --reload
+
+# Run tests
+pytest
+
+# Format code
+black .
+
+# Lint code
+ruff check .
+```
+
+### Indexer (Future)
+```bash
+# Generate bundle from repository
+python indexer.py --repo /path/to/tools --output bundle.zip
+
+# Validate index.json
+python validate_index.py index.json
+```
+
+## Current Focus
+
+The immediate focus is on Phase 1: Building a bare static UI that can:
+1. Load and parse `index.json` from a local file
+2. Display a browsable list of tools
+3. Show tool details (name, description, inputs, outputs)
+4. Provide UI for input/output configuration
+5. Include a non-functional "Run" button
+6. Display placeholder for execution history
+
+## Important Notes
+
+- The project uses Python for backend development with Flask/FastAPI preference
+- Frontend should be framework-agnostic initially but production-ready
+- All code should support offline operation without internet connectivity
+- Spatial outputs should be rendered using LeafletJS
+- The VS Code extension will integrate with the Debrief themed distribution
