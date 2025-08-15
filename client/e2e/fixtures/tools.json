@@ -1,0 +1,152 @@
+{
+  "name": "Test Tool Collection",
+  "version": "1.0.0",
+  "description": "Test collection for E2E testing",
+  "updated": "2025-08-15T12:00:00Z",
+  "tools": [
+    {
+      "id": "wordcount",
+      "name": "Word Count",
+      "description": "Counts the number of words, characters, and sentences in text.",
+      "category": "Text Analysis",
+      "tags": ["text", "analysis", "count"],
+      "inputs": [
+        {
+          "name": "text",
+          "label": "Text to analyse",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "word_count",
+          "label": "Word count",
+          "type": "integer"
+        },
+        {
+          "name": "char_count",
+          "label": "Character count",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "id": "geo-buffer",
+      "name": "Geospatial Buffer",
+      "description": "Creates a buffer polygon around a given GeoJSON geometry.",
+      "category": "Geospatial",
+      "tags": ["geo", "buffer", "geometry"],
+      "inputs": [
+        {
+          "name": "geometry",
+          "label": "Input geometry (GeoJSON)",
+          "type": "geojson",
+          "required": true
+        },
+        {
+          "name": "distance",
+          "label": "Buffer distance (meters)",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "buffered_geometry",
+          "label": "Buffered geometry",
+          "type": "geojson"
+        }
+      ]
+    },
+    {
+      "id": "json-formatter",
+      "name": "JSON Formatter",
+      "description": "Formats and validates JSON data with syntax highlighting.",
+      "category": "Text Analysis",
+      "tags": ["json", "format", "validate"],
+      "inputs": [
+        {
+          "name": "json_data",
+          "label": "JSON Data",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "formatted_json",
+          "label": "Formatted JSON",
+          "type": "string"
+        },
+        {
+          "name": "is_valid",
+          "label": "Is Valid JSON",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "image-resizer",
+      "name": "Image Resizer",
+      "description": "Resizes images to specified dimensions while maintaining aspect ratio.",
+      "category": "Image Processing",
+      "tags": ["image", "resize", "processing"],
+      "inputs": [
+        {
+          "name": "image",
+          "label": "Input Image",
+          "type": "file",
+          "required": true
+        },
+        {
+          "name": "width",
+          "label": "Target Width",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "height",
+          "label": "Target Height", 
+          "type": "number",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "resized_image",
+          "label": "Resized Image",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "hash-generator",
+      "name": "Hash Generator",
+      "description": "Generates various hash values (MD5, SHA256, etc.) for input text.",
+      "category": "Security",
+      "tags": ["hash", "security", "crypto"],
+      "inputs": [
+        {
+          "name": "input_text",
+          "label": "Input Text",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "algorithm",
+          "label": "Hash Algorithm",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "hash_value",
+          "label": "Hash Value",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -120,4 +120,3 @@ jobs:
         name: playwright-report
         path: client/playwright-report/
         retention-days: 30
-EOF < /dev/null

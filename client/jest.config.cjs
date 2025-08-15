@@ -8,6 +8,10 @@ module.exports = {
       tsconfig: {
         jsx: 'react-jsx',
         resolveJsonModule: true,
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+        target: 'es2020',
+        lib: ['es2020', 'dom', 'dom.iterable'],
       },
     }],
   },
@@ -23,15 +27,17 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
+    '!src/test-utils/**/*',
     '!src/main.tsx',
     '!src/vite-env.d.ts',
   ],
   coverageThreshold: {
     global: {
+      statements: 50,
       branches: 50,
       functions: 50,
       lines: 50,
-      statements: 50,
     },
   },
+  testTimeout: 10000,
 };

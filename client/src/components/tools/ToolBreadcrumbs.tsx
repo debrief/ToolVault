@@ -1,26 +1,21 @@
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import { Home, Build } from '@mui/icons-material';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface ToolBreadcrumbsProps {
   toolName: string;
-  onNavigateHome?: () => void;
-  onNavigateToTools?: () => void;
 }
 
-export function ToolBreadcrumbs({ 
-  toolName, 
-  onNavigateHome,
-  onNavigateToTools 
-}: ToolBreadcrumbsProps) {
+export function ToolBreadcrumbs({ toolName }: ToolBreadcrumbsProps) {
   return (
     <Breadcrumbs 
       aria-label="breadcrumb"
       sx={{ mb: 2 }}
     >
       <Link
-        component="button"
+        component={RouterLink}
+        to="/"
         variant="body2"
-        onClick={onNavigateHome}
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -37,9 +32,9 @@ export function ToolBreadcrumbs({
       </Link>
       
       <Link
-        component="button"
+        component={RouterLink}
+        to="/tools"
         variant="body2"
-        onClick={onNavigateToTools}
         sx={{
           display: 'flex',
           alignItems: 'center',

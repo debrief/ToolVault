@@ -8,8 +8,6 @@ import { ExecutionPanel } from './ExecutionPanel';
 
 interface ToolDetailProps {
   toolId: string;
-  onNavigateHome?: () => void;
-  onNavigateToTools?: () => void;
   onBack?: () => void;
 }
 
@@ -62,7 +60,7 @@ function ToolDetailSkeleton() {
 function ToolNotFound() {
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
-      <Alert severity="error" sx={{ mb: 3 }}>
+      <Alert severity="error" sx={{ mb: 3 }} data-testid="tool-not-found">
         <Typography variant="h6" gutterBottom>
           Tool Not Found
         </Typography>
@@ -77,7 +75,7 @@ function ToolNotFound() {
 function ToolError({ error }: { error: Error }) {
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
-      <Alert severity="error" sx={{ mb: 3 }}>
+      <Alert severity="error" sx={{ mb: 3 }} data-testid="tool-error">
         <Typography variant="h6" gutterBottom>
           Error Loading Tool
         </Typography>
@@ -91,8 +89,6 @@ function ToolError({ error }: { error: Error }) {
 
 export function ToolDetail({ 
   toolId, 
-  onNavigateHome, 
-  onNavigateToTools, 
   onBack 
 }: ToolDetailProps) {
   const { tool, isLoading, isError, error, isNotFound } = useToolById(toolId);
@@ -111,12 +107,10 @@ export function ToolDetail({
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 3 }}>
+    <Container maxWidth="lg" sx={{ py: 3 }} data-testid="tool-detail">
       {/* Breadcrumbs */}
       <ToolBreadcrumbs
         toolName={tool.name}
-        onNavigateHome={onNavigateHome}
-        onNavigateToTools={onNavigateToTools}
       />
 
       {/* Tool Header */}
@@ -128,7 +122,7 @@ export function ToolDetail({
       {/* Main Content Layout */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 3 }}>
         {/* Input Parameters */}
-        <Paper elevation={2}>
+        <Paper elevation={2} data-testid="input-section">
           <InputsList
             inputs={tool.inputs}
             readOnly
@@ -136,7 +130,7 @@ export function ToolDetail({
         </Paper>
 
         {/* Expected Outputs */}
-        <Paper elevation={2}>
+        <Paper elevation={2} data-testid="output-section">
           <OutputsList
             outputs={tool.outputs}
           />
@@ -144,7 +138,7 @@ export function ToolDetail({
       </Box>
 
       {/* Execution Panel */}
-      <Box id="execution-panel">
+      <Box id="execution-panel" data-testid="execution-panel">
         <ExecutionPanel
           tool={tool}
         />

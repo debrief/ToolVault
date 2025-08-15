@@ -16,7 +16,7 @@ interface ToolHeaderProps {
 
 export function ToolHeader({ tool, onBackClick }: ToolHeaderProps) {
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: 4 }} data-testid="tool-header">
       {/* Back button */}
       {onBackClick && (
         <Button
@@ -25,13 +25,14 @@ export function ToolHeader({ tool, onBackClick }: ToolHeaderProps) {
           sx={{ mb: 2 }}
           variant="text"
           color="primary"
+          data-testid="back-button"
         >
           Back to Tools
         </Button>
       )}
 
       {/* Tool name */}
-      <Typography variant="h3" component="h1" sx={{ mb: 2 }}>
+      <Typography variant="h3" component="h1" sx={{ mb: 2 }} data-testid="tool-name">
         {tool.name}
       </Typography>
 

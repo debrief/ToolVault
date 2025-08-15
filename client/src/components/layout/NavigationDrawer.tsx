@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import BuildIcon from '@mui/icons-material/Build';
-import HistoryIcon from '@mui/icons-material/History';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface NavigationDrawerProps {
   open: boolean;
@@ -25,7 +25,6 @@ const drawerWidth = 240;
 const menuItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/' },
   { text: 'Tools', icon: <BuildIcon />, path: '/tools' },
-  { text: 'History', icon: <HistoryIcon />, path: '/history' },
 ];
 
 const secondaryItems = [
@@ -34,6 +33,21 @@ const secondaryItems = [
 ];
 
 export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ open, onClose }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    onClose();
+  };
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <Drawer
       sx={{
@@ -58,7 +72,10 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ open, onClos
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={onClose}>
+            <ListItemButton 
+              onClick={() => handleNavigation(item.path)}
+              selected={isActive(item.path)}
+            >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
@@ -69,7 +86,10 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ open, onClos
       <List>
         {secondaryItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={onClose}>
+            <ListItemButton 
+              onClick={() => handleNavigation(item.path)}
+              selected={isActive(item.path)}
+            >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
