@@ -82,6 +82,13 @@ The initial implementation will be delivered in several phases, each building on
 - SPA validates inputs per `params` and outputs per `outputs`.
 - Later phases will replace the embedded tools with dynamically indexed ones from a dedicated JS repository.
 
+Some interesting other tools, which will usefully drive the interface:
+- word-frequency: take paragraph of text, output table of work frequencies (word and count)
+- flip-line: take a GeoJSON linestring, swap the order of the latitude coordinates, but leave the longitude coordinates unchanged.
+- line-centre: take a GeoJSON linestring, output a GeoJSON point at the centre of the line (this doesn't need special spacial calcs - just do it arithmetically)
+- calc-speeds: take a GeoJSON LineString that has a `properties.times` array of unix DTG, one per LineString point.  Use simply arithmetic to determine the time travelled between each pair of points. Divide that by the time interval between those points, to get speed. Output a time-series array of speeds.
+
+
 **Deliverables:**
 - Minimal tool catalog in `index.json`.
 - At least two working tools implemented in TypeScript (e.g., `word-count`, `change-color-to-red`).
