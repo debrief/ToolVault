@@ -50,33 +50,33 @@
     {
       "id": "change-color-to-red",
       "name": "Change Color to Red",
-      "description": "Converts any color words in text to red styling in HTML output.",
-      "category": "Text Processing",
-      "tags": ["text", "html", "color", "transform"],
+      "description": "Takes a GeoJSON feature and sets its properties.color to red for map highlighting.",
+      "category": "Geospatial",
+      "tags": ["geojson", "map", "color", "highlight"],
       "module": "/src/tools/change-color-to-red/index.ts",
       "inputs": [
         {
-          "name": "text",
-          "label": "Text with color words",
-          "type": "string",
+          "name": "feature",
+          "label": "GeoJSON Feature",
+          "type": "geojson",
           "required": true
         }
       ],
       "outputs": [
         {
-          "name": "html",
-          "label": "HTML with red styling",
-          "type": "html"
+          "name": "feature",
+          "label": "Updated GeoJSON Feature",
+          "type": "geojson"
         },
         {
-          "name": "originalText",
-          "label": "Original input text",
+          "name": "originalColor",
+          "label": "Original color value",
           "type": "string"
         },
         {
-          "name": "colorChanges",
-          "label": "Number of color words changed",
-          "type": "number"
+          "name": "colorChanged",
+          "label": "Whether color was changed",
+          "type": "boolean"
         }
       ]
     },

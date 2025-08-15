@@ -116,6 +116,24 @@ export class DynamicToolExecutionService {
   }
 
   /**
+   * Load test data for a tool
+   */
+  async loadTestData(tool: Tool): Promise<Record<string, any> | null> {
+    if (!tool.module) {
+      return null;
+    }
+
+    try {
+      // Dynamic import of the tool module
+      const module = await import(/* @vite-ignore */ tool.module);
+      return module.testData || null;
+    } catch (error) {
+      console.warn(`Failed to load test data for tool ${tool.id}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Execute a tool dynamically
    */
   async executeTool(

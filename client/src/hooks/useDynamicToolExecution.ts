@@ -20,6 +20,7 @@ export interface DynamicExecutionState {
 
 export interface DynamicExecutionActions {
   executeTool: (tool: Tool, input: Record<string, any>) => Promise<ToolExecutionResult>;
+  loadTestData: (tool: Tool) => Promise<Record<string, any> | null>;
   cancelExecution: () => void;
   clearExecution: () => void;
   getExecutionProgress: () => ExecutionProgress | null;
@@ -125,6 +126,10 @@ export function useDynamicToolExecution(): UseDynamicToolExecutionReturn {
     setState(INITIAL_STATE);
   }, []);
 
+  const loadTestData = useCallback(async (tool: Tool): Promise<Record<string, any> | null> => {
+    return dynamicToolExecutionService.loadTestData(tool);
+  }, []);
+
   const getExecutionProgress = useCallback((): ExecutionProgress | null => {
     if (!state.executionId) return null;
     return dynamicToolExecutionService.getExecutionProgress(state.executionId);
@@ -143,6 +148,7 @@ export function useDynamicToolExecution(): UseDynamicToolExecutionReturn {
 
     // Actions
     executeTool,
+    loadTestData,
     cancelExecution,
     clearExecution,
     getExecutionProgress,

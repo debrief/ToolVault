@@ -2,7 +2,7 @@
  * Dynamic Execution Panel for real JavaScript tool execution
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -25,7 +25,8 @@ import {
   Error as ErrorIcon, 
   Refresh,
   Speed,
-  Code
+  Code,
+  DataObject
 } from '@mui/icons-material';
 import { InputsList } from './InputsList';
 import { OutputRenderer } from '../output/OutputRenderer';
@@ -76,9 +77,23 @@ export function DynamicExecutionPanel({ tool, disabled = false }: DynamicExecuti
     error,
     executionTime,
     executeTool,
+    loadTestData,
     cancelExecution,
     clearExecution,
   } = useDynamicToolExecution();
+
+  // Load test data when component mounts
+  useEffect(() => {
+    if (tool.module && Object.keys(inputValues).length === 0) {
+      loadTestData(tool).then(testData => {
+        if (testData) {
+          setInputValues(testData);
+        }
+      }).catch(error => {
+        console.warn('Failed to load test data:', error);
+      });
+    }
+  }, [tool, inputValues, loadTestData]);
 
   const handleInputChange = useCallback((newValues: Record<string, any>) => {
     setInputValues(newValues);
@@ -132,6 +147,20 @@ export function DynamicExecutionPanel({ tool, disabled = false }: DynamicExecuti
     setValidationErrors({});
   }, [clearExecution]);
 
+  const handleLoadTestData = useCallback(async () => {
+    if (!tool.module) return;
+    
+    try {
+      const testData = await loadTestData(tool);
+      if (testData) {
+        setInputValues(testData);
+        setValidationErrors({});
+      }
+    } catch (error) {
+      console.error('Failed to load test data:', error);
+    }
+  }, [tool, loadTestData]);
+
   const currentStep = getStepFromStatus(status);
   const canExecute = !disabled && !isExecuting && tool.module && Object.keys(validationErrors).length === 0;
   const hasValidationErrors = Object.keys(validationErrors).length > 0;
@@ -163,9 +192,22 @@ export function DynamicExecutionPanel({ tool, disabled = false }: DynamicExecuti
 
       {/* Input Section */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Tool Inputs
-        </Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Typography variant="subtitle1">
+            Tool Inputs
+          </Typography>
+          {tool.module && (
+            <Button
+              size="small"
+              startIcon={<DataObject />}
+              onClick={handleLoadTestData}
+              disabled={isExecuting}
+              variant="outlined"
+            >
+              Load Test Data
+            </Button>
+          )}
+        </Stack>
         <InputsList
           inputs={tool.inputs || []}
           values={inputValues}

@@ -2,23 +2,37 @@
  * Type definitions for the change-color-to-red tool
  */
 
+import type { Feature, Geometry } from 'geojson';
+
 export interface ChangeColorToRedInput {
-  text: string;
+  feature: Feature<Geometry>;
 }
 
 export interface ChangeColorToRedOutput {
-  html: string;
-  originalText: string;
-  colorChanges: number;
+  feature: Feature<Geometry>;
+  originalColor?: string;
+  colorChanged: boolean;
 }
 
 /**
  * Input validation for change color to red tool
  */
 export function isChangeColorToRedInput(input: any): input is ChangeColorToRedInput {
-  return (
-    typeof input === 'object' &&
-    input !== null &&
-    typeof input.text === 'string'
-  );
+  if (typeof input !== 'object' || input === null) {
+    return false;
+  }
+  
+  if (typeof input.feature !== 'object' || input.feature === null) {
+    return false;
+  }
+  
+  if (input.feature.type !== 'Feature') {
+    return false;
+  }
+  
+  if (!input.feature.geometry || typeof input.feature.geometry !== 'object' || input.feature.geometry === null) {
+    return false;
+  }
+  
+  return true;
 }

@@ -1,19 +1,13 @@
 /**
  * Change Color to Red Tool
  * 
- * Converts text to HTML with red color styling for any color words found.
- * This tool demonstrates simple text processing with HTML output.
+ * Takes a GeoJSON feature and sets its properties.color to red.
+ * Useful for highlighting features on a map or standardizing feature colors.
  */
 
 import { ToolValidationError } from '../types';
 import { ChangeColorToRedInput, ChangeColorToRedOutput, isChangeColorToRedInput } from './types';
-
-// List of color words to replace
-const COLOR_WORDS = [
-  'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'white', 'gray', 'grey',
-  'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'silver', 'gold', 'violet',
-  'indigo', 'turquoise', 'crimson', 'scarlet', 'azure', 'beige', 'coral', 'ivory', 'khaki'
-];
+import type { Feature, Geometry } from 'geojson';
 
 /**
  * Main tool execution function
@@ -21,36 +15,40 @@ const COLOR_WORDS = [
 export default function run(input: ChangeColorToRedInput): ChangeColorToRedOutput {
   // Validate input
   if (!isChangeColorToRedInput(input)) {
-    throw new ToolValidationError('Invalid input: expected object with text property');
+    throw new ToolValidationError('Invalid input: expected object with feature property containing a valid GeoJSON Feature');
   }
 
-  const { text } = input;
+  const { feature } = input;
 
-  if (typeof text !== 'string') {
-    throw new ToolValidationError('Invalid input: text must be a string');
+  // Additional validation
+  if (!feature.geometry) {
+    throw new ToolValidationError('Invalid feature: geometry is required');
   }
 
   try {
-    let html = text;
-    let colorChanges = 0;
-    const originalText = text;
-
-    // Replace color words with red-styled versions
-    COLOR_WORDS.forEach(color => {
-      // Use case-insensitive regex with word boundaries
-      const regex = new RegExp(`\\b${color}\\b`, 'gi');
-      const matches = html.match(regex);
-      
-      if (matches) {
-        colorChanges += matches.length;
-        html = html.replace(regex, '<span style="color: red; font-weight: bold;">red</span>');
+    // Create a deep copy of the feature to avoid mutating the input
+    const updatedFeature: Feature<Geometry> = {
+      type: 'Feature',
+      geometry: feature.geometry,
+      properties: {
+        ...feature.properties,
+        color: 'red'
       }
-    });
+    };
+
+    // If the feature has an id, preserve it
+    if (feature.id !== undefined) {
+      updatedFeature.id = feature.id;
+    }
+
+    // Capture the original color for reporting
+    const originalColor = feature.properties?.color;
+    const colorChanged = originalColor !== 'red';
 
     return {
-      html,
-      originalText,
-      colorChanges
+      feature: updatedFeature,
+      originalColor: originalColor || undefined,
+      colorChanged
     };
   } catch (error) {
     throw new Error(`Change color to red execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -71,4 +69,29 @@ export const metadata = {
   version: '1.0.0',
   author: 'ToolVault',
   dependencies: []
+};
+
+/**
+ * Sample test data for the tool
+ */
+export const testData = {
+  feature: {
+    type: 'Feature',
+    id: 'sample-polygon',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [-122.4194, 37.7749], // San Francisco area
+        [-122.4094, 37.7749],
+        [-122.4094, 37.7849],
+        [-122.4194, 37.7849],
+        [-122.4194, 37.7749]
+      ]]
+    },
+    properties: {
+      name: 'Sample Area',
+      color: 'blue',
+      description: 'A sample polygon in San Francisco that will be changed to red'
+    }
+  }
 };
