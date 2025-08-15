@@ -521,6 +521,26 @@ Objective: Deliver a minimal working catalog with at least two real tools, fully
    - Worker-based execution pipeline.
    - Basic error handling and tests.
 
+### Task 5.5 - Agent_Tool_Integrator: Implement Additional JS Tools for UI Demonstration
+Objective: Implement and integrate a set of additional JavaScript tools to drive and demonstrate the user interface, as described in the software requirements.
+
+1. Implement the following tools as TypeScript modules, compile to ES modules, and register in `index.json`:
+   - `word-frequency`: Accepts a paragraph of text, outputs a table of word frequencies (word and count).
+   - `flip-line`: Accepts a GeoJSON LineString, swaps the order of the latitude coordinates, leaving longitude unchanged.
+   - `line-centre`: Accepts a GeoJSON LineString, outputs a GeoJSON Point at the centre of the line (arithmetic mean, not spatial).
+   - `calc-speeds`: Accepts a GeoJSON LineString with a `properties.times` array of unix DTG (one per point), computes speed for each segment (distance/time), outputs a time-series array of speeds.
+2. For each tool:
+   - Ensure input/output types are minimal but descriptive, and update `index.json` accordingly.
+   - Follow the same module structure and conventions as previous tool tasks (Task 5.1, 5.4).
+   - Validate inputs and outputs per the schema and UI contract.
+   - Add documentation for each tool, including usage and input/output contract.
+   - Provide at least one test case per tool.
+3. Integrate these tools into the SPA so they are discoverable and executable via the UI.
+   - Ensure outputs render correctly using the existing output rendering pipeline.
+   - Validate correct error handling and UI feedback for edge cases and invalid input.
+
+Guidance: Refer to the Software Requirements Document (SRD) and the sample tool entries in `index.json` for structure and contract. Tools should help drive development and demonstration of the interface, so prioritize clarity, robust input validation, and output rendering.
+
 ---
 
 ## Memory Bank System Configuration
@@ -530,6 +550,7 @@ Objective: Deliver a minimal working catalog with at least two real tools, fully
 - `Memory/Phase_2_Core_UI_Implementation/`
 - `Memory/Phase_3_Testing_Polish/`
 - `Memory/Phase_4_Full_UI_Mock_Execution/`
+- `Memory/Phase_5_Working_JS_Implementation/`
 
 Each phase directory will contain individual log files for each task (e.g., `Task_1.1_React_Project_Init_Log.md`). This structure aligns with the phased approach and multiple specialized agents working on distinct aspects of the implementation.
 
