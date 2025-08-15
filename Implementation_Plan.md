@@ -448,6 +448,81 @@ Objective: Ensure optimal experience across all device types and screen sizes.
 
 ---
 
+## Phase 5: Working JS Implementation - Agent Group Epsilon (Agent_Frontend_Dev, Agent_Tool_Integrator)
+
+**Note:** This phase corresponds to **Phase 4** in the Software Requirements Document — "Working JS Implementation".
+
+### Task 5.1 - Agent_Tool_Integrator: Integrate Real Tool Modules (TypeScript/JavaScript)
+Objective: Enable execution of real tools written in TypeScript/JavaScript, compiled as ES modules, within the SPA (no Python infrastructure).
+
+1. Define tool module structure and requirements.
+   - Specify convention for tool modules (e.g., each exports a `run()` function with input/output signature).
+   - Document expected input/output types and error handling.
+   - Guidance: Align with sample in `index.json` and SRD.
+2. Organize tool source and build outputs in the project.
+   - Place tool `.ts` source and compiled `.js` in `client/src/tools/` or designated directory.
+   - Ensure build process outputs ES modules compatible with dynamic import.
+   - Guidance: Use Vite/TS build config to ensure output format.
+3. Update `index.json` with real tool entries.
+   - Add at least two tools (e.g., `word-count`, `change-color-to-red`) with correct module paths.
+   - Specify params and outputs as per SRD example.
+   - Guidance: Validate index against schema.
+
+### Task 5.2 - Agent_Frontend_Dev: Dynamic Tool Loading and Execution Pipeline
+Objective: Implement dynamic loading and execution of tool modules via `import()`, with input validation and output rendering.
+
+1. Implement dynamic import of tool modules.
+   - Use `import()` to load module specified in `index.json` at runtime.
+   - Handle loading errors and fallback gracefully.
+   - Guidance: Ensure compatibility with Vite/SPA build.
+2. Validate tool inputs and outputs.
+   - Validate input params against type definitions in `index.json` before execution.
+   - Validate outputs after execution; display error if contract is violated.
+   - Guidance: Use TypeScript types and runtime checks.
+3. Invoke `run()` in a Web Worker.
+   - Offload execution to a Web Worker to avoid blocking the UI.
+   - Pass validated inputs to worker, receive outputs/messages.
+   - Handle worker errors and timeouts.
+   - Guidance: Use transferable objects for performance if possible.
+4. Render outputs in the UI.
+   - Display results using existing output rendering pipeline (tables, maps, etc.).
+   - Show execution progress and errors.
+   - Guidance: Reuse/extend UI components from previous phases.
+
+### Task 5.3 - Agent_Frontend_Dev: Error Handling and Developer Experience
+Objective: Provide robust error handling, developer feedback, and maintainability for tool integration and execution.
+
+1. Implement user-friendly error reporting for tool execution failures.
+   - Display clear error messages for module load errors, validation failures, and runtime exceptions.
+   - Provide developer diagnostics in development mode.
+   - Guidance: Ensure errors are actionable for both users and developers.
+2. Document tool integration process.
+   - Create developer guide for adding new tools (structure, build, registration in `index.json`).
+   - Include troubleshooting tips for common issues (e.g., module not found, type mismatch).
+   - Guidance: Update project docs in `client/docs/`.
+3. Add basic test cases for tool execution pipeline.
+   - Write unit tests for dynamic import, validation, and worker communication.
+   - Ensure at least one test per tool type (e.g., GeoJSON, string processing).
+   - Guidance: Use Jest/RTL for UI, and worker test utilities.
+
+### Task 5.4 - Agent_Tool_Integrator & Agent_Frontend_Dev: Minimal Catalog and Example Tools
+Objective: Deliver a minimal working catalog with at least two real tools, fully integrated and executable via the SPA.
+
+1. Implement and test sample tools (`word-count`, `change-color-to-red`).
+   - Write TypeScript source, compile to ES modules, and register in `index.json`.
+   - Ensure tools conform to input/output contract and are documented.
+   - Guidance: Follow SRD sample for tool structure.
+2. Verify end-to-end execution in the browser.
+   - Run tools via SPA UI, validate correct outputs and error handling.
+   - Guidance: Test both tools with edge-case inputs.
+3. Deliverables:
+   - Minimal tool catalog in `index.json`.
+   - At least two working tools in `client/src/tools/`.
+   - Worker-based execution pipeline.
+   - Basic error handling and tests.
+
+---
+
 ## Memory Bank System Configuration
 
 **Memory Bank System:** Multi-file directory structure at `/Memory/` with subdirectories for each phase:
