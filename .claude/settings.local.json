@@ -83,7 +83,15 @@
       "Bash(touch:*)",
       "Bash(open http://localhost:5173/debug-multiple.html)",
       "Bash(open http://localhost:5173/debug-focus-test.html)",
-      "Bash(open http://localhost:5175/debug.html)"
+      "Bash(open http://localhost:5175/debug.html)",
+      "Bash(pnpm create:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm generate-types:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)"
     ]
   }
 }

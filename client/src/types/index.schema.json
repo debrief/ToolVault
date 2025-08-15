@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/toolvault/index.schema.json",
+  "title": "ToolVault Index",
+  "description": "Schema for ToolVault's tool index file",
+  "type": "object",
+  "required": ["name", "version", "tools"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the tool collection"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of this index (semantic versioning recommended)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the tool collection"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp in ISO 8601 format"
+    },
+    "tools": {
+      "type": "array",
+      "description": "List of tools in this collection",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "inputs", "outputs"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the tool"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of the tool"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the tool"
+          },
+          "category": {
+            "type": "string",
+            "description": "Optional category for grouping tools"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Keywords for searching/filtering"
+          },
+          "inputs": {
+            "type": "array",
+            "description": "Input parameters for the tool",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Internal parameter name"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Human-readable label for UI"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Data type (e.g., string, number, geojson)"
+                },
+                "required": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          },
+          "outputs": {
+            "type": "array",
+            "description": "Output fields produced by the tool",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Internal output name"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Human-readable label for UI"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Data type (e.g., string, number, geojson)"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
