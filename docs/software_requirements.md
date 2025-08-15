@@ -17,6 +17,7 @@ The initial implementation will be delivered in several phases, each building on
   - Tool detail page (description, input/output parameters).
   - Placeholder form for entering inputs.
   - "Run" button with mock execution.
+  - History placeholder panel.
 - No real execution — all outputs are mocked.
 
 **Deliverables:**
@@ -30,7 +31,8 @@ The initial implementation will be delivered in several phases, each building on
 
 - UI "Run" button triggers simulated tool execution.
 - Inputs are collected from the form based on parameter types.
-- Outputs are generated via deterministic mock logic (e.g., fixed strings or computed from inputs)
+- Outputs are generated via deterministic mock logic (e.g., fixed strings or computed from inputs).
+- History panel shows each run with timestamp.
 
 **Deliverables:**
 - Mock execution logic.
@@ -39,7 +41,15 @@ The initial implementation will be delivered in several phases, each building on
 
 ---
 
-## Phase 3 — Working JS Implementation
+## Phase 3 — Full Browsing UI with Output Rendering
+
+- Expand UI to fully render tool outputs in relevant formats (tables, maps, charts).
+- History panel displays results with rich formatting.
+- Allow export of results (JSON, CSV, PNG where relevant).
+
+---
+
+## Phase 4 — Working JS Implementation
 
 **Goal:** Execute real tools implemented in JavaScript/TypeScript, without any Python infrastructure.
 
@@ -77,13 +87,6 @@ The initial implementation will be delivered in several phases, each building on
 - At least two working tools implemented in TypeScript (e.g., `word-count`, `change-color-to-red`).
 - Worker-based execution pipeline.
 - Basic error handling.
-
----
-
-## Phase 4 — Full Browsing UI with Output Rendering
-
-- Expand UI to fully render tool outputs in relevant formats (tables, maps, charts, GeoJSON FC).
-- Allow export of results (JSON, CSV, PNG where relevant).
 
 ---
 
