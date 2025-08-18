@@ -104,9 +104,63 @@ We will create a mock tool bundle consisting of 10-15 JavaScript tools focused o
 - Mock tools may oversimplify real computational requirements
 - UI optimizations for JavaScript execution may not transfer to Python backend
 
+## Implementation Details
+
+### Input Methods
+- **Text Area**: Primary input method for pasting GeoJSON directly
+- **Sample Files**: Dropdown selector for bundled examples
+- No file upload initially (simplifies browser implementation)
+
+### Output Display
+- **Multi-tab view**: Different representations of the same output
+  - Download tab for file outputs (REP, CSV)
+  - Code preview with syntax highlighting
+  - Visual preview (Leaflet map for GeoJSON, charts for time series)
+  - Raw JSON view for debugging
+
+### Sample Data
+- Single GPS track with timestamps as primary test data
+- LineString with time properties for temporal analysis testing
+- Keep sample data minimal but representative
+
+### Error Handling
+- Minimal validation (assume valid input for mock tools)
+- Focus on happy path to test UI workflows
+- Basic try/catch to prevent crashes
+
+### Implementation Priority
+1. **Phase 1**: Simple transform tools (translate, flip)
+   - Easy to implement and verify visually
+   - Validates basic input/output flow
+2. **Phase 2**: Analysis tools (speed calculation, direction)
+   - Demonstrates computational capabilities
+   - Tests time series output visualization
+3. **Phase 3**: I/O tools (REP import/export, CSV export)
+   - Validates file handling workflows
+   - Tests download functionality
+
+### Metadata Schema Extension
+Add `runtime` field to tool definitions in index.json:
+```json
+{
+  "id": "translate-features",
+  "name": "Translate Features",
+  "runtime": "javascript",  // Options: "javascript", "python", "jupyter"
+  "script": "transform/translate.js",
+  ...
+}
+```
+
+This allows ToolVault to:
+- Route execution to appropriate runtime
+- Display runtime requirements to users
+- Support mixed-language tool bundles in future
+
 ## Implementation Plan
-1. Create index.json schema with tool metadata
-2. Implement 3-4 core tools for initial UI testing
-3. Expand to full 10-15 tool set iteratively
-4. Deploy to GitHub Pages for feedback collection
-5. Document lessons learned for Python backend implementation
+1. Create index.json schema with `runtime` field
+2. Implement translate and flip tools first (Phase 1)
+3. Add single GPS track sample data
+4. Build basic UI with text input and multi-tab output
+5. Deploy to GitHub Pages for initial feedback
+6. Iteratively add remaining tools based on feedback
+7. Document lessons learned for Python backend implementation
