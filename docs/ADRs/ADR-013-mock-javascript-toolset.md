@@ -156,11 +156,80 @@ This allows ToolVault to:
 - Display runtime requirements to users
 - Support mixed-language tool bundles in future
 
+## Development Approach
+
+### Repository Structure
+Location: `/examples/javascript-bundle/`
+```
+/examples/javascript-bundle/
+  package.json              # Jest testing, npm scripts
+  index.json               # Tool registry with runtime field
+  /tools/
+    /transform/
+      translate.js         # IIFE format tools
+      flip.js
+    /analysis/
+      speed-series.js
+    /statistics/
+      average-speed.js
+  /data/
+    sample-track.geojson   # GPS track test data
+  /tests/
+    translate.test.js      # Jest unit tests
+    flip.test.js
+    helpers.js            # Shared test utilities
+```
+
+### Tool Implementation Pattern
+Each tool uses IIFE (Immediately Invoked Function Expression) format:
+```javascript
+// translate.js
+(function() {
+  window.ToolVault = window.ToolVault || {};
+  window.ToolVault.tools = window.ToolVault.tools || {};
+  
+  window.ToolVault.tools.translateFeatures = function(input, params) {
+    // Simple synchronous function
+    // input: GeoJSON object
+    // params: { direction: number, distance: number }
+    // returns: Modified GeoJSON
+    
+    const { direction, distance } = params;
+    // Implementation here...
+    return modifiedGeoJSON;
+  };
+})();
+```
+
+### Testing Setup
+- **Framework**: Jest for unit testing
+- **Structure**: Separate `/tests/` directory
+- **Test data**: Shared fixtures in `/data/`
+- **Scripts**:
+  ```json
+  {
+    "scripts": {
+      "test": "jest",
+      "test:watch": "jest --watch"
+    }
+  }
+  ```
+
+### Development Workflow
+1. Write tool function in IIFE format
+2. Create corresponding Jest test
+3. Run tests with `npm test`
+4. Update index.json metadata
+5. Test integration with ToolVault UI
+6. No documentation initially (focus on implementation)
+
 ## Implementation Plan
-1. Create index.json schema with `runtime` field
-2. Implement translate and flip tools first (Phase 1)
-3. Add single GPS track sample data
-4. Build basic UI with text input and multi-tab output
-5. Deploy to GitHub Pages for initial feedback
-6. Iteratively add remaining tools based on feedback
-7. Document lessons learned for Python backend implementation
+1. Set up `/examples/javascript-bundle/` with package.json
+2. Create index.json with runtime field and first tool metadata
+3. Implement translate tool with IIFE pattern
+4. Write Jest tests for translate
+5. Add flip tool following same pattern
+6. Create sample GPS track data
+7. Test tools with ToolVault UI
+8. Iteratively add remaining tools
+9. Deploy complete bundle to GitHub Pages
