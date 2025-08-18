@@ -348,22 +348,57 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 ---
 
-## 6. Constraints
+## 6. Technical Implementation
 
-### 6.1 Technical Constraints
+### 6.1 Frontend Stack
+
+**Tech-1.1** The system SHALL use Vite as the build system for fast development and optimized production builds.
+
+**Tech-1.2** The system SHALL use TypeScript with maximum strictness (`strict: true`, `noImplicitAny: true`) from project inception.
+
+**Tech-1.3** The system SHALL use Material-UI (MUI) as the component library for consistent design and reduced development time.
+
+**Tech-1.4** The system SHALL organize code using domain-driven structure:
+- `/tools/` - Tool discovery, metadata, and browsing
+- `/execution/` - Tool execution and parameter management  
+- `/history/` - Execution history and provenance tracking
+- `/visualization/` - Spatial output rendering with LeafletJS
+- `/shared/` - Common components, types, and utilities
+
+**Tech-1.5** The system SHALL define strict TypeScript interfaces for:
+- Tool metadata schema
+- Execution parameters and results
+- Provenance records
+- API request/response types
+
+### 6.2 Development Standards
+
+**Tech-2.1** All new code SHALL pass TypeScript compilation with zero errors or warnings.
+
+**Tech-2.2** Components SHALL be functional components with TypeScript interfaces for all props.
+
+**Tech-2.3** State management SHALL use React hooks (useState, useReducer) with typed state objects.
+
+**Tech-2.4** API calls SHALL use typed fetch wrappers with proper error handling.
+
+---
+
+## 7. Constraints
+
+### 7.1 Technical Constraints
 
 - Browser-based execution only (no server-side processing in initial phases)
 - Maximum bundle size of 50MB
 - Web Worker API required for tool execution
 - ES2020+ JavaScript features required
 
-### 6.2 Regulatory Constraints
+### 7.2 Regulatory Constraints
 
 - Must maintain audit trail for compliance
 - Must embed provenance in outputs
 - Must support data residency requirements (no external transmission)
 
-### 6.3 Design Constraints
+### 7.3 Design Constraints
 
 - Must be metadata-driven (no hard-coded tool interfaces)
 - Must support offline operation
@@ -371,28 +406,28 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 ---
 
-## 7. Acceptance Criteria
+## 8. Acceptance Criteria
 
-### 7.1 Functional Acceptance
+### 8.1 Functional Acceptance
 
 - All specified functional requirements implemented and tested
 - Successful execution of reference tool set
 - Provenance correctly embedded in outputs
 - Pipeline capture and replay functional
 
-### 7.2 Performance Acceptance
+### 8.2 Performance Acceptance
 
 - Meets all specified performance targets
 - Successful load testing with 100 concurrent users
 - Cache hit rate exceeds 60% in typical usage
 
-### 7.3 Usability Acceptance
+### 8.3 Usability Acceptance
 
 - User testing confirms 3-click tool discovery
 - New users productive within 15 minutes
 - Accessibility audit passes WCAG 2.1 AA
 
-### 7.4 Integration Acceptance
+### 8.4 Integration Acceptance
 
 - Successfully embeds in Debrief application
 - MCP integration validated with AI tools
