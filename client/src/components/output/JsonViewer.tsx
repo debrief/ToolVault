@@ -22,7 +22,7 @@ import {
   Search as SearchIcon,
   Clear as ClearIcon,
   Download as DownloadIcon,
-  Copy as CopyIcon,
+  ContentCopy as CopyIcon,
   ExpandMore as ExpandMoreIcon,
   ChevronRight as ChevronRightIcon,
   ExpandLess as CollapseAllIcon,

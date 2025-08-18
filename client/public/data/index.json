@@ -86,6 +86,7 @@
       "description": "Creates a buffer polygon around a given GeoJSON geometry.",
       "category": "Geospatial",
       "tags": ["geo", "buffer", "geometry"],
+      "module": "/src/tools/geo-buffer/index.ts",
       "inputs": [
         {
           "name": "geometry",
@@ -105,6 +106,119 @@
           "name": "buffered_geometry",
           "label": "Buffered geometry",
           "type": "geojson"
+        }
+      ]
+    },
+    {
+      "id": "json-validator",
+      "name": "JSON Validator",
+      "description": "Validates JSON syntax, formats it, and provides detailed error information.",
+      "category": "Data Processing",
+      "tags": ["json", "validation", "format"],
+      "module": "/src/tools/json-validator/index.ts",
+      "inputs": [
+        {
+          "name": "jsonString",
+          "label": "JSON to validate",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "indent",
+          "label": "Indentation spaces",
+          "type": "number",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "isValid",
+          "label": "Is valid JSON",
+          "type": "boolean"
+        },
+        {
+          "name": "formatted",
+          "label": "Formatted JSON",
+          "type": "string"
+        },
+        {
+          "name": "error",
+          "label": "Error message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "hash-generator",
+      "name": "Hash Generator",
+      "description": "Generates various hash values (MD5, SHA-1, SHA-256) for text input.",
+      "category": "Security",
+      "tags": ["hash", "md5", "sha", "security"],
+      "module": "/src/tools/hash-generator/index.ts",
+      "inputs": [
+        {
+          "name": "text",
+          "label": "Text to hash",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "algorithms",
+          "label": "Hash algorithms",
+          "type": "array",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "hashes",
+          "label": "Generated hashes",
+          "type": "json"
+        },
+        {
+          "name": "length",
+          "label": "Input length",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "id": "base64-codec",
+      "name": "Base64 Encoder/Decoder",
+      "description": "Encodes text to Base64 or decodes Base64 to text with URL-safe option.",
+      "category": "Data Processing",
+      "tags": ["base64", "encode", "decode", "url-safe"],
+      "module": "/src/tools/base64-codec/index.ts",
+      "inputs": [
+        {
+          "name": "text",
+          "label": "Text to encode/decode",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "operation",
+          "label": "Operation",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "urlSafe",
+          "label": "URL-safe encoding",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "label": "Result",
+          "type": "string"
+        },
+        {
+          "name": "operation",
+          "label": "Operation performed",
+          "type": "string"
         }
       ]
     }

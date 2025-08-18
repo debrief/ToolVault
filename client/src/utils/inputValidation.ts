@@ -153,28 +153,46 @@ function validateSingleInput(
 
       case 'json':
       case 'geojson':
-        try {
-          const parsed = JSON.parse(sanitizedValue);
-          sanitizedValue = parsed;
-          
-          // Additional GeoJSON validation
-          if (input.type === 'geojson') {
-            if (!parsed.type || !['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes(parsed.type)) {
-              warnings.push({
-                field: input.name,
-                message: `${fieldLabel} may not be valid GeoJSON format`,
-                code: 'INVALID_GEOJSON',
-                value: parsed,
-              });
-            }
+        let parsed: any;
+        
+        // Handle both string and object inputs
+        if (typeof sanitizedValue === 'string') {
+          try {
+            parsed = JSON.parse(sanitizedValue);
+          } catch (error) {
+            errors.push({
+              field: input.name,
+              message: `${fieldLabel} must be valid JSON`,
+              code: 'INVALID_JSON',
+              value: sanitizedValue,
+            });
+            break;
           }
-        } catch (error) {
+        } else if (typeof sanitizedValue === 'object' && sanitizedValue !== null) {
+          // Value is already an object (e.g., from test data)
+          parsed = sanitizedValue;
+        } else {
           errors.push({
             field: input.name,
             message: `${fieldLabel} must be valid JSON`,
             code: 'INVALID_JSON',
             value: sanitizedValue,
           });
+          break;
+        }
+        
+        sanitizedValue = parsed;
+        
+        // Additional GeoJSON validation
+        if (input.type === 'geojson') {
+          if (!parsed.type || !['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes(parsed.type)) {
+            warnings.push({
+              field: input.name,
+              message: `${fieldLabel} may not be valid GeoJSON format`,
+              code: 'INVALID_GEOJSON',
+              value: parsed,
+            });
+          }
         }
         break;
 

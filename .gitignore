@@ -207,3 +207,4 @@ marimo/_lsp/
 __marimo__/
 client/coverage/
 client/test-results/
+client/playwright-report/

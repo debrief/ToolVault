@@ -32,6 +32,27 @@ export class ToolDetailPage {
     return this.page.getByTestId('execution-panel');
   }
 
+  // Dynamic execution panel elements
+  get loadTestDataButton() {
+    return this.page.getByRole('button', { name: 'Load Test Data' });
+  }
+
+  get executeButton() {
+    return this.page.getByRole('button', { name: 'Execute' });
+  }
+
+  get inputField() {
+    return this.page.getByRole('textbox').first();
+  }
+
+  get outputViewer() {
+    return this.page.locator('[data-testid="output-viewer"]');
+  }
+
+  get validationError() {
+    return this.page.locator('.MuiFormHelperText-root.Mui-error');
+  }
+
   get toolNotFound() {
     return this.page.getByTestId('tool-not-found');
   }
@@ -59,6 +80,27 @@ export class ToolDetailPage {
 
   async waitForNotFound() {
     await this.toolNotFound.waitFor();
+  }
+
+  // Tool execution actions
+  async loadTestData() {
+    await this.loadTestDataButton.click();
+    await this.page.waitForTimeout(500); // Wait for data to populate
+  }
+
+  async executeWithTestData() {
+    await this.loadTestData();
+    await this.executeButton.click();
+    await this.page.waitForTimeout(1000); // Wait for execution
+  }
+
+  async fillInputField(value: string) {
+    await this.inputField.fill(value);
+  }
+
+  async executeTool() {
+    await this.executeButton.click();
+    await this.page.waitForTimeout(1000); // Wait for execution
   }
 
   // Assertions
@@ -110,5 +152,38 @@ export class ToolDetailPage {
   async expectExecutionSection() {
     await expect(this.executionPanel).toBeVisible();
     // Could add more specific checks for execution controls
+  }
+
+  // Tool execution assertions
+  async expectLoadTestDataButtonVisible() {
+    await expect(this.loadTestDataButton).toBeVisible();
+  }
+
+  async expectExecuteButtonVisible() {
+    await expect(this.executeButton).toBeVisible();
+  }
+
+  async expectExecuteButtonEnabled() {
+    await expect(this.executeButton).toBeEnabled();
+  }
+
+  async expectInputFieldFilled() {
+    await expect(this.inputField).not.toBeEmpty();
+  }
+
+  async expectOutputVisible() {
+    await expect(this.outputViewer).toBeVisible();
+  }
+
+  async expectValidationError() {
+    await expect(this.validationError).toBeVisible();
+  }
+
+  async expectNoValidationError() {
+    await expect(this.validationError).not.toBeVisible();
+  }
+
+  async expectOutputContains(text: string) {
+    await expect(this.outputViewer).toContainText(text);
   }
 }

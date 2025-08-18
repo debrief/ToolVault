@@ -167,16 +167,94 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     setError(null);
   }, [data]);
 
+  // Style function that uses feature properties for coloring
+  const getFeatureStyle = useCallback((feature?: GeoJSON.Feature) => {
+    const properties = feature?.properties || {};
+    const featureColor = properties.color;
+    
+    // Default style
+    const defaultStyle = {
+      color: '#3388ff',
+      fillColor: '#3388ff',
+      weight: 2,
+      fillOpacity: 0.2,
+      opacity: 0.8
+    };
+
+    // If no color property, use default
+    if (!featureColor) {
+      return defaultStyle;
+    }
+
+    // Support different color formats
+    let processedColor = featureColor;
+    
+    // Convert named colors to hex/rgb if needed
+    if (typeof featureColor === 'string') {
+      processedColor = featureColor.toLowerCase();
+      
+      // Handle common named colors
+      const namedColors: Record<string, string> = {
+        'red': '#ff0000',
+        'blue': '#0000ff', 
+        'green': '#008000',
+        'yellow': '#ffff00',
+        'orange': '#ffa500',
+        'purple': '#800080',
+        'pink': '#ffc0cb',
+        'brown': '#a52a2a',
+        'gray': '#808080',
+        'grey': '#808080',
+        'black': '#000000',
+        'white': '#ffffff'
+      };
+      
+      if (namedColors[processedColor]) {
+        processedColor = namedColors[processedColor];
+      }
+    }
+
+    return {
+      ...defaultStyle,
+      color: processedColor,
+      fillColor: processedColor,
+      // Make the feature slightly more prominent if it has a custom color
+      weight: 3,
+      fillOpacity: 0.3,
+      opacity: 0.9
+    };
+  }, []);
+
   const onEachFeature = useCallback((feature: GeoJSON.Feature, layer: L.Layer) => {
     // Bind popup with feature information
     if (feature.properties && Object.keys(feature.properties).length > 0) {
-      const popupContent = document.createElement('div');
+      const properties = feature.properties;
       
-      // We'll create a React portal for the popup content
+      // Create formatted popup content
+      let popupHTML = '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">';
+      popupHTML += '<h4 style="margin: 0 0 8px 0; color: #333;">Feature Properties</h4>';
+      
+      // Display each property
+      Object.entries(properties).forEach(([key, value]) => {
+        popupHTML += '<div style="margin-bottom: 4px;">';
+        popupHTML += `<strong style="color: #666;">${key}:</strong> `;
+        
+        // Special handling for color property
+        if (key === 'color' && typeof value === 'string') {
+          popupHTML += `<span style="background-color: ${value}; padding: 2px 8px; border-radius: 3px; color: white; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">${value}</span>`;
+        } else {
+          popupHTML += `<span>${String(value)}</span>`;
+        }
+        
+        popupHTML += '</div>';
+      });
+      
+      popupHTML += '</div>';
+      
       const popup = L.popup({ 
         maxWidth: 300,
         closeButton: true 
-      }).setContent(popupContent);
+      }).setContent(popupHTML);
       
       layer.bindPopup(popup);
     }
@@ -265,12 +343,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           <GeoJSON
             data={data}
             onEachFeature={onEachFeature}
-            style={() => ({
-              color: '#3388ff',
-              weight: 2,
-              fillOpacity: 0.2,
-              opacity: 0.8
-            })}
+            style={getFeatureStyle}
           />
           <MapBoundsController data={data} />
         </>

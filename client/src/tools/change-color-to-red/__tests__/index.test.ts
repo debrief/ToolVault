@@ -2,8 +2,7 @@
  * Tests for change-color-to-red tool
  */
 
-import run, { validate } from '../index';
-import { isChangeColorToRedInput } from '../types';
+import run, { validate, ChangeColorToRedInput } from '../index';
 import { ToolValidationError } from '../../types';
 import type { Feature, Geometry } from 'geojson';
 
@@ -174,7 +173,7 @@ describe('change-color-to-red tool', () => {
           // Missing geometry property
         }
       };
-      const result = isChangeColorToRedInput(featureWithoutGeometry);
+      const result = validate(featureWithoutGeometry);
       expect(result).toBe(false);
     });
   });

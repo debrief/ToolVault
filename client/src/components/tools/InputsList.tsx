@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -8,6 +9,10 @@ import {
   ListItemText,
   Chip,
   FormHelperText,
+  IconButton,
+  Tooltip,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 import {
   TextFields,
@@ -19,8 +24,14 @@ import {
   CalendarToday,
   Schedule,
   Code,
+  Visibility,
+  Edit,
+  ToggleOn,
+  ToggleOff,
 } from '@mui/icons-material';
 import { getInputType, getInputPlaceholder } from '../../utils/inputValidation';
+import { detectOutputType } from '../../utils/outputTypeDetection';
+import { OutputRenderer } from '../output/OutputRenderer';
 import type { ToolInput } from '../../types/index';
 
 interface InputsListProps {
@@ -40,10 +51,9 @@ function getInputIcon(type: string) {
     case 'url':
       return <Link />;
     case 'json':
-    case 'geojson':
       return <DataObject />;
-    case 'map':
     case 'geojson':
+    case 'map':
       return <Map />;
     case 'date':
       return <CalendarToday />;
@@ -83,12 +93,99 @@ export function InputsList({
   readOnly = false,
   errors = {}
 }: InputsListProps) {
-  const handleInputChange = (name: string, value: any) => {
+  // Track which inputs are in viewer mode vs editor mode
+  // Auto-enable viewer mode for GeoJSON inputs with valid data
+  const [viewerModes, setViewerModes] = useState<Record<string, boolean>>(() => {
+    const initialModes: Record<string, boolean> = {};
+    inputs.forEach(input => {
+      const value = values[input.name];
+      // Auto-enable viewer mode for GeoJSON inputs with data
+      if (input.type === 'geojson' && value && typeof value === 'object') {
+        const detectedType = detectOutputType(value);
+        if (detectedType === 'geojson') {
+          initialModes[input.name] = true;
+        }
+      }
+    });
+    return initialModes;
+  });
+
+  // Update viewer modes when values change (e.g., when test data is loaded)
+  React.useEffect(() => {
+    inputs.forEach(input => {
+      const value = values[input.name];
+      // Auto-enable viewer mode for new GeoJSON inputs with data
+      if (input.type === 'geojson' && value && typeof value === 'object' && !viewerModes[input.name]) {
+        const detectedType = detectOutputType(value);
+        if (detectedType === 'geojson') {
+          setViewerModes(prev => ({
+            ...prev,
+            [input.name]: true
+          }));
+        }
+      }
+    });
+  }, [values, inputs]);
+
+  // Determine if an input should support viewer mode
+  const supportsViewerMode = (input: ToolInput, value: any) => {
+    if (!value || readOnly) return false;
+    
+    // Always support viewer mode for complex data types
+    const complexTypes = ['json', 'geojson', 'array', 'object'];
+    if (complexTypes.includes(input.type)) return true;
+    
+    // Use intelligent detection for any non-primitive value
+    if (typeof value === 'object' && value !== null) {
+      const detectedType = detectOutputType(value);
+      return ['geojson', 'table', 'chart', 'json'].includes(detectedType);
+    }
+    
+    // Also support viewer mode for long strings that might be structured data
+    if (typeof value === 'string' && value.length > 100) {
+      const detectedType = detectOutputType(value);
+      return ['html', 'text', 'json'].includes(detectedType);
+    }
+    
+    return false;
+  };
+
+  // Get the optimal viewer type for an input value
+  const getInputViewerType = (input: ToolInput, value: any) => {
+    if (!value) return null;
+    
+    // For GeoJSON inputs, always prefer map viewer
+    if (input.type === 'geojson') return 'geojson';
+    
+    // Use intelligent detection for the actual data
+    return detectOutputType(value);
+  };
+
+  // Toggle between viewer and editor mode
+  const toggleViewerMode = (inputName: string) => {
+    setViewerModes(prev => ({
+      ...prev,
+      [inputName]: !prev[inputName]
+    }));
+  };
+  const handleInputChange = (name: string, value: any, inputType: string) => {
     if (!onChange) return;
+    
+    let processedValue = value;
+    
+    // Handle JSON/GeoJSON inputs - parse string back to object
+    if ((inputType === 'json' || inputType === 'geojson') && typeof value === 'string') {
+      try {
+        processedValue = value.trim() ? JSON.parse(value) : null;
+      } catch (error) {
+        // Keep as string if invalid JSON - validation will catch this
+        processedValue = value;
+      }
+    }
     
     onChange({
       ...values,
-      [name]: value,
+      [name]: processedValue,
     });
   };
 
@@ -111,8 +208,14 @@ export function InputsList({
       <List disablePadding>
         {inputs.map((input) => {
           const inputType = getInputType(input.type);
-          const isMultiline = inputType === 'textarea';
+          const isMultiline = inputType === 'textarea' || input.type === 'json' || input.type === 'geojson';
           const hasError = errors[input.name];
+          
+          // Convert object values to JSON string for display
+          let displayValue = values[input.name] || '';
+          if ((input.type === 'json' || input.type === 'geojson') && typeof displayValue === 'object' && displayValue !== null) {
+            displayValue = JSON.stringify(displayValue, null, 2);
+          }
           
           return (
             <ListItem key={input.name} sx={{ flexDirection: 'column', alignItems: 'stretch', py: 2 }}>
@@ -136,6 +239,18 @@ export function InputsList({
                         color={getTypeColor(input.type)}
                         variant="outlined"
                       />
+                      {/* Viewer mode toggle for complex inputs */}
+                      {supportsViewerMode(input, values[input.name]) && (
+                        <Tooltip title={viewerModes[input.name] ? "Switch to Editor" : "Switch to Viewer"}>
+                          <IconButton
+                            size="small"
+                            onClick={() => toggleViewerMode(input.name)}
+                            color={viewerModes[input.name] ? "primary" : "default"}
+                          >
+                            {viewerModes[input.name] ? <Edit /> : <Visibility />}
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </Box>
                   }
                   secondary={input.label !== input.name ? `Parameter: ${input.name}` : undefined}
@@ -144,19 +259,46 @@ export function InputsList({
               
               {!readOnly && (
                 <Box sx={{ width: '100%', ml: 5 }}>
-                  <TextField
-                    fullWidth
-                    name={input.name}
-                    type={isMultiline ? 'text' : inputType}
-                    multiline={isMultiline}
-                    rows={isMultiline ? 4 : 1}
-                    value={values[input.name] || ''}
-                    onChange={(e) => handleInputChange(input.name, e.target.value)}
-                    placeholder={getInputPlaceholder(input)}
-                    error={!!hasError}
-                    variant="outlined"
-                    size="small"
-                  />
+                  {/* Show viewer or editor based on mode */}
+                  {viewerModes[input.name] && supportsViewerMode(input, values[input.name]) ? (
+                    // Viewer Mode - show appropriate viewer
+                    <Box sx={{ 
+                      border: '1px solid #ddd', 
+                      borderRadius: 1, 
+                      overflow: 'hidden',
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <OutputRenderer
+                        data={values[input.name]}
+                        outputs={[]} // No output schema needed for input viewing
+                        title={`${input.label || input.name} Preview`}
+                        interactive={false} // Read-only viewing
+                        compact={true}
+                        maxHeight={300}
+                      />
+                    </Box>
+                  ) : (
+                    // Editor Mode - show text field
+                    <TextField
+                      fullWidth
+                      name={input.name}
+                      type={isMultiline ? 'text' : inputType}
+                      multiline={isMultiline}
+                      rows={isMultiline ? (input.type === 'json' || input.type === 'geojson') ? 8 : 4 : 1}
+                      value={displayValue}
+                      onChange={(e) => handleInputChange(input.name, e.target.value, input.type)}
+                      placeholder={getInputPlaceholder(input)}
+                      error={!!hasError}
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        '& .MuiInputBase-input': {
+                          fontFamily: (input.type === 'json' || input.type === 'geojson') ? 'monospace' : 'inherit',
+                          fontSize: (input.type === 'json' || input.type === 'geojson') ? '0.85rem' : 'inherit'
+                        }
+                      }}
+                    />
+                  )}
                   {hasError && (
                     <FormHelperText error>
                       {errors[input.name]}
@@ -167,9 +309,32 @@ export function InputsList({
               
               {readOnly && values[input.name] && (
                 <Box sx={{ width: '100%', ml: 5 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {values[input.name]}
-                  </Typography>
+                  {supportsViewerMode(input, values[input.name]) ? (
+                    // Show viewer for complex data in read-only mode
+                    <Box sx={{ 
+                      border: '1px solid #e0e0e0', 
+                      borderRadius: 1, 
+                      overflow: 'hidden',
+                      backgroundColor: '#f9f9f9'
+                    }}>
+                      <OutputRenderer
+                        data={values[input.name]}
+                        outputs={[]}
+                        title={`${input.label || input.name}`}
+                        interactive={false}
+                        compact={true}
+                        maxHeight={250}
+                      />
+                    </Box>
+                  ) : (
+                    // Show simple text for primitive data
+                    <Typography variant="body2" color="text.secondary">
+                      {typeof values[input.name] === 'object' 
+                        ? JSON.stringify(values[input.name], null, 2)
+                        : String(values[input.name])
+                      }
+                    </Typography>
+                  )}
                 </Box>
               )}
             </ListItem>

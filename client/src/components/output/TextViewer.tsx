@@ -23,7 +23,7 @@ import {
   Search as SearchIcon,
   Clear as ClearIcon,
   Download as DownloadIcon,
-  Copy as CopyIcon,
+  ContentCopy as CopyIcon,
   KeyboardArrowUp as PrevIcon,
   KeyboardArrowDown as NextIcon,
   WrapText as WrapTextIcon,

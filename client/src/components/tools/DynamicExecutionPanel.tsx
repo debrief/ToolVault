@@ -109,8 +109,13 @@ export function DynamicExecutionPanel({ tool, disabled = false }: DynamicExecuti
       setValidationErrors({});
       
       // Validate inputs
-      const errors = validateInputs(inputValues, tool.inputs || []);
-      if (Object.keys(errors).length > 0) {
+      const validationResult = validateInputs(tool.inputs || [], inputValues);
+      if (!validationResult.isValid) {
+        // Convert ValidationError[] to Record<string, string>
+        const errors: Record<string, string> = {};
+        validationResult.errors.forEach(error => {
+          errors[error.field] = error.message;
+        });
         setValidationErrors(errors);
         return;
       }
@@ -340,7 +345,7 @@ export function DynamicExecutionPanel({ tool, disabled = false }: DynamicExecuti
           </Stack>
 
           {/* Results Section */}
-          <Box>
+          <Box data-testid="output-viewer">
             <Typography variant="subtitle1" gutterBottom>
               Tool Outputs
             </Typography>

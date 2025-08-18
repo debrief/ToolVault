@@ -27,6 +27,67 @@ import {
 import { detectOutputType } from '../../utils/outputTypeDetection';
 import type { OutputRendererProps, OutputType, ChartData } from '../../types/output';
 
+/**
+ * Normalize GeoJSON data for MapViewer consumption
+ * Handles single Features, nested objects with features, and FeatureCollections
+ */
+function normalizeGeoJSONData(data: any): any {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  // If it's already a FeatureCollection, return as-is
+  if (data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+    return data;
+  }
+
+  // If it's a single Feature, wrap it in a FeatureCollection
+  if (data.type === 'Feature' && data.geometry) {
+    return {
+      type: 'FeatureCollection',
+      features: [data]
+    };
+  }
+
+  // Check if the data has a nested feature property (common for tool outputs)
+  if (data.feature && typeof data.feature === 'object') {
+    if (data.feature.type === 'Feature' && data.feature.geometry) {
+      return {
+        type: 'FeatureCollection',
+        features: [data.feature]
+      };
+    }
+  }
+
+  // Check if the data has a buffered_geometry property (geo-buffer tool)
+  if (data.buffered_geometry && typeof data.buffered_geometry === 'object') {
+    if (data.buffered_geometry.type === 'Feature' && data.buffered_geometry.geometry) {
+      return {
+        type: 'FeatureCollection',
+        features: [data.buffered_geometry]
+      };
+    }
+  }
+
+  // Try to find any GeoJSON-like structure in the object values
+  for (const value of Object.values(data)) {
+    if (value && typeof value === 'object') {
+      if ((value as any).type === 'Feature' && (value as any).geometry) {
+        return {
+          type: 'FeatureCollection',
+          features: [value]
+        };
+      }
+      if ((value as any).type === 'FeatureCollection' && Array.isArray((value as any).features)) {
+        return value;
+      }
+    }
+  }
+
+  // If no valid GeoJSON found, return null to trigger error handling
+  return null;
+}
+
 // Lazy load all viewer components for better performance
 const MapViewer = lazy(() => import('./MapViewer'));
 const TableViewer = lazy(() => import('./TableViewer'));
@@ -241,9 +302,13 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({
     try {
       switch (outputType) {
         case 'geojson':
+          const normalizedGeoJSON = normalizeGeoJSONData(data);
+          if (!normalizedGeoJSON) {
+            throw new Error('Invalid GeoJSON data: Unable to extract valid features');
+          }
           return (
             <MapViewer
-              data={data}
+              data={normalizedGeoJSON}
               {...commonProps}
               showControls={interactive}
             />

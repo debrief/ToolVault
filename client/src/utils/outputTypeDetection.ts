@@ -70,6 +70,45 @@ export function detectGeoJSON(data: any): FeatureDetectionResult {
     data.geometry.coordinates
   ) {
     confidence = 0.9; // Single feature
+  } else {
+    // Check for nested GeoJSON in object properties (common for tool outputs)
+    const possibleFeatures = [];
+    
+    // Check for common property names that might contain GeoJSON
+    const geoJsonProperties = ['feature', 'buffered_geometry', 'geometry', 'result'];
+    
+    for (const propName of geoJsonProperties) {
+      if (data[propName] && typeof data[propName] === 'object') {
+        const nestedData = data[propName];
+        
+        // Check if nested data is a Feature
+        if (nestedData.type === 'Feature' && nestedData.geometry && nestedData.geometry.coordinates) {
+          possibleFeatures.push(nestedData);
+          confidence = Math.max(confidence, 0.8);
+        }
+        // Check if nested data is a FeatureCollection
+        else if (nestedData.type === 'FeatureCollection' && Array.isArray(nestedData.features)) {
+          possibleFeatures.push(...nestedData.features);
+          confidence = Math.max(confidence, 0.9);
+        }
+      }
+    }
+    
+    // Also check all object values for GeoJSON-like structures
+    if (confidence === 0) {
+      for (const value of Object.values(data)) {
+        if (value && typeof value === 'object') {
+          if ((value as any).type === 'Feature' && (value as any).geometry && (value as any).geometry.coordinates) {
+            confidence = Math.max(confidence, 0.7);
+            break;
+          }
+          if ((value as any).type === 'FeatureCollection' && Array.isArray((value as any).features)) {
+            confidence = Math.max(confidence, 0.8);
+            break;
+          }
+        }
+      }
+    }
   }
 
   return {

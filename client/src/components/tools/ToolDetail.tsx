@@ -153,13 +153,6 @@ export function ToolDetail({
           </>
         )}
         
-        {/* Show both for testing/comparison if available */}
-        {tool.module && process.env.NODE_ENV === 'development' && (
-          <>
-            <Divider />
-            <ExecutionPanel tool={tool} />
-          </>
-        )}
       </Stack>
     </Container>
   );
