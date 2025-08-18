@@ -107,16 +107,6 @@ python indexer.py --repo /path/to/tools --output bundle.zip
 python validate_index.py index.json
 ```
 
-## Current Focus
-
-The immediate focus is on Phase 1: Building a bare static UI that can:
-1. Load and parse `index.json` from a local file
-2. Display a browsable list of tools
-3. Show tool details (name, description, inputs, outputs)
-4. Provide UI for input/output configuration
-5. Include a non-functional "Run" button
-6. Display placeholder for execution history
-
 ## Important Notes
 
 - The project uses Python for backend development with Flask/FastAPI preference
