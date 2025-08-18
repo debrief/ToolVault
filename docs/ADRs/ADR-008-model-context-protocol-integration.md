@@ -70,6 +70,46 @@ Pipeline approval with save/export gates maintains human control over final outp
 - **Performance monitoring**: Track AI interaction overhead and optimize as needed
 - **Clear boundaries**: Maintain explicit human approval gates for all persistent actions
 
+## MCP Protocol Compliance Requirements
+
+### Core Capabilities Declaration
+ToolVault must declare support for the following MCP capabilities during initialization:
+- **Tools capability**: With `listChanged` notification support for dynamic tool availability
+- **Resources capability**: For exposing bundle metadata and tool documentation  
+- **Prompts capability**: For providing analytical workflow templates
+
+### Required Protocol Methods
+
+#### Tools Interface
+- **`tools/list`**: Discover available tools across all loaded bundles
+  - Support pagination for large tool collections
+  - Include tool name, description, input/output schemas
+- **`tools/call`**: Execute specific tools with parameter validation
+  - Validate inputs against tool schemas
+  - Return structured results with provenance metadata
+- **`notifications/tools/list_changed`**: Notify when bundles are loaded/unloaded
+
+#### Resources Interface  
+- **`resources/list`**: Expose bundle metadata and tool documentation
+- **`resources/read`**: Provide access to tool schemas and example data
+- **`resources/subscribe`**: Notify on bundle or tool metadata changes
+
+#### Prompts Interface
+- **`prompts/list`**: Expose analytical workflow templates
+- **`prompts/get`**: Retrieve parameterized workflow templates
+- **Arguments support**: Allow customization of workflow prompts
+
+### Message Transport
+- **JSON-RPC 2.0**: All MCP communication via JSON-RPC protocol
+- **HTTP with SSE**: Server-Sent Events for real-time notifications
+- **Version negotiation**: Support MCP version "2025-06-18" format
+
+### Security and Validation
+- **Input validation**: All tool parameters validated against schemas
+- **Access controls**: Human approval gates for tool execution
+- **Rate limiting**: Prevent excessive AI tool invocations
+- **Output sanitization**: Clean tool outputs before returning to AI
+
 ## Implementation Notes
 - MCP server will be integrated into ToolVault's backend architecture
 - Tool metadata exposure will leverage existing bundle `index.json` schemas
@@ -77,3 +117,7 @@ Pipeline approval with save/export gates maintains human control over final outp
 - Audit logging will capture all AI interactions for provenance and debugging
 - Human approval interface will clearly show proposed pipelines before execution
 - Context management will evolve through defined phases with clear upgrade paths
+- MCP version negotiation will occur during client initialization
+- Tool schemas will be automatically generated from bundle metadata
+- Resource endpoints will expose bundle contents and documentation
+- Prompt templates will be created for common analytical workflows
