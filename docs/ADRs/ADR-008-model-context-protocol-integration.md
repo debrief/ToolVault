@@ -1,36 +1,79 @@
 # ADR-008: Model Context Protocol Integration
 
 ## Status
-Draft
+Accepted
 
-## Notes for Discussion
+## Context
+ToolVault's bundle-based architecture provides rich metadata about analysis tools that AI systems could leverage for intelligent assistance. Users would benefit from AI-powered tool discovery, automated pipeline creation, and natural language interfaces for complex analytical workflows. The Model Context Protocol (MCP) provides a standardized way to expose ToolVault's capabilities to AI systems while maintaining appropriate security boundaries and human oversight.
 
-### Key Decision Points
-- **MCP Implementation**: How to expose ToolVault tools via Model Context Protocol
-- **AI Integration Depth**: Tool discovery vs full execution via AI
-- **Security Boundaries**: What can AI systems do vs what requires human approval
-- **Tool Composition**: How AI can chain tools together
-- **Context Management**: How to maintain state across AI-driven tool sequences
+## Decision
+We will implement native MCP server integration with the following characteristics:
 
-### Important Aspects to Consider
-1. **AI Use Cases**: What kinds of AI assistance are most valuable?
-2. **Security Model**: How to prevent AI from accessing sensitive data?
-3. **User Control**: When should AI require human confirmation?
-4. **Error Handling**: How AI deals with tool failures
-5. **Learning**: How AI improves tool selection over time
-6. **Context Size**: Managing conversation context for complex analyses
-7. **Tool Discovery**: How AI finds appropriate tools for user needs
-8. **Result Validation**: How to verify AI-generated analyses
+### MCP Implementation Architecture
+- **Native MCP server**: ToolVault directly implements MCP protocol for optimal performance
+- **Full tool exposure**: All tools available to human users are accessible via MCP
+- **Rich metadata exposure**: Complete tool schemas including input/output types, parameters, and usage examples
+- **Bundle-aware discovery**: AI can explore tools across all loaded bundles
 
-### Options to Evaluate
-- Full MCP server exposing all tools
-- Curated subset of AI-safe tools
-- Read-only tool discovery vs full execution
-- Human-in-the-loop for all AI actions
-- Automated tool chaining with approval gates
+### AI Integration Capabilities
+- **Tool discovery and recommendation**: AI suggests relevant tools based on user data and objectives
+- **Automated pipeline creation**: AI chains tools together into complete analytical workflows
+- **Natural language interface**: Users can describe analytical needs in plain language
+- **Parameter assistance**: AI helps configure complex tool parameters when requested
 
-### Business Requirements Impact
-- User productivity gains from AI assistance
-- Risk management for automated analysis
-- Training requirements for AI-assisted workflows
-- Competitive advantage in analytics capabilities
+### Security and Oversight Model
+- **Sandboxed execution**: AI can execute tools but outputs remain quarantined until human approval
+- **Pipeline approval workflow**: AI proposes complete analysis pipelines, human approves before execution
+- **Human gate for persistence**: Results only saved/exported after explicit human confirmation
+- **Full audit trail**: All AI-driven actions logged with provenance information
+
+### Context Management Evolution
+- **Phase 1 - Stateless**: Each AI interaction independent, simple tool discovery and execution
+- **Phase 2 - Project-based**: AI maintains context across sessions for coherent project workflows  
+- **Phase 3 - Persistent learning**: AI builds knowledge about user preferences and workflow patterns
+
+## Rationale
+
+### Native Integration Benefits
+Direct MCP implementation provides optimal performance and tightest integration with ToolVault's metadata-driven architecture, enabling sophisticated AI assistance without external dependencies.
+
+### Full Tool Exposure with Sandboxing
+Exposing all tools via MCP maximizes AI capability for pipeline creation while sandboxed execution ensures safety through human approval gates.
+
+### Rich Metadata Exposure
+Complete tool schemas enable AI to make intelligent recommendations and create valid tool chains without needing execution history or documentation complexity.
+
+### Phased Context Evolution
+Starting stateless and evolving toward persistent learning allows incremental capability development while maintaining system simplicity initially.
+
+### Human-Centered Approval Workflow
+Pipeline approval with save/export gates maintains human control over final outputs while allowing AI to demonstrate full analytical workflows.
+
+## Consequences
+
+### Positive
+- **Enhanced productivity**: AI assistance for tool discovery and pipeline creation
+- **Lower barrier to entry**: Natural language interface reduces learning curve
+- **Intelligent recommendations**: AI suggests relevant tools based on data characteristics
+- **Workflow automation**: Automated pipeline creation for common analytical patterns
+- **Standards compliance**: MCP integration enables compatibility with multiple AI systems
+
+### Negative
+- **Implementation complexity**: Native MCP server requires protocol implementation
+- **Security considerations**: AI access to all tools requires careful sandboxing
+- **Performance overhead**: AI interactions add processing load
+- **Context management**: Persistent learning phases increase system complexity
+
+### Mitigation Strategies
+- **Incremental rollout**: Start with stateless implementation and evolve capabilities
+- **Robust sandboxing**: Ensure AI outputs cannot affect persistent storage without approval
+- **Performance monitoring**: Track AI interaction overhead and optimize as needed
+- **Clear boundaries**: Maintain explicit human approval gates for all persistent actions
+
+## Implementation Notes
+- MCP server will be integrated into ToolVault's backend architecture
+- Tool metadata exposure will leverage existing bundle `index.json` schemas
+- Sandboxed execution environment will isolate AI-driven tool runs
+- Audit logging will capture all AI interactions for provenance and debugging
+- Human approval interface will clearly show proposed pipelines before execution
+- Context management will evolve through defined phases with clear upgrade paths
