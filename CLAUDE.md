@@ -6,23 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ToolVault is a portable, self-contained service that delivers curated collections of analysis tools for scientists, analysts, and developers. It provides an interactive browser-based interface for discovering, running, and understanding tools with history tracking, version awareness, and spatial output visualization.
 
-The project is currently in the **early UI mockup phase** (Phase 1), with no implementation code yet written.
-
-## Development Phases
-
-The project follows a phased implementation approach:
-1. **Phase 1** - Bare static UI driven by `index.json` (current)
-2. **Phase 2** - Mock tool calls to simulate execution
-3. **Phase 3** - Full browsing UI with LeafletJS output rendering
-4. **Phase 4** - Indexer development for bundle creation
-5. **Phase 5** - Flask/FastAPI backend with embedded Jupyter
-6. **Phase 6** - VS Code extension integration
-
 ## Project Structure
 
 ### Current Structure
 ```
 /docs           # Documentation including software requirements
+/docs/ADRs      # Architecture Decision Records
 /prompts        # APM (Agentic Project Management) framework guides
 /tasks          # Task tracking directory
 ```
@@ -48,21 +37,6 @@ The project follows a phased implementation approach:
 - Python-based tool execution
 
 ## Architecture Decisions
-
-### Metadata-First Design
-The entire UI is driven by an `index.json` metadata file that describes:
-- Available tools
-- Input/output schemas
-- Tool categories and versioning
-- Execution history
-
-### Bundle Architecture
-Tools are packaged as self-contained zip bundles containing:
-- Python modules and dependencies
-- Metadata (`index.json`)
-- Demo notebooks
-- Sample data
-- All dependencies for offline operation
 
 ### Key Constraints
 - **Offline capability**: All dependencies must be packaged in bundles
