@@ -100,7 +100,8 @@
       "Bash(open http://localhost:9323)",
       "Bash(open http://localhost:5176)",
       "Bash(VITE_PORT=5175 pnpm dev)",
-      "Bash(open http://localhost:5175/tools/change-color-to-red)"
+      "Bash(open http://localhost:5175/tools/change-color-to-red)",
+      "WebFetch(domain:modelcontextprotocol.io)"
     ]
   }
 }
