@@ -2,9 +2,9 @@
 
 ## Overview
 
-ToolVault is a portable, self-contained service delivering curated collections of analysis tools, with an interactive UI, versioning, and multiple deployment modes (standalone server, VS Code extension).
+ToolVault is a portable, self-contained service delivering curated collections of analysis tools for scientists, analysts, and developers. It provides an interactive browser-based interface for discovering, running, and understanding tools with history tracking, version awareness, and spatial output visualization.
 
-The initial implementation will be delivered in several phases, each building on the previous.
+The implementation follows a phased approach, progressively building from a static UI to a fully-featured tool execution platform.
 
 ---
 
