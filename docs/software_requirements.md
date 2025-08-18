@@ -1,305 +1,441 @@
 # Software Requirements Document (SRD) — ToolVault
 
-## Executive Summary
+## 1. Introduction
 
-ToolVault transforms how organizations access and use analysis tools. Instead of juggling multiple applications, installing complex software, or waiting for IT support, users access everything through their web browser. Tools run instantly, results appear immediately for repeated analyses, and everything works even without internet connection.
+### 1.1 Purpose
+This document specifies the functional and non-functional requirements for ToolVault, a browser-based platform for executing and managing analytical tools with full provenance tracking.
 
-Think of it as a Swiss Army knife for data analysis - all your tools in one place, always ready, always fast.
+### 1.2 Scope
+ToolVault SHALL provide a metadata-driven interface for tool discovery, execution, and pipeline management with embedded provenance tracking compliant with W3C PROV standards.
 
----
-
-## Value Proposition
-
-### For End Users
-- **Find and use any tool in under 30 seconds** - no training required
-- **Get instant results** when running the same analysis twice  
-- **Work anywhere** - on your phone, tablet, or computer
-- **Never lose work** - automatic history of everything you've done
-- **Share results easily** in formats everyone can use
-
-### For Organizations  
-- **Deploy new tools in hours**, not months
-- **Save $100K+ annually** by preventing analysis errors
-- **Reduce support costs by 75%** with self-service tools
-- **Enable 100% of workforce** regardless of technical skills
-- **Ensure compliance** with complete audit trails
-
-### For IT Departments
-- **Zero infrastructure** - runs entirely in user's browser
-- **No installation** - access through any modern web browser
-- **Automatic updates** - users always have latest version
-- **Enterprise security** - data never leaves user's device
-- **Standards-based** - no vendor lock-in
+### 1.3 References
+- W3C PROV-DM: The PROV Data Model
+- Model Context Protocol (MCP) Specification
+- WCAG 2.1 Accessibility Guidelines
 
 ---
 
-## Core Capabilities
+## 2. Functional Requirements
 
-### 1. Instant Performance Through Smart Caching
+### 2.1 Tool Discovery and Management
 
-**What This Means**: When you run the same analysis twice, the second time is instant. The system remembers previous results and returns them immediately.
+**FR-1.1** The system SHALL provide full-text search across tool names, descriptions, categories, and tags.
 
-**Business Impact**: Transform decision-making from hours to seconds. Teams can explore "what-if" scenarios in real-time during meetings.
+**FR-1.2** The system SHALL support browsing tools by category with hierarchical organization.
 
-**Key Features**:
-- Results appear in milliseconds for repeated analyses
-- System learns your patterns and pre-loads tools you're likely to use
-- Works offline - perfect for field work or unreliable connections
-- Reduces network usage by 90%, saving bandwidth costs
-- Automatically updates when tools change
-- Handles thousands of saved results without slowing down
+**FR-1.3** The system SHALL display tool metadata including:
+- Name and unique identifier
+- Description and purpose
+- Input parameters with types
+- Output specifications
+- Version information
+- Usage examples
 
-**Technical Details**: 
-- Content-addressable caching using SHA-256 hashes
-- Multi-layer cache hierarchy (memory → IndexedDB → HTTP)
-- Configurable TTL per tool category
-- Automatic cache invalidation on version changes
+**FR-1.4** The system SHALL provide an interactive tool detail page allowing users to test tools with sample data.
 
-### 2. Zero-Friction Tool Access
+**FR-1.5** The system SHALL display version history for individual tools and tool collections.
 
-**What This Means**: No software to install, no IT tickets to file, no waiting. Open your browser, pick a tool, start working.
+### 2.2 Input Management
 
-**Business Impact**: Democratize analytics across your organization. Anyone can perform complex analyses without technical expertise.
+**FR-2.1** The system SHALL dynamically generate input forms based on tool parameter specifications.
 
-**Key Features**:
-- Works on any device with a web browser
-- Find the right tool in 3 clicks or less
-- Each tool includes built-in help and examples
-- Search by what you want to do, not tool names
-- Visual previews show what each tool does
-- Install like a phone app for quick access
+**FR-2.2** The system SHALL validate inputs according to type specifications:
+- String (with optional length constraints)
+- Number (with optional range constraints)
+- Boolean
+- JSON (with schema validation)
+- GeoJSON (with geometry validation)
+- Array (with element type validation)
 
-**Technical Details**:
-- Progressive Web App (PWA) architecture
-- Metadata-driven UI generation from index.json
-- Full-text search indexing
-- Service Worker for offline functionality
-- Responsive design for all screen sizes
+**FR-2.3** The system SHALL support default values as specified in tool metadata.
 
-### 3. Error-Free Data Processing
+**FR-2.4** The system SHALL allow users to save input configurations as templates.
 
-**What This Means**: The system prevents mistakes before they happen. Invalid data can't be submitted, required fields can't be skipped, and clear messages explain any issues.
+**FR-2.5** The system SHALL provide contextual help for each input parameter.
 
-**Business Impact**: Eliminate costly rework. Ensure regulatory compliance. Build trust in analysis results.
+### 2.3 Tool Execution
 
-**Key Features**:
-- Forms adapt to the type of data needed
-- Impossible to submit invalid information
-- Helpful defaults speed up common tasks
-- Save templates for repetitive analyses
-- Clear error messages guide corrections
-- Complete history for audit requirements
+**FR-3.1** The system SHALL execute JavaScript/TypeScript tools in isolated Web Worker contexts.
 
-**Technical Details**:
-- Type-safe validation at input time
-- JSON Schema validation for complex data
-- Immutable execution for reproducibility
-- Comprehensive error boundaries
-- Execution context with timeout protection
+**FR-3.2** The system SHALL support tool execution with:
+- Timeout protection (configurable per tool)
+- Memory usage monitoring
+- Cancellation capability
+- Progress reporting
 
-### 4. Rich Data Visualization
+**FR-3.3** The system SHALL maintain execution state:
+- Pending
+- Running
+- Completed
+- Failed
+- Cancelled
 
-**What This Means**: Results appear in the most useful format automatically. Maps for geographic data, charts for statistics, tables for detailed records.
+**FR-3.4** The system SHALL capture execution metrics:
+- Start and end timestamps
+- Duration
+- Resource usage
+- Error information if applicable
 
-**Business Impact**: Extract insights 5x faster. Make data accessible to non-technical stakeholders.
+### 2.4 Pipeline Management
 
-**Key Features**:
-- Automatic format detection
-- Interactive maps for location data
-- Dynamic charts for trends and patterns
-- Sortable tables for detailed analysis
-- Export to any format (Excel, PDF, images)
-- Compare multiple results side-by-side
+**FR-4.1** The system SHALL automatically capture tool execution sequences as pipelines.
 
-**Technical Details**:
-- LeafletJS for spatial rendering
-- Recharts for statistical visualization
-- Virtual scrolling for large datasets
-- WebGL acceleration where available
-- Lazy loading of visualization libraries
+**FR-4.2** The system SHALL allow users to:
+- View pipeline as a sequence of steps
+- Enable/disable individual steps
+- Reorder steps
+- Modify parameters for each step
+- Save pipelines as reusable templates
 
-### 5. Enterprise-Scale Productivity
+**FR-4.3** The system SHALL support branching pipelines for comparison workflows.
 
-**What This Means**: Whether processing one item or one thousand, the system scales effortlessly. Teams can standardize workflows and share best practices.
+**FR-4.4** The system SHALL allow grouping of steps into composite operations.
 
-**Business Impact**: Increase analysis throughput 100x. Ensure consistency across teams and departments.
+### 2.5 Provenance Tracking
 
-**Key Features**:
-- Process hundreds of items at once
-- Create standard workflows for teams
-- Compare different approaches easily
-- Monitor progress in real-time
-- Full audit trail with timestamps
-- Works on any platform or device
+**FR-5.1** The system SHALL embed W3C PROV-compliant provenance in all output files.
 
-**Technical Details**:
-- Web Worker parallel execution
-- Batch processing with queue management
-- Real-time progress via Server-Sent Events
-- IndexedDB for large dataset storage
-- Cross-origin resource sharing (CORS) support
+**FR-5.2** Provenance records SHALL include:
+- Source document identifiers
+- Tool repository reference
+- Tool identifier and version
+- Execution parameters
+- Execution timestamp
+- User identifier (when available)
 
-### 6. Universal Accessibility
+**FR-5.3** The system SHALL support provenance queries to identify:
+- All derivatives of a source dataset
+- All analyses dependent on a specific dataset
+- Complete transformation history of any output
 
-**What This Means**: Everyone can use these tools, regardless of physical abilities, device limitations, or network quality.
+**FR-5.4** The system SHALL maintain provenance chains across multiple tool executions.
 
-**Business Impact**: Enable your entire workforce. Meet legal requirements. Expand to global markets.
+### 2.6 Version Management
 
-**Key Features**:
-- Full keyboard control for power users
-- Screen reader compatible for vision impaired
-- Works on slow connections and old devices
-- Mobile-optimized for field workers
-- High contrast modes for visibility
-- Multiple language support (planned)
+**FR-6.1** The system SHALL support dual-mode execution:
+- Original version (for reproducibility)
+- Latest version (for comparison)
 
-**Technical Details**:
-- WCAG 2.1 AA compliance
-- ARIA labels and landmarks
-- Progressive enhancement strategy
-- Responsive breakpoints at 320px+
-- Reduced motion media queries
-- i18n infrastructure ready
+**FR-6.2** The system SHALL track tool versions using semantic versioning.
 
-### 7. Rapid Tool Development
+**FR-6.3** The system SHALL indicate when newer versions are available.
 
-**What This Means**: New tools can be added in hours, not months. No need to build user interfaces or worry about deployment.
+**FR-6.4** The system SHALL allow side-by-side comparison of results from different tool versions.
 
-**Business Impact**: Respond to business needs immediately. Reduce development costs by 90%.
+### 2.7 Output Management
 
-**Key Features**:
-- Tools automatically get professional UI
-- Built-in documentation and help
-- Test immediately while building
-- Automatic quality checks
-- Use industry standards
-- Own your tools completely
+**FR-7.1** The system SHALL automatically detect output types and select appropriate renderers:
+- JSON (tree view with syntax highlighting)
+- Table (sortable, filterable grid)
+- GeoJSON (interactive map using LeafletJS)
+- Chart (interactive visualization)
+- Image (with zoom/pan controls)
+- Text (with line numbers)
+- HTML (sanitized rendering)
 
-**Technical Details**:
-- TypeScript tool interface specification
-- Dynamic module loading via ES modules
-- Hot module replacement in development
-- Jest/Playwright testing integration
-- Metadata-driven UI generation
+**FR-7.2** The system SHALL support output export in multiple formats:
+- JSON
+- CSV
+- PNG/JPEG (for visualizations)
+- PDF (planned)
 
----
+**FR-7.3** The system SHALL allow side-by-side comparison of outputs.
 
-## Implementation Roadmap
+**FR-7.4** The system SHALL maintain output history with full reproduction capability.
 
-### Current Status
-- ✅ **Phase 1-3**: Core UI, mock execution, and output rendering complete
-- 🚧 **Phase 4**: Real JavaScript tool execution in progress
-- 📋 **Phase 5-8**: Advanced features and enterprise capabilities planned
+### 2.8 Audit Trail
 
-### Near-term Milestones
-1. **Q1 2025**: 10+ working analysis tools
-2. **Q2 2025**: Python tool support
-3. **Q3 2025**: VS Code extension
-4. **Q4 2025**: Enterprise features
+**FR-8.1** The system SHALL maintain an immutable audit log containing:
+- User identifier (when available)
+- Tool identifier and version
+- Execution timestamp
+- Input parameters
+- Output summary
+- Execution status
+
+**FR-8.2** The system SHALL provide audit trail search and filtering capabilities.
+
+**FR-8.3** The system SHALL export audit trails in standard formats.
+
+### 2.9 Integration
+
+**FR-9.1** The system SHALL expose tools via MCP (Model Context Protocol) for AI integration.
+
+**FR-9.2** The system SHALL support embedding in:
+- Debrief application
+- Python IDEs
+- ArcGIS
+- VS Code (planned)
+
+**FR-9.3** The system SHALL provide a REST API for external tool execution.
 
 ---
 
-## Success Metrics
+## 3. Non-Functional Requirements
 
-### Performance Targets
-- First-time tool execution: < 3 seconds
-- Cached tool execution: < 10 milliseconds  
-- Page load on 3G: < 3 seconds
-- Memory usage: < 200MB typical session
-- Cache hit rate: > 60%
+### 3.1 Performance
 
-### Quality Targets
-- User productivity: 5x improvement
-- Error rate: < 0.1% of executions
-- Browser support: 98% of users
-- Accessibility score: 100/100
-- Test coverage: > 80%
+**NFR-1.1** First-time tool execution SHALL complete within 3 seconds for standard datasets.
 
-### Business Targets
-- Time to deploy new tool: < 4 hours
-- Support ticket reduction: 75%
-- User adoption: 80% within 6 months
-- ROI: 300% year one
+**NFR-1.2** Cached tool execution SHALL return results within 10 milliseconds.
+
+**NFR-1.3** The application SHALL load within 3 seconds on a 3G connection.
+
+**NFR-1.4** The system SHALL handle datasets up to 100MB in browser memory.
+
+**NFR-1.5** Search results SHALL appear within 500 milliseconds.
+
+### 3.2 Scalability
+
+**NFR-2.1** The system SHALL support at least 1000 tools in the catalog.
+
+**NFR-2.2** The system SHALL maintain performance with 10,000 cached results.
+
+**NFR-2.3** The system SHALL support pipelines with up to 50 sequential steps.
+
+### 3.3 Reliability
+
+**NFR-3.1** The system SHALL gracefully handle tool execution failures.
+
+**NFR-3.2** The system SHALL preserve work in progress during browser refresh.
+
+**NFR-3.3** The system SHALL provide clear error messages with recovery guidance.
+
+### 3.4 Usability
+
+**NFR-4.1** Users SHALL be able to discover appropriate tools within 3 interactions.
+
+**NFR-4.2** The system SHALL provide contextual help for all features.
+
+**NFR-4.3** The system SHALL work on screens from 320px width and above.
+
+### 3.5 Accessibility
+
+**NFR-5.1** The system SHALL comply with WCAG 2.1 Level AA standards.
+
+**NFR-5.2** All functionality SHALL be accessible via keyboard navigation.
+
+**NFR-5.3** The system SHALL support screen readers with appropriate ARIA labels.
+
+**NFR-5.4** The system SHALL respect prefers-reduced-motion settings.
+
+### 3.6 Security
+
+**NFR-6.1** The system SHALL execute tools in isolated contexts (Web Workers).
+
+**NFR-6.2** The system SHALL sanitize all HTML output before rendering.
+
+**NFR-6.3** The system SHALL validate all inputs before tool execution.
+
+**NFR-6.4** The system SHALL NOT transmit user data to external servers without explicit consent.
+
+### 3.7 Compatibility
+
+**NFR-7.1** The system SHALL support the following browsers (latest 2 versions):
+- Chrome/Edge
+- Firefox
+- Safari
+
+**NFR-7.2** The system SHALL function offline after initial load.
+
+**NFR-7.3** The system SHALL work with JavaScript disabled for basic browsing (progressive enhancement).
 
 ---
 
-## Constraints & Assumptions
+## 4. Data Requirements
 
-### What We're Building
-- Browser-based tool execution platform
-- Client-side processing for security
-- Offline-capable progressive web app
-- Tool marketplace ecosystem
+### 4.1 Tool Metadata Schema
 
-### What We're NOT Building (Yet)
-- Real-time collaboration features
-- Cloud storage of results
-- User authentication system
-- Mobile native apps
-- Data pipeline orchestration
+```json
+{
+  "id": "string (unique identifier)",
+  "name": "string (display name)",
+  "description": "string (purpose and usage)",
+  "category": "string (hierarchical path)",
+  "tags": ["array of strings"],
+  "version": "string (semantic version)",
+  "module": "string (path to executable)",
+  "inputs": [{
+    "name": "string (parameter name)",
+    "label": "string (display label)",
+    "type": "string (data type)",
+    "required": "boolean",
+    "default": "any (default value)",
+    "constraints": "object (validation rules)"
+  }],
+  "outputs": [{
+    "name": "string (output name)",
+    "label": "string (display label)",
+    "type": "string (data type)"
+  }]
+}
+```
 
-### Key Assumptions
-- Users have modern web browsers (2020+)
-- Tools are trusted (limited sandboxing)
-- English interface initially
-- Single-user sessions
-- Results fit in browser memory
+### 4.2 Provenance Schema (PROV-compliant)
+
+```json
+{
+  "entity": {
+    "id": "string (output identifier)",
+    "attributes": {
+      "type": "string (data type)",
+      "created": "ISO 8601 timestamp"
+    }
+  },
+  "activity": {
+    "id": "string (execution identifier)",
+    "attributes": {
+      "tool": "string (tool identifier)",
+      "version": "string (tool version)",
+      "parameters": "object (execution parameters)",
+      "startTime": "ISO 8601 timestamp",
+      "endTime": "ISO 8601 timestamp"
+    }
+  },
+  "wasDerivedFrom": [{
+    "entity": "string (source entity id)",
+    "activity": "string (activity id)"
+  }]
+}
+```
+
+### 4.3 Pipeline Schema
+
+```json
+{
+  "id": "string (pipeline identifier)",
+  "name": "string (pipeline name)",
+  "description": "string (purpose)",
+  "steps": [{
+    "tool": "string (tool identifier)",
+    "version": "string (tool version)",
+    "parameters": "object (input parameters)",
+    "enabled": "boolean",
+    "position": "number (execution order)"
+  }],
+  "created": "ISO 8601 timestamp",
+  "modified": "ISO 8601 timestamp"
+}
+```
 
 ---
 
-## Glossary of Terms
+## 5. Interface Requirements
 
-**Business Terms**
-- **Tool**: A specific analysis or transformation function
-- **Workflow**: A sequence of tools working together
-- **Template**: Saved configuration for repeated use
-- **Cache**: Storage of previous results for instant access
+### 5.1 User Interface
 
-**Technical Terms**
-- **PWA**: Progressive Web App - installable web application
-- **Client-side**: Processing that happens in the user's browser
-- **Metadata**: Data that describes the tools and their requirements
-- **Web Worker**: Technology for background processing
-- **IndexedDB**: Browser storage for large datasets
+**IR-1.1** The system SHALL provide a responsive web interface using React and TypeScript.
+
+**IR-1.2** The interface SHALL follow Material Design principles.
+
+**IR-1.3** The interface SHALL support dark and light themes.
+
+### 5.2 API Interface
+
+**IR-2.1** The system SHALL expose a RESTful API for tool execution.
+
+**IR-2.2** The API SHALL use JSON for request and response bodies.
+
+**IR-2.3** The API SHALL implement standard HTTP status codes.
+
+### 5.3 Integration Interface
+
+**IR-3.1** The system SHALL provide an embeddable JavaScript widget.
+
+**IR-3.2** The system SHALL support iframe embedding with PostMessage communication.
+
+**IR-3.3** The system SHALL implement MCP for AI tool discovery and execution.
 
 ---
 
-## Appendices
+## 6. Constraints
 
-### A. Sample Tools Catalog
-**Text Analysis**
-- Word frequency analysis
-- Sentiment detection  
-- Language identification
-- Text summarization
+### 6.1 Technical Constraints
 
-**Geospatial**
-- Buffer zone creation
-- Distance calculation
-- Coordinate transformation
-- Route optimization
+- Browser-based execution only (no server-side processing in initial phases)
+- Maximum bundle size of 50MB
+- Web Worker API required for tool execution
+- ES2020+ JavaScript features required
 
-**Data Processing**  
-- Format conversion (CSV, JSON, XML)
-- Data validation and cleaning
-- Statistical analysis
-- Hash/checksum generation
+### 6.2 Regulatory Constraints
 
-### B. Competitive Advantages
-| Feature | ToolVault | Traditional Software | Cloud Platforms |
-|---------|-----------|---------------------|-----------------|
-| Setup Time | Instant | Hours/Days | Minutes/Hours |
-| Cost | Free* | $1000s license | Monthly fees |
-| Offline Use | ✅ Full | ✅ Full | ❌ None |
-| Updates | Automatic | Manual | Automatic |
-| Platform | Any browser | OS-specific | Any browser |
-| Data Security | Local only | Local only | Cloud storage |
+- Must maintain audit trail for compliance
+- Must embed provenance in outputs
+- Must support data residency requirements (no external transmission)
 
-*Free for client-side execution; server features may require licensing
+### 6.3 Design Constraints
 
-### C. Security & Compliance
-- **Data Residency**: All processing happens on user's device
-- **No Data Transmission**: Results never leave the browser
-- **Audit Trail**: Complete execution history with timestamps
-- **Version Control**: Tool versions tracked for reproducibility
-- **Open Source**: Auditable codebase (planned)
+- Must be metadata-driven (no hard-coded tool interfaces)
+- Must support offline operation
+- Must use standard web technologies
+
+---
+
+## 7. Acceptance Criteria
+
+### 7.1 Functional Acceptance
+
+- All specified functional requirements implemented and tested
+- Successful execution of reference tool set
+- Provenance correctly embedded in outputs
+- Pipeline capture and replay functional
+
+### 7.2 Performance Acceptance
+
+- Meets all specified performance targets
+- Successful load testing with 100 concurrent users
+- Cache hit rate exceeds 60% in typical usage
+
+### 7.3 Usability Acceptance
+
+- User testing confirms 3-click tool discovery
+- New users productive within 15 minutes
+- Accessibility audit passes WCAG 2.1 AA
+
+### 7.4 Integration Acceptance
+
+- Successfully embeds in Debrief application
+- MCP integration validated with AI tools
+- API supports external tool execution
+
+---
+
+## Appendix A: Tool Categories
+
+- Geospatial Analysis
+- Text Processing
+- Data Validation
+- Statistical Analysis
+- Data Transformation
+- Security/Cryptography
+- Time Series Analysis
+- Image Processing
+
+## Appendix B: Supported Data Types
+
+### Input Types
+- string (text)
+- number (integer or float)
+- boolean
+- json (valid JSON)
+- geojson (valid GeoJSON)
+- array (typed array)
+- file (file upload)
+
+### Output Types
+- All input types plus:
+- table (2D array with headers)
+- chart (data series)
+- image (base64 or URL)
+- html (sanitized HTML)
+- binary (downloadable file)
+
+## Appendix C: Error Codes
+
+- TOOL_NOT_FOUND - Requested tool does not exist
+- INVALID_INPUT - Input validation failed
+- EXECUTION_TIMEOUT - Tool exceeded time limit
+- MEMORY_EXCEEDED - Tool exceeded memory limit
+- WORKER_ERROR - Web Worker execution failed
+- VERSION_MISMATCH - Requested version not available
+- PERMISSION_DENIED - User lacks required permission
