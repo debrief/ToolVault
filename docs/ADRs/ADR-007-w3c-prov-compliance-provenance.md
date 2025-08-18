@@ -1,35 +1,83 @@
 # ADR-007: W3C PROV Compliance for Provenance
 
 ## Status
-Draft
+Accepted
 
-## Notes for Discussion
+## Context
+ToolVault supports scientific reproducibility and quality assurance in analytical workflows. The UK Government's Reproducible Analytical Pipelines (RAPs) initiative emphasizes the need for traceable, reproducible analysis. Users must be able to verify how results were produced and reproduce analytical processes. Provenance information must travel with output data to ensure it remains accessible when files are shared independently of ToolVault.
 
-### Key Decision Points
-- **PROV Standard Compliance**: Full W3C PROV-DM vs simplified provenance model
-- **Embedding Strategy**: How provenance gets embedded in output files
-- **Storage Format**: RDF, JSON-LD, or custom JSON schema
-- **Granularity**: What level of detail to capture in provenance
-- **Query Capability**: How users search and explore provenance data
+## Decision
+We will implement W3C PROV-compliant provenance tracking with the following characteristics:
 
-### Important Aspects to Consider
-1. **Regulatory Requirements**: What audit standards must be met?
-2. **User Needs**: How will analysts actually use provenance information?
-3. **Tool Impact**: How much overhead does provenance add to tool execution?
-4. **Retroactive Analysis**: Finding all outputs affected by a tool defect
-5. **Chain Complexity**: Handling multi-step pipeline provenance
-6. **Export Formats**: Different provenance needs for different output types
-7. **Privacy**: What information should/shouldn't be captured?
-8. **Performance**: Impact on execution time and storage requirements
+### Compliance Level
+- **PROV-compatible JSON-LD subset**: Covers essential W3C PROV concepts in practical format
+- **Standards alignment**: Ensures interoperability while maintaining implementation simplicity
+- **Extensible foundation**: Allows future enhancement to full PROV-DM if needed
 
-### Options to Evaluate
-- Full W3C PROV-DM with RDF serialization
-- Simplified JSON-based provenance model
-- Hybrid approach with PROV-compatible subset
-- External provenance service vs embedded provenance
+### Embedding Strategy
+- **Direct embedding**: Provenance embedded directly within output files using format-native metadata
+- **Format-specific approach**: Leverage each file type's native metadata capabilities
+  - GeoJSON: Custom properties in feature metadata
+  - CSV: Structured comments in file headers
+  - Images: EXIF metadata or embedded annotations
+  - Custom formats: Defined metadata sections
 
-### Business Requirements Impact
-- Audit trail completeness and compliance
-- Tool execution performance overhead
-- Storage and bandwidth requirements
-- User workflow complexity
+### Provenance Granularity
+- **Standard level capture**:
+  - Tool identity and version (from bundle timestamp)
+  - Execution timestamp and duration
+  - User identity (when available)
+  - Input parameters and configuration
+  - Input data checksums/identifiers
+  - Execution environment details (ToolVault version, platform)
+  - Output data characteristics
+
+### Pipeline Provenance
+- **Reference-based chaining**: Each tool records provenance of its immediate inputs only
+- **Traceable lineage**: Full pipeline reconstructible by following provenance references
+- **Manageable complexity**: Avoids exponential growth in multi-step workflows
+
+## Rationale
+
+### Scientific Reproducibility
+PROV compliance enables others to understand and reproduce analytical processes, supporting scientific rigor and the UK Government's RAP objectives.
+
+### Embedded Provenance Necessity
+Direct embedding ensures provenance cannot be accidentally separated from data when files are shared, moved, or archived independently of ToolVault.
+
+### JSON-LD Practicality
+PROV-compatible JSON-LD provides standards compliance while remaining human-readable and easy to process programmatically without RDF complexity.
+
+### Format-Specific Integration
+Using native metadata capabilities ensures compatibility with existing tools and workflows while preserving provenance information.
+
+### Reference-Based Pipeline Tracking
+Immediate-input-only recording maintains provenance chains without creating unmanageably large provenance records in complex pipelines.
+
+## Consequences
+
+### Positive
+- **Reproducibility support**: Enables verification and reproduction of analytical processes
+- **Standards compliance**: Aligns with W3C PROV for interoperability
+- **Data integrity**: Provenance travels with data regardless of distribution method
+- **Quality assurance**: Provides audit trail for analytical procedures
+- **RAP alignment**: Supports UK Government reproducibility initiatives
+
+### Negative
+- **File size overhead**: Embedded provenance increases output file sizes
+- **Implementation complexity**: Format-specific embedding requires different handling per file type
+- **Tool integration**: Tools must be modified to embed provenance in outputs
+- **Performance impact**: Additional processing time for provenance generation and embedding
+
+### Mitigation Strategies
+- **Efficient encoding**: Use compact JSON-LD serialization to minimize size overhead
+- **Optional embedding**: Allow users to disable provenance for performance-critical applications
+- **Standardized libraries**: Provide common provenance embedding functions for different formats
+- **Incremental implementation**: Phase in provenance support across file formats over time
+
+## Implementation Notes
+- Provenance schema will be defined as JSON-LD context compatible with W3C PROV
+- Tool execution framework will automatically capture standard provenance elements
+- Format-specific embedding libraries will be developed for common output types
+- Provenance validation tools will ensure PROV compliance
+- Documentation will provide examples of provenance usage for reproducibility scenarios
