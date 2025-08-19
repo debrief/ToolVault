@@ -28,6 +28,7 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 **Goal:** Rapidly prototype UI with functional JavaScript tools for immediate feedback
 
 - Set up React/TypeScript SPA with Vite
+- Load standard `bundle` from Phase 0
 - Implement metadata-driven UI from `index.json`
 - Create tool discovery and browsing interface
 - Build dynamic input forms and output renderers
@@ -38,13 +39,17 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 **Goal:** Complete UI features with full mock tool functionality
 
 - Add LeafletJS for spatial visualization
-- Implement execution history tracking
-- Create pipeline capture and replay
-- Add provenance display (PROV format preview)
-- Implement multi-format output viewers
+- Implement multi-format input and output viewers
 - Enhance search with fuzzy matching
 
-## Phase 3: Backend Infrastructure (Weeks 5-6)
+## Phase 3: Create deployable instance
+
+- Implement MCP (Model Context Protocol) support
+- Add REST API documentation
+- Create deployable instance of ToolVault, that vs-code "Command Toolbox" can run against
+- Let instance mature as reqired during vs-code development.
+
+## Phase 4: Backend Infrastructure (Weeks 5-6)
 **Goal:** Establish Python backend while maintaining JS mock tools
 
 - Set up FastAPI backend structure
@@ -54,7 +59,7 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 - Integrate with existing JavaScript tools
 - Maintain GitHub Pages deployment
 
-## Phase 4: Python Tool Integration (Weeks 7-8)
+## Phase 5: Python Tool Integration (Weeks 7-8)
 **Goal:** Transition to production tool execution
 
 - Port key JavaScript tools to Python
@@ -63,16 +68,6 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 - Create tool validation framework
 - Implement error handling and recovery
 - Performance optimization
-
-## Phase 5: Platform Integration (Weeks 9-10)
-**Goal:** Enable multi-platform embedding
-
-- Develop Debrief plugin adapter
-- Create VS Code extension prototype
-- Implement MCP (Model Context Protocol) support
-- Add REST API documentation
-- Create embedding examples
-- Platform-specific testing
 
 ## Phase 6: Production Readiness (Weeks 11-12)
 **Goal:** Prepare for deployment and scaling
