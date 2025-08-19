@@ -1,0 +1,364 @@
+{
+  "name": "JavaScript Mock Tool Bundle",
+  "version": "0.1.0",
+  "description": "A comprehensive collection of mock analysis tools for testing ToolVault's JavaScript toolset architecture",
+  "author": "ToolVault Development Team",
+  "license": "MIT",
+  "bundle_format": "javascript",
+  "runtime": "browser",
+  "tools": [
+    {
+      "id": "translate",
+      "name": "Translate Features",
+      "category": "transform",
+      "description": "Translate geometric features by distance and direction or simple dx/dy offsets",
+      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "parameters": [
+        {
+          "name": "distance",
+          "type": "number",
+          "default": 0,
+          "description": "Distance to translate (meters)"
+        },
+        {
+          "name": "direction",
+          "type": "number", 
+          "default": 0,
+          "description": "Direction in degrees (0=North, 90=East)"
+        },
+        {
+          "name": "units",
+          "type": "string",
+          "default": "meters",
+          "enum": ["meters", "kilometers"],
+          "description": "Distance units"
+        },
+        {
+          "name": "dx",
+          "type": "number",
+          "default": 0,
+          "description": "Simple offset in longitude (degrees)"
+        },
+        {
+          "name": "dy", 
+          "type": "number",
+          "default": 0,
+          "description": "Simple offset in latitude (degrees)"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Move 1km North",
+          "parameters": { "distance": 1000, "direction": 0, "units": "meters" }
+        },
+        {
+          "name": "Simple offset",
+          "parameters": { "dx": 0.01, "dy": 0.01 }
+        }
+      ]
+    },
+    {
+      "id": "flip-horizontal",
+      "name": "Flip Horizontal",
+      "category": "transform",
+      "description": "Flip features horizontally around the longitude or latitude axis",
+      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "default": "longitude",
+          "enum": ["longitude", "latitude"],
+          "description": "Axis to flip around"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Mirror longitude",
+          "parameters": { "axis": "longitude" }
+        }
+      ]
+    },
+    {
+      "id": "flip-vertical", 
+      "name": "Flip Vertical",
+      "category": "transform", 
+      "description": "Flip features vertically around the latitude axis",
+      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "parameters": [],
+      "examples": [
+        {
+          "name": "Mirror latitude",
+          "parameters": {}
+        }
+      ]
+    },
+    {
+      "id": "speed-series",
+      "name": "Calculate Speed Series", 
+      "category": "analysis",
+      "description": "Calculate speed time series from GPS track with timestamps",
+      "input_types": ["Feature"],
+      "output_types": ["array"],
+      "parameters": [
+        {
+          "name": "time_unit",
+          "type": "string", 
+          "default": "seconds",
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
+        },
+        {
+          "name": "smoothing",
+          "type": "boolean",
+          "default": false,
+          "description": "Apply smoothing to speed values"
+        },
+        {
+          "name": "window_size",
+          "type": "number",
+          "default": 3,
+          "description": "Smoothing window size"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Speed in m/s",
+          "parameters": { "time_unit": "seconds" }
+        },
+        {
+          "name": "Smoothed speed in km/h",
+          "parameters": { "time_unit": "hours", "smoothing": true, "window_size": 5 }
+        }
+      ]
+    },
+    {
+      "id": "direction-series",
+      "name": "Calculate Direction Series",
+      "category": "analysis", 
+      "description": "Calculate bearing/direction time series from GPS track",
+      "input_types": ["Feature"],
+      "output_types": ["array"],
+      "parameters": [
+        {
+          "name": "smoothing",
+          "type": "boolean",
+          "default": false, 
+          "description": "Apply smoothing to direction values"
+        },
+        {
+          "name": "window_size",
+          "type": "number",
+          "default": 3,
+          "description": "Smoothing window size"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Raw bearings", 
+          "parameters": { "smoothing": false }
+        },
+        {
+          "name": "Smoothed bearings",
+          "parameters": { "smoothing": true, "window_size": 5 }
+        }
+      ]
+    },
+    {
+      "id": "average-speed",
+      "name": "Calculate Average Speed",
+      "category": "statistics",
+      "description": "Calculate the average speed over an entire GPS track",
+      "input_types": ["Feature"],
+      "output_types": ["number"],
+      "parameters": [
+        {
+          "name": "time_unit",
+          "type": "string",
+          "default": "seconds", 
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Average speed m/s",
+          "parameters": { "time_unit": "seconds" }
+        },
+        {
+          "name": "Average speed km/h", 
+          "parameters": { "time_unit": "hours" }
+        }
+      ]
+    },
+    {
+      "id": "speed-histogram",
+      "name": "Create Speed Histogram",
+      "category": "statistics",
+      "description": "Generate a histogram of speeds from GPS track data",
+      "input_types": ["Feature"],
+      "output_types": ["object"],
+      "parameters": [
+        {
+          "name": "bins",
+          "type": "number",
+          "default": 10,
+          "description": "Number of histogram bins"
+        },
+        {
+          "name": "time_unit",
+          "type": "string", 
+          "default": "seconds",
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
+        }
+      ],
+      "examples": [
+        {
+          "name": "10-bin histogram", 
+          "parameters": { "bins": 10, "time_unit": "seconds" }
+        },
+        {
+          "name": "20-bin histogram in km/h",
+          "parameters": { "bins": 20, "time_unit": "hours" }
+        }
+      ]
+    },
+    {
+      "id": "smooth-polyline",
+      "name": "Smooth Polyline",
+      "category": "processing", 
+      "description": "Apply smoothing algorithms to LineString geometries",
+      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "parameters": [
+        {
+          "name": "algorithm",
+          "type": "string",
+          "default": "gaussian",
+          "enum": ["gaussian", "moving_average"],
+          "description": "Smoothing algorithm to use"
+        },
+        {
+          "name": "window_size",
+          "type": "number",
+          "default": 3,
+          "description": "Smoothing window size"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Gaussian smoothing",
+          "parameters": { "algorithm": "gaussian", "window_size": 3 }
+        },
+        {
+          "name": "Moving average",
+          "parameters": { "algorithm": "moving_average", "window_size": 5 }
+        }
+      ]
+    },
+    {
+      "id": "export-csv",
+      "name": "Export to CSV",
+      "category": "io",
+      "description": "Export GeoJSON features to CSV format with coordinates and properties",
+      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "output_types": ["string"],
+      "parameters": [
+        {
+          "name": "include_properties",
+          "type": "boolean",
+          "default": false,
+          "description": "Include feature properties in CSV output"
+        },
+        {
+          "name": "coordinate_format",
+          "type": "string",
+          "default": "separate", 
+          "enum": ["separate", "wkt"],
+          "description": "How to format coordinates"
+        },
+        {
+          "name": "separator",
+          "type": "string",
+          "default": ",",
+          "description": "CSV field separator"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Basic CSV",
+          "parameters": { "include_properties": false }
+        },
+        {
+          "name": "CSV with properties",
+          "parameters": { "include_properties": true, "separator": ";" }
+        }
+      ]
+    },
+    {
+      "id": "export-rep",
+      "name": "Export to REP Format", 
+      "category": "io",
+      "description": "Export GeoJSON features to Debrief REP format for vessel tracking",
+      "input_types": ["Feature", "FeatureCollection"],
+      "output_types": ["string"],
+      "parameters": [
+        {
+          "name": "precision",
+          "type": "number",
+          "default": 6,
+          "description": "Coordinate precision (decimal places)"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Standard precision",
+          "parameters": { "precision": 6 }
+        },
+        {
+          "name": "High precision",
+          "parameters": { "precision": 8 }
+        }
+      ]
+    },
+    {
+      "id": "import-rep",
+      "name": "Import REP Format",
+      "category": "io",
+      "description": "Import Debrief REP format files into GeoJSON FeatureCollection",
+      "input_types": ["string"],
+      "output_types": ["FeatureCollection"],
+      "parameters": [
+        {
+          "name": "encoding",
+          "type": "string",
+          "default": "utf-8", 
+          "description": "Text encoding for REP file"
+        }
+      ],
+      "examples": [
+        {
+          "name": "UTF-8 encoding",
+          "parameters": { "encoding": "utf-8" }
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "runtime": "browser",
+    "javascript_version": "ES2020"
+  },
+  "test_coverage": {
+    "statements": "90.05%",
+    "branches": "78.20%", 
+    "functions": "85.71%",
+    "lines": "90.00%"
+  },
+  "bundle_size": "~25KB",
+  "created": "2024-01-19",
+  "last_updated": "2024-01-19"
+}
