@@ -3,14 +3,35 @@
 ## Overview
 This document outlines the high-level phases for implementing ToolVault, emphasizing early feedback through mock JavaScript infrastructure before full backend development.
 
-## Phase 1: Mock JavaScript Foundation (Weeks 1-2)
+## Phase 0: JavaScript Toolbox Repository (Week 1)
+**Goal:** Create standalone JavaScript toolbox with comprehensive unit tests as reference implementation
+
+- Set up `/examples/javascript-bundle/` directory structure with Jest testing framework
+- Implement 10-15 JavaScript tools for GeoJSON processing and spatial analysis following ADR-013:
+  - **Transform tools**: Translate, flip horizontal/vertical
+  - **Analysis tools**: Speed series, direction series calculations
+  - **Statistics tools**: Average speed, speed histogram
+  - **Processing tools**: Polyline smoothing algorithms
+  - **I/O tools**: REP file import/export, CSV export
+- Create comprehensive unit tests for each tool implementation:
+  - Test geometric transformations with known coordinate sets
+  - Verify temporal calculations with sample GPS tracks
+  - Validate statistical computations against expected results
+  - Test file format conversions with reference data
+- Establish IIFE pattern for browser-compatible tool execution
+- Create `index.json` with runtime field and complete tool metadata
+- Add sample GPS track data and test fixtures for realistic testing
+- Document tool specifications and testing approach
+- Ensure 100% test coverage for all tool methods
+
+## Phase 1: Mock JavaScript Foundation (Week 2)
 **Goal:** Rapidly prototype UI with functional JavaScript tools for immediate feedback
 
 - Set up React/TypeScript SPA with Vite
 - Implement metadata-driven UI from `index.json`
 - Create tool discovery and browsing interface
 - Build dynamic input forms and output renderers
-- Integrate existing JavaScript mock tools
+- Integrate JavaScript toolbox from Phase 0
 - Deploy to GitHub Pages for stakeholder review
 
 ## Phase 2: Enhanced UI & Tool Execution (Weeks 3-4)
@@ -23,18 +44,7 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 - Implement multi-format output viewers
 - Enhance search with fuzzy matching
 
-
-## Phase 3: Platform Integration (Weeks 9-10)
-**Goal:** Enable multi-platform embedding
-
-- Develop Debrief plugin adapter
-- Create VS Code extension prototype
-- Implement MCP (Model Context Protocol) support
-- Add REST API documentation
-- Create embedding examples
-- Platform-specific testing
-
-## Phase 4: Backend Infrastructure (Weeks 5-6)
+## Phase 3: Backend Infrastructure (Weeks 5-6)
 **Goal:** Establish Python backend while maintaining JS mock tools
 
 - Set up FastAPI backend structure
@@ -44,7 +54,7 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 - Integrate with existing JavaScript tools
 - Maintain GitHub Pages deployment
 
-## Phase 5: Python Tool Integration (Weeks 7-8)
+## Phase 4: Python Tool Integration (Weeks 7-8)
 **Goal:** Transition to production tool execution
 
 - Port key JavaScript tools to Python
@@ -53,6 +63,16 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 - Create tool validation framework
 - Implement error handling and recovery
 - Performance optimization
+
+## Phase 5: Platform Integration (Weeks 9-10)
+**Goal:** Enable multi-platform embedding
+
+- Develop Debrief plugin adapter
+- Create VS Code extension prototype
+- Implement MCP (Model Context Protocol) support
+- Add REST API documentation
+- Create embedding examples
+- Platform-specific testing
 
 ## Phase 6: Production Readiness (Weeks 11-12)
 **Goal:** Prepare for deployment and scaling
@@ -74,6 +94,7 @@ This document outlines the high-level phases for implementing ToolVault, emphasi
 
 ## Success Metrics
 
+- Week 1: JavaScript toolbox with 100% test coverage and comprehensive tool suite
 - Week 2: Stakeholders can browse and execute mock tools
 - Week 4: Complete UI with pipeline functionality available
 - Week 6: Backend supports both JS and Python execution
