@@ -1,6 +1,7 @@
 {
   "name": "JavaScript Mock Tool Bundle",
-  "version": "0.1.0",
+  "commit": "f7g8h9i0",
+  "commit_date": "2024-01-31T16:45:00Z",
   "description": "A comprehensive collection of mock analysis tools for testing ToolVault's JavaScript toolset architecture",
   "author": "ToolVault Development Team",
   "license": "MIT",
@@ -9,11 +10,14 @@
   "tools": [
     {
       "id": "translate",
+      "commit": "a1b2c3d4",
+      "commit_date": "2024-01-15T14:30:00Z",
       "name": "Translate Features",
-      "category": "transform",
+      "labels": ["transform", "geometry"],
       "description": "Translate geometric features by distance and direction or simple dx/dy offsets",
-      "input_types": ["Feature", "FeatureCollection", "geometry"],
-      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "distance",
@@ -60,11 +64,14 @@
     },
     {
       "id": "flip-horizontal",
+      "commit": "b2c3d4e5",
+      "commit_date": "2024-01-15T10:15:00Z",
       "name": "Flip Horizontal",
-      "category": "transform",
+      "labels": ["transform", "geometry"],
       "description": "Flip features horizontally around the longitude or latitude axis",
-      "input_types": ["Feature", "FeatureCollection", "geometry"],
-      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "axis",
@@ -83,11 +90,14 @@
     },
     {
       "id": "flip-vertical", 
+      "commit": "c3d4e5f6",
+      "commit_date": "2024-01-15T10:15:00Z",
       "name": "Flip Vertical",
-      "category": "transform", 
+      "labels": ["transform", "geometry"],
       "description": "Flip features vertically around the latitude axis",
-      "input_types": ["Feature", "FeatureCollection", "geometry"],
-      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
       "parameters": [],
       "examples": [
         {
@@ -98,11 +108,14 @@
     },
     {
       "id": "speed-series",
+      "commit": "d4e5f6g7",
+      "commit_date": "2024-01-18T09:45:00Z",
       "name": "Calculate Speed Series", 
-      "category": "analysis",
+      "labels": ["analysis", "temporal"],
       "description": "Calculate speed time series from GPS track with timestamps",
-      "input_types": ["Feature"],
+      "input_types": ["LineString"],
       "output_types": ["array"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "time_unit",
@@ -137,11 +150,14 @@
     },
     {
       "id": "direction-series",
+      "commit": "e5f6g7h8",
+      "commit_date": "2024-01-20T11:20:00Z",
       "name": "Calculate Direction Series",
-      "category": "analysis", 
+      "labels": ["analysis", "temporal"], 
       "description": "Calculate bearing/direction time series from GPS track",
-      "input_types": ["Feature"],
+      "input_types": ["LineString"],
       "output_types": ["array"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "smoothing",
@@ -169,11 +185,14 @@
     },
     {
       "id": "average-speed",
+      "commit": "f6g7h8i9",
+      "commit_date": "2024-01-22T16:30:00Z",
       "name": "Calculate Average Speed",
-      "category": "statistics",
+      "labels": ["statistics", "temporal"],
       "description": "Calculate the average speed over an entire GPS track",
-      "input_types": ["Feature"],
+      "input_types": ["LineString"],
       "output_types": ["number"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "time_unit",
@@ -196,11 +215,14 @@
     },
     {
       "id": "speed-histogram",
+      "commit": "g7h8i9j0",
+      "commit_date": "2024-01-25T13:15:00Z",
       "name": "Create Speed Histogram",
-      "category": "statistics",
+      "labels": ["statistics", "temporal"],
       "description": "Generate a histogram of speeds from GPS track data",
-      "input_types": ["Feature"],
+      "input_types": ["LineString"],
       "output_types": ["object"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "bins",
@@ -229,11 +251,14 @@
     },
     {
       "id": "smooth-polyline",
+      "commit": "h8i9j0k1",
+      "commit_date": "2024-01-28T10:00:00Z",
       "name": "Smooth Polyline",
-      "category": "processing", 
+      "labels": ["processing", "geometry"], 
       "description": "Apply smoothing algorithms to LineString geometries",
-      "input_types": ["Feature", "FeatureCollection", "geometry"],
-      "output_types": ["Feature", "FeatureCollection", "geometry"],
+      "input_types": ["Feature", "FeatureCollection", "LineString"],
+      "output_types": ["Feature", "FeatureCollection", "LineString"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "algorithm",
@@ -262,11 +287,14 @@
     },
     {
       "id": "export-csv",
+      "commit": "i9j0k1l2",
+      "commit_date": "2024-01-30T14:45:00Z",
       "name": "Export to CSV",
-      "category": "io",
+      "labels": ["io", "export"],
       "description": "Export GeoJSON features to CSV format with coordinates and properties",
-      "input_types": ["Feature", "FeatureCollection", "geometry"],
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
       "output_types": ["string"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "include_properties",
@@ -301,11 +329,14 @@
     },
     {
       "id": "export-rep",
+      "commit": "j0k1l2m3",
+      "commit_date": "2024-01-31T08:30:00Z",
       "name": "Export to REP Format", 
-      "category": "io",
+      "labels": ["io", "export", "maritime"],
       "description": "Export GeoJSON features to Debrief REP format for vessel tracking",
       "input_types": ["Feature", "FeatureCollection"],
       "output_types": ["string"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "precision",
@@ -327,11 +358,14 @@
     },
     {
       "id": "import-rep",
+      "commit": "k1l2m3n4",
+      "commit_date": "2024-01-31T12:00:00Z",
       "name": "Import REP Format",
-      "category": "io",
+      "labels": ["io", "import", "maritime"],
       "description": "Import Debrief REP format files into GeoJSON FeatureCollection",
       "input_types": ["string"],
       "output_types": ["FeatureCollection"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "encoding",

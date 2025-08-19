@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toolvault.org/schema/bundle-index/v1.0.0",
+  "title": "ToolVault Bundle Index Schema",
+  "description": "JSON Schema for ToolVault bundle index.json files",
+  "type": "object",
+  "required": [
+    "name",
+    "commit",
+    "commit_date",
+    "description",
+    "bundle_format",
+    "runtime",
+    "tools"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the tool bundle"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8,40}$",
+      "description": "Git commit hash when bundle was last modified"
+    },
+    "commit_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the bundle commit"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the bundle's purpose and contents"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or organization that created the bundle"
+    },
+    "license": {
+      "type": "string",
+      "description": "Software license (SPDX identifier preferred)"
+    },
+    "bundle_format": {
+      "type": "string",
+      "enum": ["javascript", "python", "r", "executable"],
+      "description": "Format/language of the tools in this bundle"
+    },
+    "runtime": {
+      "type": "string",
+      "enum": ["browser", "node", "python", "r", "system"],
+      "description": "Runtime environment required to execute tools"
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/tool"
+      },
+      "description": "Array of tools included in this bundle"
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Bundle-level dependencies and requirements"
+    },
+    "test_coverage": {
+      "type": "object",
+      "properties": {
+        "statements": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)?%$",
+          "description": "Statement coverage percentage"
+        },
+        "branches": {
+          "type": "string", 
+          "pattern": "^\\d+(\\.\\d+)?%$",
+          "description": "Branch coverage percentage"
+        },
+        "functions": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)?%$", 
+          "description": "Function coverage percentage"
+        },
+        "lines": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)?%$",
+          "description": "Line coverage percentage"
+        }
+      },
+      "description": "Test coverage statistics for the bundle"
+    },
+    "bundle_size": {
+      "type": "string",
+      "description": "Approximate bundle size (e.g., '~25KB')"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the bundle was created"
+    },
+    "last_updated": {
+      "type": "string", 
+      "format": "date",
+      "description": "Date the bundle was last updated"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "required": [
+        "id",
+        "commit",
+        "commit_date", 
+        "name",
+        "labels",
+        "description",
+        "input_types",
+        "output_types",
+        "isTemporal",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique identifier for the tool (lowercase, hyphens allowed)"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8,40}$",
+          "description": "Git commit hash when tool was last modified"
+        },
+        "commit_date": {
+          "type": "string",
+          "format": "date-time", 
+          "description": "ISO 8601 timestamp of the commit"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the tool"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "transform", "analysis", "statistics", "processing", "io",
+              "geometry", "temporal", "export", "import", "maritime",
+              "gis", "spatial", "visualization"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Categorization labels for the tool"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of what the tool does"
+        },
+        "input_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Feature", "FeatureCollection", 
+              "Point", "LineString", "Polygon",
+              "string", "number", "array", "object"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Types of data this tool can accept as input"
+        },
+        "output_types": {
+          "type": "array", 
+          "items": {
+            "type": "string",
+            "enum": [
+              "Feature", "FeatureCollection",
+              "Point", "LineString", "Polygon", 
+              "string", "number", "array", "object"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Types of data this tool produces as output"
+        },
+        "isTemporal": {
+          "type": "boolean",
+          "description": "Whether this tool requires temporal data (timestamps)"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/parameter"
+          },
+          "description": "Parameters accepted by this tool"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/example"
+          },
+          "description": "Usage examples for this tool"
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["name", "type", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "description": "Parameter name (valid identifier)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object"],
+          "description": "JavaScript type of the parameter"
+        },
+        "default": {
+          "description": "Default value for the parameter (type should match 'type' field)"
+        },
+        "enum": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Allowed values for the parameter (for string/number types)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the parameter"
+        }
+      },
+      "additionalProperties": false
+    },
+    "example": {
+      "type": "object",
+      "required": ["name", "parameters"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of this example"
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Parameter values for this example"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of what this example demonstrates"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
