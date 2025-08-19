@@ -55,41 +55,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 ### 2.3 Tool Execution
 
-**FR-3.1** The system SHALL execute JavaScript/TypeScript tools in isolated Web Worker contexts.
-
-**FR-3.2** The system SHALL support tool execution with:
-- Timeout protection (configurable per tool)
-- Memory usage monitoring
-- Cancellation capability
-- Progress reporting
-
-**FR-3.3** The system SHALL maintain execution state:
-- Pending
-- Running
-- Completed
-- Failed
-- Cancelled
-
-**FR-3.4** The system SHALL capture execution metrics:
-- Start and end timestamps
-- Duration
-- Resource usage
-- Error information if applicable
-
-### 2.4 Pipeline Management
-
-**FR-4.1** The system SHALL automatically capture tool execution sequences as pipelines.
-
-**FR-4.2** The system SHALL allow users to:
-- View pipeline as a sequence of steps
-- Enable/disable individual steps
-- Reorder steps
-- Modify parameters for each step
-- Save pipelines as reusable templates
-
-**FR-4.3** The system SHALL support branching pipelines for comparison workflows.
-
-**FR-4.4** The system SHALL allow grouping of steps into composite operations.
+**FR-3.1** The system SHALL execute JavaScript/TypeScript tools in the current context.  Note: in the future we may switch to web workers (including timeout and memory protection, and cancellation), but not now.
 
 ### 2.5 Provenance Tracking
 
@@ -114,7 +80,8 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 **FR-6.1** The system SHALL support dual-mode execution:
 - Original version (for reproducibility)
-- Latest version (for comparison)
+- Latest compatible version (to use up-to-date features)
+- Latest version (for comparison). Fail if not compatible with params.
 
 **FR-6.2** The system SHALL track tool versions using semantic versioning.
 
@@ -124,7 +91,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 ### 2.7 Output Management
 
-**FR-7.1** The system SHALL automatically detect output types and select appropriate renderers:
+**FR-7.1** The system SHALL automatically detect input and output types and select appropriate renderers, though the user may override this:
 - JSON (tree view with syntax highlighting)
 - Table (sortable, filterable grid)
 - GeoJSON (interactive map using LeafletJS)
@@ -221,7 +188,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 ### 3.6 Security
 
-**NFR-6.1** The system SHALL execute tools in isolated contexts (Web Workers).
+**NFR-6.1** The system MAY execute tools in isolated contexts (Web Workers).
 
 **NFR-6.2** The system SHALL sanitize all HTML output before rendering.
 
@@ -389,7 +356,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 - Browser-based execution only (no server-side processing in initial phases)
 - Maximum bundle size of 50MB
-- Web Worker API required for tool execution
+- Web Worker API required for tool execution (in the future)
 - ES2020+ JavaScript features required
 
 ### 7.2 Regulatory Constraints
