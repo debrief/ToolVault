@@ -1,7 +1,8 @@
-import type { ToolBundle, ToolMetadata } from '../types/tools';
+import type { ToolBundle, ToolMetadata, ToolHistory, ToolHistoryCommit } from '../types/tools';
 
 export class BundleLoader {
   private cache = new Map<string, ToolBundle>();
+  private historyCache: ToolHistory | null = null;
 
   async loadBundle(bundlePath: string): Promise<ToolBundle> {
     // Check cache first
@@ -66,8 +67,43 @@ export class BundleLoader {
     }
   }
 
+  async loadHistory(): Promise<ToolHistory> {
+    // Check cache first
+    if (this.historyCache) {
+      return this.historyCache;
+    }
+
+    try {
+      const historyPath = import.meta.env.DEV 
+        ? '/examples/javascript-bundle/history.json'
+        : '/examples/javascript-bundle/history.json';
+      
+      const response = await fetch(historyPath);
+      if (!response.ok) {
+        throw new Error(`Failed to load history: ${response.statusText}`);
+      }
+
+      const history: ToolHistory = await response.json();
+      
+      // Cache the history
+      this.historyCache = history;
+      
+      return history;
+    } catch (error) {
+      throw new Error(
+        `History loading failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
+
+  async getToolHistory(toolId: string): Promise<ToolHistoryCommit[]> {
+    const history = await this.loadHistory();
+    return history[toolId] || [];
+  }
+
   clearCache(): void {
     this.cache.clear();
+    this.historyCache = null;
   }
 }
 

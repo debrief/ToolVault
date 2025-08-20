@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ParameterField } from './ParameterField';
 import { ParameterValidation } from './ParameterValidation';
 import type { ParameterSchema } from './ParameterValidation';
@@ -24,6 +24,7 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
   const [values, setValues] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const isUpdatingRef = useRef(false);
 
   // Initialize form values with defaults
   useEffect(() => {
@@ -41,8 +42,19 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
     setValues(prev => {
       // Check if we need to update
       const needsUpdate = parameters.some(param => !(param.name in prev));
-      if (needsUpdate || Object.keys(prev).length === 0) {
-        return { ...prev, ...defaultValues };
+      const isEmpty = Object.keys(prev).length === 0;
+      
+      // Check if initial values actually changed by comparing with current values
+      const hasInitialValues = Object.keys(initialValues).length > 0;
+      const initialValuesChanged = hasInitialValues && Object.keys(initialValues).some(key => {
+        return initialValues[key] !== undefined && initialValues[key] !== prev[key];
+      });
+      
+      if (needsUpdate || isEmpty || initialValuesChanged) {
+        // Merge defaults first, then initial values to ensure initial values take precedence
+        const newValues = { ...defaultValues, ...initialValues };
+        isUpdatingRef.current = true; // Prevent onChange callback during internal update
+        return newValues;
       }
       return prev;
     });
@@ -56,6 +68,10 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
   }, [values, parameters]);
 
   useEffect(() => {
+    if (isUpdatingRef.current) {
+      isUpdatingRef.current = false;
+      return;
+    }
     const isValid = validateForm();
     onChange?.(values, isValid);
   }, [values, validateForm, onChange]);

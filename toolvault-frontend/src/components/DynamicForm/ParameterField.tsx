@@ -7,13 +7,15 @@ interface ParameterFieldProps {
   value: any;
   onChange: (value: any) => void;
   error?: string;
+  compact?: boolean; // Only render the input field, no label or description
 }
 
 export const ParameterField: React.FC<ParameterFieldProps> = ({
   schema,
   value,
   onChange,
-  error
+  error,
+  compact = false
 }) => {
   const renderField = () => {
     switch (schema.type) {
@@ -117,6 +119,19 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
         );
     }
   };
+
+  if (compact) {
+    return (
+      <div className="parameter-field-compact">
+        {renderField()}
+        {error && (
+          <div className="parameter-error">
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="parameter-field">

@@ -42,6 +42,18 @@ export interface ToolBundle {
   tools: ToolMetadata[];
 }
 
+export interface ToolHistoryCommit {
+  commit: string;
+  commit_date: string;
+  message: string;
+  author: string;
+  changes: string[];
+}
+
+export interface ToolHistory {
+  [toolId: string]: ToolHistoryCommit[];
+}
+
 export interface ToolRegistryEntry {
   metadata: ToolMetadata;
   loaded: boolean;

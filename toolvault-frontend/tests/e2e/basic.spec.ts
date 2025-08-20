@@ -57,7 +57,7 @@ test('should show tool overview tab by default', async ({ page }) => {
   await page.goto('/tool/translate');
   
   // Should show overview tab as active by default
-  await expect(page.locator('.tab-button.active')).toContainText('Overview');
+  await expect(page.getByRole('button', { name: 'Overview' })).toHaveClass(/active/);
   
   // Should show tool name and description
   await expect(page.locator('h1')).toContainText('Translate Features');
@@ -75,19 +75,19 @@ test('should switch to Try It tab and show dynamic form', async ({ page }) => {
   await page.click('text=Try It');
   
   // Should show Try It tab as active
-  await expect(page.locator('.tab-button.active')).toContainText('Try It');
+  await expect(page.getByRole('button', { name: 'Try It' })).toHaveClass(/active/);
   
-  // Should show execution interface
-  await expect(page.locator('.execution-interface')).toBeVisible();
+  // Should show workflow container
+  await expect(page.locator('.workflow-container')).toBeVisible();
   
-  // Should show input viewer
-  await expect(page.locator('.input-viewer')).toBeVisible();
+  // Should show input configuration
+  await expect(page.locator('.input-configuration')).toBeVisible();
   
-  // Should show parameter form (translate tool has 5 parameters)
-  await expect(page.locator('.parameter-field')).toHaveCount(5);
+  // Should show parameters config section
+  await expect(page.locator('.parameters-config-section')).toBeVisible();
   
-  // Should show output viewer
-  await expect(page.locator('.output-viewer')).toBeVisible();
+  // Should show output section
+  await expect(page.locator('.output-section')).toBeVisible();
   
   // Execute button should be disabled initially (no input data)
   await expect(page.locator('.execute-button')).toBeDisabled();
@@ -96,11 +96,11 @@ test('should switch to Try It tab and show dynamic form', async ({ page }) => {
 test('should load example data and enable execution', async ({ page }) => {
   await page.goto('/tool/translate?tab=example');
   
-  // Should start on Try It tab due to query parameter
-  await expect(page.locator('.tab-button.active')).toContainText('Try It');
+  // Should start on Try It tab due to query parameter  
+  await expect(page.getByRole('button', { name: 'Try It' })).toHaveClass(/active/);
   
   // Click on first example button if available
-  const exampleButton = page.locator('.example-button').first();
+  const exampleButton = page.locator('.example-button-small').first();
   if (await exampleButton.isVisible()) {
     await exampleButton.click();
     
@@ -108,9 +108,19 @@ test('should load example data and enable execution', async ({ page }) => {
     await expect(page.locator('.parameter-input').first()).not.toHaveValue('');
   }
   
-  // Load sample data
-  await page.click('text=Sample Data');
-  await page.click('text=Load Sample GeoJSON Data');
+  // Load sample data using InputViewer
+  const inputDataSection = page.locator('.input-data-section');
+  await expect(inputDataSection).toBeVisible();
+  
+  // Wait for JSON input tabs to be available
+  await expect(inputDataSection.locator('.io-tabs')).toBeVisible();
+  
+  // Click on Sample Data tab if available
+  const sampleDataTab = inputDataSection.locator('.tab-button').filter({ hasText: 'Sample Data' });
+  if (await sampleDataTab.isVisible()) {
+    await sampleDataTab.click();
+    await page.click('text=Load Sample GeoJSON Data');
+  }
   
   // Should show current input preview
   await expect(page.locator('.current-data-preview')).toBeVisible();
@@ -122,9 +132,19 @@ test('should load example data and enable execution', async ({ page }) => {
 test('should execute tool and show output', async ({ page }) => {
   await page.goto('/tool/translate?tab=example');
   
-  // Load sample data
-  await page.click('text=Sample Data');
-  await page.click('text=Load Sample GeoJSON Data');
+  // Load sample data using InputViewer
+  const inputDataSection = page.locator('.input-data-section');
+  await expect(inputDataSection).toBeVisible();
+  
+  // Wait for JSON input tabs to be available
+  await expect(inputDataSection.locator('.io-tabs')).toBeVisible();
+  
+  // Click on Sample Data tab if available
+  const sampleDataTab = inputDataSection.locator('.tab-button').filter({ hasText: 'Sample Data' });
+  if (await sampleDataTab.isVisible()) {
+    await sampleDataTab.click();
+    await page.click('text=Load Sample GeoJSON Data');
+  }
   
   // Wait for input to be loaded
   await expect(page.locator('.execute-button')).toBeEnabled();

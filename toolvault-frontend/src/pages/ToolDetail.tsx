@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import type { ToolMetadata } from '../types/tools';
+import type { ToolMetadata, ToolHistoryCommit } from '../types/tools';
 import { toolService } from '../services/toolService';
-import { ParameterForm } from '../components/DynamicForm';
+import { bundleLoader } from '../services/bundleLoader';
+import { ParameterForm, ParameterField } from '../components/DynamicForm';
 import { InputViewer, OutputViewer } from '../components/IOViewer';
 import type { ParameterSchema } from '../components/DynamicForm';
 import './ToolDetail.css';
@@ -24,6 +25,13 @@ function ToolDetail() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionError, setExecutionError] = useState<string | null>(null);
   const [executionTime, setExecutionTime] = useState<number | undefined>();
+
+  // History state
+  const [historyData, setHistoryData] = useState<ToolHistoryCommit[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [expandedChanges, setExpandedChanges] = useState<Set<string>>(new Set());
+  const [allExpanded, setAllExpanded] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -62,6 +70,15 @@ function ToolDetail() {
     }
   }, [searchParams]);
 
+  // Update allExpanded state when individual expansions change
+  useEffect(() => {
+    if (historyData.length > 0) {
+      const totalCommitsWithChanges = historyData.filter(commit => commit.changes && commit.changes.length > 0).length;
+      const expandedCount = expandedChanges.size;
+      setAllExpanded(totalCommitsWithChanges > 0 && expandedCount === totalCommitsWithChanges);
+    }
+  }, [expandedChanges, historyData]);
+
   const loadTool = async (toolId: string) => {
     try {
       setLoading(true);
@@ -78,10 +95,55 @@ function ToolDetail() {
       // Load the tool script
       await toolService.loadToolScript(toolId);
       
+      // Load history data
+      loadToolHistory(toolId);
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load tool');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadToolHistory = async (toolId: string) => {
+    try {
+      setHistoryLoading(true);
+      setHistoryError(null);
+      
+      const history = await bundleLoader.getToolHistory(toolId);
+      setHistoryData(history);
+      
+    } catch (err) {
+      setHistoryError(err instanceof Error ? err.message : 'Failed to load history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const toggleChangeExpansion = (commitHash: string) => {
+    setExpandedChanges(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(commitHash)) {
+        newSet.delete(commitHash);
+      } else {
+        newSet.add(commitHash);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleExpandAll = () => {
+    if (allExpanded) {
+      // Collapse all
+      setExpandedChanges(new Set());
+    } else {
+      // Expand all commits that have changes
+      const commitsWithChanges = new Set(
+        historyData
+          .filter(commit => commit.changes && commit.changes.length > 0)
+          .map(commit => commit.commit)
+      );
+      setExpandedChanges(commitsWithChanges);
     }
   };
 
@@ -188,28 +250,22 @@ function ToolDetail() {
 
   const renderOverviewTab = () => (
     <div className="overview-tab">
-      <div className="tool-header">
-        <div className="tool-info">
-          <h1>{tool.name}</h1>
-          <p className="tool-description">{tool.description}</p>
-          <div className="tool-metadata">
-            <div className="metadata-row">
-              <span className="metadata-label">Category:</span>
-              <span className="metadata-value">{tool.labels.join(', ')}</span>
-            </div>
-            <div className="metadata-row">
-              <span className="metadata-label">Input Types:</span>
-              <span className="metadata-value">{tool.input_types.join(', ')}</span>
-            </div>
-            <div className="metadata-row">
-              <span className="metadata-label">Output Types:</span>
-              <span className="metadata-value">{tool.output_types.join(', ')}</span>
-            </div>
-            <div className="metadata-row">
-              <span className="metadata-label">Temporal:</span>
-              <span className="metadata-value">{tool.isTemporal ? 'Yes' : 'No'}</span>
-            </div>
-          </div>
+      <div className="tool-metadata">
+        <div className="metadata-row">
+          <span className="metadata-label">Category:</span>
+          <span className="metadata-value">{tool.labels.join(', ')}</span>
+        </div>
+        <div className="metadata-row">
+          <span className="metadata-label">Input Types:</span>
+          <span className="metadata-value">{tool.input_types.join(', ')}</span>
+        </div>
+        <div className="metadata-row">
+          <span className="metadata-label">Output Types:</span>
+          <span className="metadata-value">{tool.output_types.join(', ')}</span>
+        </div>
+        <div className="metadata-row">
+          <span className="metadata-label">Temporal:</span>
+          <span className="metadata-value">{tool.isTemporal ? 'Yes' : 'No'}</span>
         </div>
       </div>
 
@@ -218,26 +274,47 @@ function ToolDetail() {
         {tool.parameters.length === 0 ? (
           <p>This tool requires no parameters.</p>
         ) : (
-          <div className="parameters-list">
-            {tool.parameters.map(param => (
-              <div key={param.name} className="parameter-item">
-                <div className="parameter-header">
-                  <strong>{param.name}</strong>
-                  <span className="parameter-type">({param.type})</span>
-                </div>
-                <p className="parameter-description">{param.description}</p>
-                {param.default !== undefined && (
-                  <div className="parameter-default">
-                    Default: <code>{JSON.stringify(param.default)}</code>
-                  </div>
-                )}
-                {param.enum && (
-                  <div className="parameter-options">
-                    Options: {param.enum.join(', ')}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="parameters-table-container">
+            <table className="parameters-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Default</th>
+                  <th>Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tool.parameters.map(param => (
+                  <tr key={param.name}>
+                    <td className="param-name">
+                      <strong>{param.name}</strong>
+                    </td>
+                    <td className="param-type">
+                     <code>{param.type}</code>
+                    </td>
+                    <td className="param-description">
+                      {param.description}
+                    </td>
+                    <td className="param-default">
+                      {param.default !== undefined ? (
+                        <code>{JSON.stringify(param.default)}</code>
+                      ) : (
+                        <span className="no-value">—</span>
+                      )}
+                    </td>
+                    <td className="param-options">
+                      {param.enum ? (
+                        param.enum.join(', ')
+                      ) : (
+                        <span className="no-value">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -248,9 +325,10 @@ function ToolDetail() {
           <div className="examples-list">
             {tool.examples.map((example, index) => (
               <div key={index} className="example-item">
-                <h4>{example.name}</h4>
+                <div className="example-title">
+                  <h4>{example.name}</h4>
+                </div>
                 <div className="example-params">
-                  <strong>Parameters:</strong>
                   <pre>{JSON.stringify(example.parameters, null, 2)}</pre>
                 </div>
               </div>
@@ -263,67 +341,95 @@ function ToolDetail() {
 
   const renderExampleTab = () => (
     <div className="example-tab">
-      <div className="example-controls">
+      <div className="workflow-container">
         <h3>Try the Tool</h3>
-        {tool.examples && tool.examples.length > 0 && (
-          <div className="example-selector">
-            <label>Load Example:</label>
-            <div className="example-buttons">
-              {tool.examples.map((example, index) => (
-                <button
-                  key={index}
-                  className="example-button"
-                  onClick={() => loadExampleData(index)}
-                >
-                  {example.name}
-                </button>
-              ))}
+        
+        {/* Step 1: Input Configuration */}
+        <div className="input-configuration">
+          <div className="input-config-grid">
+            <div className="input-data-section">
+              <InputViewer
+                inputTypes={tool.input_types}
+                onDataChange={setInputData}
+                currentData={inputData}
+                placeholder="Enter or upload input data for this tool..."
+              />
+            </div>
+
+            <div className="parameters-config-section">
+              <div className="parameters-header">
+                <h4>Parameters</h4>
+                {tool.examples && tool.examples.length > 0 && (
+                  <div className="example-controls-inline">
+                    <span className="example-label">Load Example:</span>
+                    <div className="example-buttons-compact">
+                      {tool.examples.map((example, index) => (
+                        <button
+                          key={index}
+                          className="example-button-small"
+                          onClick={() => loadExampleData(index)}
+                        >
+                          {example.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {tool.parameters.length === 0 ? (
+                <p className="no-parameters">This tool requires no parameters.</p>
+              ) : (
+                <div className="parameters-table-container">
+                  <table className="parameters-form-table">
+                    <tbody>
+                      {tool.parameters.map(param => (
+                        <tr key={param.name}>
+                          <td className="param-name">
+                            <strong>{param.name}</strong>
+                          </td>
+                          <td className="param-description">
+                            {param.description || '—'}
+                          </td>
+                          <td className="param-input">
+                            <ParameterField
+                              schema={convertParametersToSchema([param])[0]}
+                              value={paramValues[param.name]}
+                              onChange={(value) => setParamValues(prev => ({ ...prev, [param.name]: value }))}
+                              compact={true}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
 
-      <div className="execution-interface">
-        <div className="interface-grid">
-          <div className="input-section">
-            <InputViewer
-              inputTypes={tool.input_types}
-              onDataChange={setInputData}
-              currentData={inputData}
-              title="Input Data"
-              placeholder="Enter or upload input data for this tool..."
-            />
-          </div>
+        {/* Step 2: Execute */}
+        <div className="execution-controls">
+          <button 
+            className="execute-button"
+            onClick={executeTool}
+            disabled={!inputData || isExecuting}
+          >
+            {isExecuting ? '⏳ Executing...' : '▶ Run Tool'}
+          </button>
+        </div>
 
-          <div className="parameters-section">
-            <h4>Parameters</h4>
-            <ParameterForm
-              parameters={parameterSchema}
-              onChange={(values) => setParamValues(values)}
-            />
-            
-            <div className="execution-controls">
-              <button 
-                className="execute-button"
-                onClick={executeTool}
-                disabled={!inputData || isExecuting}
-              >
-                {isExecuting ? 'Executing...' : 'Run Tool'}
-              </button>
-            </div>
-          </div>
-
-          <div className="output-section">
-            <OutputViewer
-              data={outputData}
-              outputTypes={tool.output_types}
-              title="Output Data"
-              filename={tool.id}
-              isLoading={isExecuting}
-              error={executionError || undefined}
-              executionTime={executionTime}
-            />
-          </div>
+        {/* Step 3: Output */}
+        <div className="output-section">
+          <OutputViewer
+            data={outputData}
+            outputTypes={tool.output_types}
+            filename={tool.id}
+            isLoading={isExecuting}
+            error={executionError || undefined}
+            executionTime={executionTime}
+          />
         </div>
       </div>
     </div>
@@ -331,17 +437,83 @@ function ToolDetail() {
 
   const renderHistoryTab = () => (
     <div className="history-tab">
-      <h3>Version History</h3>
-      <div className="history-placeholder">
-        <p>🚧 Version history and source information will be available in a future release.</p>
-        <div className="current-version">
-          <h4>Current Version</h4>
-          <div className="version-info">
-            <div>Commit: {tool.commit}</div>
-            <div>Date: {new Date(tool.commit_date).toLocaleDateString()}</div>
-          </div>
-        </div>
+      <div className="history-header">
+        <h3>Version History</h3>
+        {historyData.length > 0 && (
+          <button 
+            className="expand-all-button"
+            onClick={toggleExpandAll}
+          >
+            {allExpanded ? '📝 Collapse All Changes' : '📝 Expand All Changes'}
+          </button>
+        )}
       </div>
+      
+      {historyLoading && (
+        <div className="history-loading">
+          <div className="loading-spinner"></div>
+          <div>Loading history...</div>
+        </div>
+      )}
+      
+      {historyError && (
+        <div className="history-error">
+          <p>❌ Failed to load history: {historyError}</p>
+        </div>
+      )}
+      
+      {!historyLoading && !historyError && historyData.length === 0 && (
+        <div className="no-history">
+          <p>📝 No version history available for this tool.</p>
+        </div>
+      )}
+      
+      {!historyLoading && !historyError && historyData.length > 0 && (
+        <div className="history-list">
+          {historyData.map((commit, index) => {
+            const isExpanded = expandedChanges.has(commit.commit);
+            const hasChanges = commit.changes && commit.changes.length > 0;
+            
+            return (
+              <div key={commit.commit} className={`history-item ${index === 0 ? 'current' : ''}`}>
+                <div className={`commit-content ${hasChanges && isExpanded ? 'has-expanded-changes' : ''}`}>
+                  <div className="commit-summary">
+                    <div className="commit-header">
+                      <span className="commit-hash">{commit.commit}</span>
+                      {index === 0 && <span className="current-badge">Current</span>}
+                      <span className="commit-date">
+                        {new Date(commit.commit_date).toLocaleDateString()}
+                      </span>
+                      <span className="commit-author">{commit.author}</span>
+                    </div>
+                    <div className="commit-message-row">
+                      <div className="commit-message">{commit.message}</div>
+                      {hasChanges && (
+                        <button 
+                          className="expand-changes-button"
+                          onClick={() => toggleChangeExpansion(commit.commit)}
+                        >
+                          {isExpanded ? '▼ Hide' : '▶ Show'} ({commit.changes.length})
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {hasChanges && isExpanded && (
+                    <div className="commit-changes">
+                      <h6>Changes:</h6>
+                      <ul>
+                        {commit.changes.map((change, changeIndex) => (
+                          <li key={changeIndex}>{change}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 
@@ -351,6 +523,11 @@ function ToolDetail() {
         <button className="back-button" onClick={() => navigate('/browse')}>
           ← Back to Browse Tools
         </button>
+      </div>
+
+      <div className="tool-header">
+        <h1>{tool.name}</h1>
+        <p className="tool-description">{tool.description}</p>
       </div>
 
       <div className="tool-tabs">
