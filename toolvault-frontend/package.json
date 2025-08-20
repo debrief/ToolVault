@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "kill-vite": "ps aux | grep '[v]ite' | awk '{print $2}' | xargs kill -9 || true",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc -b",
     "preview": "vite preview",
-    "test:e2e": "npm run build && playwright test",
+    "test:e2e": "yarn build && playwright test",
     "prepare": "husky"
   },
   "dependencies": {
