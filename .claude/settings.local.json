@@ -109,7 +109,8 @@
       "Bash(open http://localhost:*)",
       "Bash(open http://127.0.0.1:*)",
       "Bash(ln:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(yarn install)"
     ]
   }
 }
