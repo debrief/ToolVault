@@ -37,7 +37,7 @@ export class BundleLoader {
   async loadPhase0Bundle(): Promise<ToolBundle> {
     // Load the Phase 0 JavaScript bundle from the original location
     const bundlePath = import.meta.env.DEV 
-      ? '/../examples/javascript-bundle/index.json'
+      ? '/examples/javascript-bundle/index.json'  // Vite dev server can serve parent directories with fs.allow
       : '/examples/javascript-bundle/index.json'; // In production, this will be bundled
     
     return this.loadBundle(bundlePath);

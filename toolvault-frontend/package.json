@@ -9,7 +9,7 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc -b",
     "preview": "vite preview",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build && playwright test",
     "prepare": "husky"
   },
   "dependencies": {

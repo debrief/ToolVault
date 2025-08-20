@@ -107,7 +107,9 @@
       "Bash(npm create:*)",
       "Bash(npm run prepare:*)",
       "Bash(open http://localhost:*)",
-      "Bash(open http://127.0.0.1:*)"
+      "Bash(open http://127.0.0.1:*)",
+      "Bash(ln:*)",
+      "Bash(kill:*)"
     ]
   }
 }
