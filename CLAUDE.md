@@ -10,31 +10,45 @@ ToolVault is a portable, self-contained service that delivers curated collection
 
 ### Current Implementation
 ```
-/docs                          # Documentation including software requirements
-/docs/ADRs                    # Architecture Decision Records 
-/prompts                      # APM (Agentic Project Management) framework guides
-/prompts/tasks               # Task Assignment Prompts for Phase 0 implementation
-/examples/javascript-bundle  # Mock JavaScript tool implementation (ACTIVE)
+/docs/                        # Documentation including software requirements
+├── ADRs/                    # Architecture Decision Records 
+├── software_requirements.md
+├── phase_plan.md
+└── ui/readme.md
+
+/toolvault-frontend/         # React/TypeScript SPA frontend (Phase 1 - ACTIVE)
+├── src/components/          # UI components for tool browsing and execution
+├── src/services/            # Bundle loading, tool registry, search
+├── src/types/tools.ts       # TypeScript interfaces for tool metadata
+├── public/examples/         # Symlinked JavaScript bundle for dev
+├── tests/e2e/               # Playwright end-to-end tests
+└── package.json            # Vite, React, TypeScript, Playwright config
+
+/examples/javascript-bundle/ # Phase 0 JavaScript tools (COMPLETE)
 ├── tools/                   # JavaScript tool implementations using IIFE pattern
-├── data/                    # Sample GeoJSON data files
-├── tests/                   # Jest test files
+├── tests/                   # Jest test files with 100% coverage
 ├── index.json              # Tool metadata for UI generation
 └── package.json            # Jest testing configuration
+
+/prompts/                    # APM (Agentic Project Management) framework
+├── tasks/                   # Task Assignment Prompts
+└── 01_Manager_Agent_Core_Guides/
 ```
 
 ### Planned Structure
 ```
-/client         # React/TypeScript SPA frontend (Phase 1)
 /server         # Flask/FastAPI backend (Phase 3) 
 /indexer        # Bundle creation scripts (Phase 2)
 ```
 
 ## Current Development Phase
 
-**Phase 0: JavaScript Mock Tools** (ACTIVE)
-- Complete JavaScript tool bundle with 12 tools across 5 categories
+**Phase 1: React/TypeScript Frontend** (ACTIVE)
+- React/TypeScript SPA with metadata-driven UI generation in `toolvault-frontend/`
+- Integration with Phase 0 JavaScript tools bundle
+- Complete JavaScript tool bundle with 12 tools across 5 categories in `examples/javascript-bundle/`
 - Tools use IIFE pattern and register in `window.ToolVault.tools` namespace
-- Full Jest test suite with 100% coverage requirement
+- Full Jest test suite with 100% coverage requirement achieved
 - Comprehensive `index.json` metadata for frontend integration
 
 ## Architecture Decisions
@@ -61,7 +75,33 @@ ToolVault is a portable, self-contained service that delivers curated collection
 
 ## Development Commands
 
-### JavaScript Bundle Testing
+### Frontend Development (Primary Workflow)
+```bash
+cd toolvault-frontend
+
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
+
+# Build for production
+yarn build
+
+# Run type checking
+yarn typecheck
+
+# Run ESLint
+yarn lint
+
+# Run end-to-end tests
+yarn test:e2e
+
+# Preview production build
+yarn preview
+```
+
+### JavaScript Bundle Testing (Phase 0 Tools)
 ```bash
 cd examples/javascript-bundle
 
@@ -79,13 +119,39 @@ npx jest tests/transform/translate.test.js
 
 # Generate coverage report
 npx jest --coverage
+
+# Run linting
+npm run lint
+
+# Validate bundle structure
+npm run validate
 ```
+
+### Frontend Architecture Patterns
+
+The React/TypeScript frontend follows these key patterns:
+
+**Metadata-Driven UI Generation:**
+- All tool interfaces generated from `index.json` metadata (ADR-001)
+- Dynamic form generation based on parameter schemas
+- No hard-coded tool-specific UI components
+
+**Service Layer Architecture:**
+- `bundleLoader.ts`: Loads and caches tool bundles from Phase 0
+- `toolRegistry.ts`: In-memory registry for tool discovery and filtering  
+- `toolService.ts`: Executes JavaScript tools via `window.ToolVault.tools[id]`
+- `toolSearch.ts`: Fuzzy search across tool metadata
+
+**Component Structure:**
+- `ToolBrowser/`: Grid/list views for tool discovery
+- `SearchInterface/`: Search bar and filtering components
+- Layout components with consistent styling
 
 ### APM Framework Usage
 The project uses an Agentic Project Management (APM) framework with specialized agents:
-- **Agent_JS_Dev**: JavaScript tool implementation
+- **Agent_JS_Dev**: JavaScript tool implementation (Phase 0 complete)
 - **Agent_Test_Specialist**: Comprehensive testing with 100% coverage
-- **Agent_Frontend_Lead**: React/TypeScript frontend (Phase 1)
+- **Agent_Frontend_Lead**: React/TypeScript frontend (Phase 1 active)
 
 Task Assignment Prompts (TAPs) are in `/prompts/tasks/` and follow the pattern `Task_X.Y_Description.md`.
 
@@ -127,18 +193,57 @@ All tools are defined in `examples/javascript-bundle/index.json` with complete m
 
 ## Key Files and Their Purposes
 
+### Development Planning
 - `Implementation_Plan.md`: 12-week development roadmap across 4 phases
-- `examples/javascript-bundle/index.json`: Complete tool metadata for Phase 1 UI generation
-- `prompts/tasks/Task_0.X_*.md`: Detailed task assignments for Phase 0 completion
-- `Memory_Bank.md`: Centralized logging for all agent work and decisions (if exists)
+- `prompts/tasks/Task_1.X_*.md`: Current Phase 1 frontend development tasks
+- `Memory/README.md`: Project memory and decision tracking
+
+### Frontend Architecture  
+- `toolvault-frontend/src/types/tools.ts`: TypeScript interfaces for tool metadata
+- `toolvault-frontend/src/services/bundleLoader.ts`: Phase 0 bundle integration
+- `toolvault-frontend/vite.config.ts`: Build configuration with GitHub Pages support
+- `toolvault-frontend/package.json`: Dependencies and build scripts
+
+### Tool Implementation
+- `examples/javascript-bundle/index.json`: Complete tool metadata for UI generation
+- `examples/javascript-bundle/tools/`: IIFE pattern JavaScript tool implementations
+- `examples/javascript-bundle/tests/`: Jest test suite with 100% coverage
+
+### Documentation
+- `docs/ADRs/ADR-001-metadata-driven-architecture.md`: Core architectural decision
 - `docs/ADRs/ADR-013-mock-javascript-toolset.md`: JavaScript tool implementation specification
 
 ## Important Notes
 
-- The project uses Python for backend development with Flask/FastAPI preference
-- Frontend will be React/TypeScript SPA with metadata-driven UI generation
+### Current Architecture
+- **Frontend**: React/TypeScript SPA with Vite build system and metadata-driven UI generation
+- **Tools**: Phase 0 JavaScript tools executed in browser via IIFE pattern  
+- **Build System**: Vite for frontend, Jest for JavaScript tool testing
+- **Testing**: Playwright for E2E tests, Jest for unit tests with 100% coverage requirement
+- **Styling**: CSS modules with component-scoped styles
+
+### Technical Details
 - All code supports offline operation without internet connectivity
-- Spatial outputs are rendered using LeafletJS
-- In the future ToolVault will be consumed by Debrief, delivered as VS Code extensions
-- JavaScript tools in Phase 0 use spherical geometry for accurate GPS calculations
-- All temporal analysis tools support multiple timestamp formats (ISO 8601, Unix epoch)
+- JavaScript tools use spherical geometry for accurate GPS calculations
+- Temporal analysis tools support multiple timestamp formats (ISO 8601, Unix epoch)
+- Bundle loading supports caching with fallback mechanisms
+- TypeScript strict mode enabled with comprehensive type checking
+
+### Future Integration
+- Backend will use Python with Flask/FastAPI preference (Phase 3)
+- Spatial outputs will be rendered using LeafletJS (planned)
+- ToolVault will be consumed by Debrief and delivered as VS Code extensions
+- MCP (Model Context Protocol) integration planned for AI tool execution
+
+## Development Guidelines
+
+### Code Quality
+- TypeScript strict mode enforced with no `any` types allowed
+- ESLint configured for strict checking with pre-push hooks via Husky
+- 100% test coverage requirement for all JavaScript tools
+- Playwright E2E tests verify core functionality
+
+### File Management
+- Always prefer editing existing files over creating new ones
+- Never proactively create documentation files unless explicitly requested
+- Focus on implementation over documentation during development phases

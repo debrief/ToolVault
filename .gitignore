@@ -210,3 +210,5 @@ client/test-results/
 client/playwright-report/
 examples/javascript-bundle/node_modules/
 examples/javascript-bundle/coverage/
+toolvault-frontend/playwright-report
+toolvault-frontend/test-results/

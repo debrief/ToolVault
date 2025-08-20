@@ -1,0 +1,128 @@
+name: Tool Feedback
+description: Provide feedback on specific Phase 0 tools
+title: "[Tool]: "
+labels: ["tool-feedback", "phase-0"]
+projects: ["ToolVault"]
+assignees:
+  - "@me"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing our Phase 0 tools! Your feedback helps us improve.
+  - type: dropdown
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: Which tool are you providing feedback on?
+      options:
+        - translate-features (Transform)
+        - flip-horizontal (Transform)
+        - flip-vertical (Transform)
+        - calculate-speed-series (Analysis)
+        - calculate-direction-series (Analysis)
+        - average-speed (Statistics)
+        - speed-histogram (Statistics)
+        - smooth-polyline (Processing)
+        - import-rep (I/O)
+        - export-rep (I/O)
+        - export-csv (I/O)
+        - General UI/Interface
+        - Multiple Tools
+    validations:
+      required: true
+  - type: dropdown
+    id: feedback-type
+    attributes:
+      label: Feedback Type
+      description: What type of feedback are you providing?
+      options:
+        - Tool Works Correctly
+        - Incorrect Output/Results
+        - Parameter Issues
+        - Performance Problem
+        - UI/UX Issue
+        - Documentation Issue
+        - Feature Enhancement
+        - Data Format Issue
+        - Error/Exception
+    validations:
+      required: true
+  - type: textarea
+    id: test-data
+    attributes:
+      label: Test Data Used
+      description: What data did you use to test the tool? (Please describe or provide sample)
+      placeholder: e.g., "REP file with 100 GPS points", "GeoJSON with polygon features", etc.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect the tool to do?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened when you used the tool?
+    validations:
+      required: true
+  - type: textarea
+    id: output-data
+    attributes:
+      label: Output Data/Results
+      description: If applicable, describe or paste the output you received
+      render: json
+    validations:
+      required: false
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Issue Severity
+      description: How severe is this issue?
+      options:
+        - Critical - Tool completely broken
+        - High - Major functionality issue
+        - Medium - Minor issue but usable
+        - Low - Cosmetic or enhancement
+        - Positive - Tool works well
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: If this is a bug, how can we reproduce it?
+      placeholder: |
+        1. Go to tool page
+        2. Upload data file
+        3. Set parameters to...
+        4. Click execute
+        5. See error/unexpected result
+    validations:
+      required: false
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser Used
+      description: Which browser were you using?
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Mobile Chrome
+        - Mobile Safari
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+    validations:
+      required: false

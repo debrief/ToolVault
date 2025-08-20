@@ -103,7 +103,24 @@
       "Bash(open http://localhost:5175/tools/change-color-to-red)",
       "WebFetch(domain:modelcontextprotocol.io)",
       "Bash(npm run coverage:*)",
-      "WebFetch(domain:debrief.github.io)"
+      "WebFetch(domain:debrief.github.io)",
+      "Bash(npm create:*)",
+      "Bash(npm run prepare:*)",
+      "Bash(open http://localhost:*/test-tools)",
+      "Bash(open http://127.0.0.1:*/test-tools)",
+      "Bash(ln:*)",
+      "Bash(kill:*)",
+      "Bash(yarn install)",
+      "Bash(open http://localhost:5179/test-tools)",
+      "Bash(open http://localhost:5179/tool/translate)",
+      "Bash(yarn playwright test:*)",
+      "Bash(open http://localhost:5179/tool/direction-series)",
+      "Bash(open http://localhost:5173/tool/translate?tab=example)",
+      "Bash(yarn preview:*)",
+      "Bash(open http://localhost:5174/tool/translate?tab=example)",
+      "Bash(open http://localhost:5174/tool/translate)",
+      "Bash(GITHUB_PAGES=true yarn build)",
+      "Bash(gh run list:*)"
     ]
   }
 }

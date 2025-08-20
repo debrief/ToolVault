@@ -1,0 +1,45 @@
+{
+  "name": "toolvault-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "kill-vite": "ps aux | grep '[v]ite' | awk '{print $2}' | xargs kill -9 || true",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc -b",
+    "preview": "vite preview",
+    "test:e2e": "yarn build && playwright test",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.20",
+    "@types/react-router-dom": "^5.3.3",
+    "date-fns": "^4.1.0",
+    "lodash": "^4.17.21",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.1",
+    "react-syntax-highlighter": "^15.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "playwright": "^1.54.2",
+    "prettier": "^3.6.2",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2"
+  }
+}

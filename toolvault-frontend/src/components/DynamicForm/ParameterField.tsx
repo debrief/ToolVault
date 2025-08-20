@@ -1,0 +1,158 @@
+import React from 'react';
+import type { ParameterSchema } from './ParameterValidation';
+import './ParameterField.css';
+
+interface ParameterFieldProps {
+  schema: ParameterSchema;
+  value: unknown;
+  onChange: (value: unknown) => void;
+  error?: string;
+  compact?: boolean; // Only render the input field, no label or description
+}
+
+export const ParameterField: React.FC<ParameterFieldProps> = ({
+  schema,
+  value,
+  onChange,
+  error,
+  compact = false
+}) => {
+  const renderField = () => {
+    switch (schema.type) {
+      case 'number':
+        return (
+          <input
+            type="number"
+            className={`parameter-input ${error ? 'error' : ''}`}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '') {
+                onChange(undefined);
+              } else {
+                const parsed = parseFloat(val);
+                onChange(isNaN(parsed) ? undefined : parsed);
+              }
+            }}
+            min={schema.min}
+            max={schema.max}
+            step={schema.step || 'any'}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
+          />
+        );
+
+      case 'string':
+        if (schema.enum) {
+          return (
+            <select
+              className={`parameter-select ${error ? 'error' : ''}`}
+              value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
+              onChange={(e) => onChange(e.target.value)}
+            >
+              {schema.enum.map(option => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          );
+        }
+        
+        if (schema.description && schema.description.length > 100) {
+          return (
+            <textarea
+              className={`parameter-textarea ${error ? 'error' : ''}`}
+              value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={String(schema.default !== undefined ? schema.default : '')}
+              rows={3}
+            />
+          );
+        }
+
+        return (
+          <input
+            type="text"
+            className={`parameter-input ${error ? 'error' : ''}`}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
+            pattern={schema.pattern}
+          />
+        );
+
+      case 'boolean':
+        return (
+          <label className="parameter-checkbox-label">
+            <input
+              type="checkbox"
+              className="parameter-checkbox"
+              checked={value !== undefined ? Boolean(value) : Boolean(schema.default || false)}
+              onChange={(e) => onChange(e.target.checked)}
+            />
+            <span className="checkbox-text">
+              {(value !== undefined ? Boolean(value) : Boolean(schema.default || false)) ? 'Yes' : 'No'}
+            </span>
+          </label>
+        );
+
+      case 'array':
+        return (
+          <textarea
+            className={`parameter-textarea ${error ? 'error' : ''}`}
+            value={Array.isArray(value) ? value.join(', ') : (Array.isArray(schema.default) ? schema.default.join(', ') : '')}
+            onChange={(e) => onChange(e.target.value.split(',').map(item => item.trim()).filter(item => item))}
+            placeholder="Enter comma-separated values"
+            rows={2}
+          />
+        );
+
+      default:
+        return (
+          <input
+            type="text"
+            className={`parameter-input ${error ? 'error' : ''}`}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
+          />
+        );
+    }
+  };
+
+  if (compact) {
+    return (
+      <div className="parameter-field-compact">
+        {renderField()}
+        {error && (
+          <div className="parameter-error">
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="parameter-field">
+      <label className="parameter-label">
+        {schema.name}
+        {schema.required && <span className="required">*</span>}
+      </label>
+      
+      {renderField()}
+      
+      {schema.description && (
+        <div className="parameter-description">
+          {schema.description}
+        </div>
+      )}
+      
+      {error && (
+        <div className="parameter-error">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+};
