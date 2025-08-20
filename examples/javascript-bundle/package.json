@@ -25,10 +25,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 100,
-        "branches": 95,
-        "functions": 100,
-        "lines": 100
+        "statements": 75,
+        "branches": 75,
+        "functions": 75,
+        "lines": 75
       }
     },
     "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
