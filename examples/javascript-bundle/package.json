@@ -1,23 +1,36 @@
 {
   "name": "toolvault-javascript-bundle",
   "version": "1.0.0",
-  "description": "Mock JavaScript tool bundle for ToolVault UI testing",
+  "description": "Mock JavaScript tool bundle for ToolVault UI validation",
+  "main": "index.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint tools/ tests/",
+    "validate": "node scripts/validate-bundle.js"
   },
+  "keywords": ["toolvault", "gis", "analysis", "mock"],
+  "author": "ToolVault Project",
+  "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.0",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "eslint": "^8.57.0"
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "testMatch": [
-      "**/tests/**/*.test.js"
-    ],
     "collectCoverageFrom": [
       "tools/**/*.js"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 95,
+        "functions": 100,
+        "lines": 100
+      }
+    },
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
   }
 }

@@ -11,12 +11,14 @@
     // Find the center point for flipping
     let center = 0;
     let coordCount = 0;
+    let allCoords = [];
     
     // Helper to collect all coordinates
     function collectCoordinates(coords, axisIndex) {
       if (typeof coords[0] === 'number') {
         center += coords[axisIndex];
         coordCount++;
+        allCoords.push(coords[axisIndex]);
       } else {
         coords.forEach(c => collectCoordinates(c, axisIndex));
       }
@@ -56,7 +58,17 @@
     }
     
     // Calculate center
-    center = coordCount > 0 ? center / coordCount : 0;
+    if (coordCount === 1) {
+      // For single points, flip around 0
+      center = 0;
+    } else if (coordCount > 1) {
+      // For multiple points, use the bounding box center
+      const min = Math.min(...allCoords);
+      const max = Math.max(...allCoords);
+      center = (min + max) / 2;
+    } else {
+      center = 0;
+    }
     
     // Apply flipping
     if (result.type === 'FeatureCollection') {

@@ -208,3 +208,5 @@ __marimo__/
 client/coverage/
 client/test-results/
 client/playwright-report/
+examples/javascript-bundle/node_modules/
+examples/javascript-bundle/coverage/

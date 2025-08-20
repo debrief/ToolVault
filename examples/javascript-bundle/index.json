@@ -1,399 +1,398 @@
 {
-  "bundle": {
-    "name": "JavaScript GeoJSON Tools",
-    "version": "1.0.0",
-    "description": "Mock JavaScript tool bundle for ToolVault UI testing with GeoJSON processing capabilities",
-    "created": "2024-01-18",
-    "categories": ["transform", "analysis", "statistics", "processing", "io"]
-  },
+  "name": "JavaScript Mock Tool Bundle",
+  "commit": "f7g8h9i0",
+  "commit_date": "2024-01-31T16:45:00Z",
+  "description": "A comprehensive collection of mock analysis tools for testing ToolVault's JavaScript toolset architecture",
+  "author": "ToolVault Development Team",
+  "license": "MIT",
+  "bundle_format": "javascript",
+  "runtime": "browser",
   "tools": [
     {
-      "id": "translate-features",
+      "id": "translate",
+      "commit": "a1b2c3d4",
+      "commit_date": "2024-01-15T14:30:00Z",
       "name": "Translate Features",
-      "description": "Move GeoJSON features by a specified direction and distance",
-      "category": "transform",
-      "runtime": "javascript",
-      "script": "tools/transform/translate.js",
-      "function": "translateFeatures",
-      "inputs": [
-        {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "GeoJSON FeatureCollection to translate"
-        }
-      ],
+      "labels": ["transform", "geometry"],
+      "description": "Translate geometric features by distance and direction or simple dx/dy offsets",
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
       "parameters": [
-        {
-          "name": "direction",
-          "type": "number",
-          "description": "Direction in degrees (0-360)",
-          "default": 0
-        },
         {
           "name": "distance",
           "type": "number",
-          "description": "Distance in meters",
-          "default": 100
-        }
-      ],
-      "outputs": [
+          "default": 0,
+          "description": "Distance to translate (meters)"
+        },
         {
-          "name": "result",
-          "type": "GeoJSON",
-          "description": "Translated GeoJSON FeatureCollection"
+          "name": "direction",
+          "type": "number", 
+          "default": 0,
+          "description": "Direction in degrees (0=North, 90=East)"
+        },
+        {
+          "name": "units",
+          "type": "string",
+          "default": "meters",
+          "enum": ["meters", "kilometers"],
+          "description": "Distance units"
+        },
+        {
+          "name": "dx",
+          "type": "number",
+          "default": 0,
+          "description": "Simple offset in longitude (degrees)"
+        },
+        {
+          "name": "dy", 
+          "type": "number",
+          "default": 0,
+          "description": "Simple offset in latitude (degrees)"
         }
       ],
-      "tags": ["geometry", "transform", "spatial"]
+      "examples": [
+        {
+          "name": "Move 1km North",
+          "parameters": { "distance": 1000, "direction": 0, "units": "meters" }
+        },
+        {
+          "name": "Simple offset",
+          "parameters": { "dx": 0.01, "dy": 0.01 }
+        }
+      ]
     },
     {
       "id": "flip-horizontal",
+      "commit": "b2c3d4e5",
+      "commit_date": "2024-01-15T10:15:00Z",
       "name": "Flip Horizontal",
-      "description": "Mirror GeoJSON features horizontally across a reference axis",
-      "category": "transform",
-      "runtime": "javascript",
-      "script": "tools/transform/flip-horizontal.js",
-      "function": "flipHorizontal",
-      "inputs": [
-        {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "GeoJSON FeatureCollection to flip"
-        }
-      ],
+      "labels": ["transform", "geometry"],
+      "description": "Flip features horizontally around the longitude or latitude axis",
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "axis",
           "type": "string",
-          "description": "Reference axis (longitude or latitude)",
           "default": "longitude",
-          "options": ["longitude", "latitude"]
+          "enum": ["longitude", "latitude"],
+          "description": "Axis to flip around"
         }
       ],
-      "outputs": [
+      "examples": [
         {
-          "name": "result",
-          "type": "GeoJSON",
-          "description": "Flipped GeoJSON FeatureCollection"
+          "name": "Mirror longitude",
+          "parameters": { "axis": "longitude" }
         }
-      ],
-      "tags": ["geometry", "transform", "mirror"]
+      ]
     },
     {
-      "id": "flip-vertical",
+      "id": "flip-vertical", 
+      "commit": "c3d4e5f6",
+      "commit_date": "2024-01-15T10:15:00Z",
       "name": "Flip Vertical",
-      "description": "Mirror GeoJSON features vertically across a reference axis",
-      "category": "transform",
-      "runtime": "javascript",
-      "script": "tools/transform/flip-vertical.js",
-      "function": "flipVertical",
-      "inputs": [
+      "labels": ["transform", "geometry"],
+      "description": "Flip features vertically around the latitude axis",
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "isTemporal": false,
+      "parameters": [],
+      "examples": [
         {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "GeoJSON FeatureCollection to flip"
+          "name": "Mirror latitude",
+          "parameters": {}
         }
-      ],
-      "parameters": [
-        {
-          "name": "axis",
-          "type": "string",
-          "description": "Reference axis (longitude or latitude)",
-          "default": "latitude",
-          "options": ["longitude", "latitude"]
-        }
-      ],
-      "outputs": [
-        {
-          "name": "result",
-          "type": "GeoJSON",
-          "description": "Flipped GeoJSON FeatureCollection"
-        }
-      ],
-      "tags": ["geometry", "transform", "mirror"]
+      ]
     },
     {
-      "id": "calculate-speed-series",
-      "name": "Calculate Speed Series",
-      "description": "Generate time series of speeds from a GPS track",
-      "category": "analysis",
-      "runtime": "javascript",
-      "script": "tools/analysis/speed-series.js",
-      "function": "calculateSpeedSeries",
-      "inputs": [
-        {
-          "name": "track",
-          "type": "GeoJSON",
-          "description": "GeoJSON LineString with timestamp properties"
-        }
-      ],
+      "id": "speed-series",
+      "commit": "d4e5f6g7",
+      "commit_date": "2024-01-18T09:45:00Z",
+      "name": "Calculate Speed Series", 
+      "labels": ["analysis", "temporal"],
+      "description": "Calculate speed time series from GPS track with timestamps",
+      "input_types": ["LineString"],
+      "output_types": ["array"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "time_unit",
-          "type": "string",
-          "description": "Time unit for speed calculation",
+          "type": "string", 
           "default": "seconds",
-          "options": ["seconds", "minutes", "hours"]
-        }
-      ],
-      "outputs": [
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
+        },
         {
-          "name": "series",
-          "type": "JSON",
-          "description": "Array of {time, speed} objects"
+          "name": "smoothing",
+          "type": "boolean",
+          "default": false,
+          "description": "Apply smoothing to speed values"
+        },
+        {
+          "name": "window_size",
+          "type": "number",
+          "default": 3,
+          "description": "Smoothing window size"
         }
       ],
-      "tags": ["temporal", "analysis", "gps", "speed"]
+      "examples": [
+        {
+          "name": "Speed in m/s",
+          "parameters": { "time_unit": "seconds" }
+        },
+        {
+          "name": "Smoothed speed in km/h",
+          "parameters": { "time_unit": "hours", "smoothing": true, "window_size": 5 }
+        }
+      ]
     },
     {
-      "id": "calculate-direction-series",
+      "id": "direction-series",
+      "commit": "e5f6g7h8",
+      "commit_date": "2024-01-20T11:20:00Z",
       "name": "Calculate Direction Series",
-      "description": "Generate time series of travel directions from a GPS track",
-      "category": "analysis",
-      "runtime": "javascript",
-      "script": "tools/analysis/direction-series.js",
-      "function": "calculateDirectionSeries",
-      "inputs": [
-        {
-          "name": "track",
-          "type": "GeoJSON",
-          "description": "GeoJSON LineString with timestamp properties"
-        }
-      ],
+      "labels": ["analysis", "temporal"], 
+      "description": "Calculate bearing/direction time series from GPS track",
+      "input_types": ["LineString"],
+      "output_types": ["array"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "smoothing",
           "type": "boolean",
-          "description": "Apply smoothing to directions",
-          "default": false
+          "default": false, 
+          "description": "Apply smoothing to direction values"
         },
         {
           "name": "window_size",
           "type": "number",
-          "description": "Smoothing window size",
-          "default": 3
+          "default": 3,
+          "description": "Smoothing window size"
         }
       ],
-      "outputs": [
+      "examples": [
         {
-          "name": "series",
-          "type": "JSON",
-          "description": "Array of {time, direction} objects"
+          "name": "Raw bearings", 
+          "parameters": { "smoothing": false }
+        },
+        {
+          "name": "Smoothed bearings",
+          "parameters": { "smoothing": true, "window_size": 5 }
         }
-      ],
-      "tags": ["temporal", "analysis", "gps", "bearing"]
+      ]
     },
     {
       "id": "average-speed",
-      "name": "Average Speed",
-      "description": "Calculate average speed from a GPS track",
-      "category": "statistics",
-      "runtime": "javascript",
-      "script": "tools/statistics/average-speed.js",
-      "function": "calculateAverageSpeed",
-      "inputs": [
-        {
-          "name": "track",
-          "type": "GeoJSON",
-          "description": "GeoJSON LineString with timestamp properties"
-        }
-      ],
+      "commit": "f6g7h8i9",
+      "commit_date": "2024-01-22T16:30:00Z",
+      "name": "Calculate Average Speed",
+      "labels": ["statistics", "temporal"],
+      "description": "Calculate the average speed over an entire GPS track",
+      "input_types": ["LineString"],
+      "output_types": ["number"],
+      "isTemporal": true,
       "parameters": [
         {
           "name": "time_unit",
           "type": "string",
-          "description": "Time unit for speed calculation",
-          "default": "seconds",
-          "options": ["seconds", "minutes", "hours"]
+          "default": "seconds", 
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
         }
       ],
-      "outputs": [
+      "examples": [
         {
-          "name": "speed",
-          "type": "number",
-          "description": "Average speed value"
+          "name": "Average speed m/s",
+          "parameters": { "time_unit": "seconds" }
+        },
+        {
+          "name": "Average speed km/h", 
+          "parameters": { "time_unit": "hours" }
         }
-      ],
-      "tags": ["statistics", "gps", "speed"]
+      ]
     },
     {
       "id": "speed-histogram",
-      "name": "Speed Histogram",
-      "description": "Create histogram of speeds with configurable intervals",
-      "category": "statistics",
-      "runtime": "javascript",
-      "script": "tools/statistics/speed-histogram.js",
-      "function": "createSpeedHistogram",
-      "inputs": [
-        {
-          "name": "track",
-          "type": "GeoJSON",
-          "description": "GeoJSON LineString with timestamp properties"
-        }
-      ],
+      "commit": "g7h8i9j0",
+      "commit_date": "2024-01-25T13:15:00Z",
+      "name": "Create Speed Histogram",
+      "labels": ["statistics", "temporal"],
+      "description": "Generate a histogram of speeds from GPS track data",
+      "input_types": ["LineString"],
+      "output_types": ["object"],
+      "isTemporal": true,
       "parameters": [
-        {
-          "name": "interval_minutes",
-          "type": "number",
-          "description": "Time interval in minutes",
-          "default": 1
-        },
         {
           "name": "bins",
           "type": "number",
-          "description": "Number of histogram bins",
-          "default": 20
-        }
-      ],
-      "outputs": [
+          "default": 10,
+          "description": "Number of histogram bins"
+        },
         {
-          "name": "histogram",
-          "type": "JSON",
-          "description": "Histogram data structure"
+          "name": "time_unit",
+          "type": "string", 
+          "default": "seconds",
+          "enum": ["seconds", "minutes", "hours"],
+          "description": "Time unit for speed calculation"
         }
       ],
-      "tags": ["statistics", "visualization", "gps", "speed"]
+      "examples": [
+        {
+          "name": "10-bin histogram", 
+          "parameters": { "bins": 10, "time_unit": "seconds" }
+        },
+        {
+          "name": "20-bin histogram in km/h",
+          "parameters": { "bins": 20, "time_unit": "hours" }
+        }
+      ]
     },
     {
       "id": "smooth-polyline",
+      "commit": "h8i9j0k1",
+      "commit_date": "2024-01-28T10:00:00Z",
       "name": "Smooth Polyline",
+      "labels": ["processing", "geometry"], 
       "description": "Apply smoothing algorithms to LineString geometries",
-      "category": "processing",
-      "runtime": "javascript",
-      "script": "tools/processing/smooth-polyline.js",
-      "function": "smoothPolyline",
-      "inputs": [
-        {
-          "name": "linestring",
-          "type": "GeoJSON",
-          "description": "GeoJSON LineString to smooth"
-        }
-      ],
+      "input_types": ["Feature", "FeatureCollection", "LineString"],
+      "output_types": ["Feature", "FeatureCollection", "LineString"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "algorithm",
           "type": "string",
-          "description": "Smoothing algorithm",
-          "default": "moving_average",
-          "options": ["moving_average", "gaussian"]
+          "default": "gaussian",
+          "enum": ["gaussian", "moving_average"],
+          "description": "Smoothing algorithm to use"
         },
         {
           "name": "window_size",
           "type": "number",
-          "description": "Smoothing window size",
-          "default": 3
+          "default": 3,
+          "description": "Smoothing window size"
         }
       ],
-      "outputs": [
+      "examples": [
         {
-          "name": "result",
-          "type": "GeoJSON",
-          "description": "Smoothed GeoJSON LineString"
-        }
-      ],
-      "tags": ["geometry", "processing", "smoothing"]
-    },
-    {
-      "id": "import-rep",
-      "name": "Import REP File",
-      "description": "Parse REP format file to GeoJSON",
-      "category": "io",
-      "runtime": "javascript",
-      "script": "tools/io/import-rep.js",
-      "function": "importREP",
-      "inputs": [
+          "name": "Gaussian smoothing",
+          "parameters": { "algorithm": "gaussian", "window_size": 3 }
+        },
         {
-          "name": "content",
-          "type": "text",
-          "description": "REP format text content"
+          "name": "Moving average",
+          "parameters": { "algorithm": "moving_average", "window_size": 5 }
         }
-      ],
-      "parameters": [
-        {
-          "name": "encoding",
-          "type": "string",
-          "description": "Text encoding",
-          "default": "utf-8"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "Parsed GeoJSON FeatureCollection"
-        }
-      ],
-      "tags": ["import", "conversion", "rep"]
-    },
-    {
-      "id": "export-rep",
-      "name": "Export to REP",
-      "description": "Convert GeoJSON to REP format",
-      "category": "io",
-      "runtime": "javascript",
-      "script": "tools/io/export-rep.js",
-      "function": "exportREP",
-      "inputs": [
-        {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "GeoJSON FeatureCollection to export"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "precision",
-          "type": "number",
-          "description": "Coordinate precision",
-          "default": 6
-        }
-      ],
-      "outputs": [
-        {
-          "name": "content",
-          "type": "text",
-          "description": "REP format text"
-        }
-      ],
-      "tags": ["export", "conversion", "rep"]
+      ]
     },
     {
       "id": "export-csv",
+      "commit": "i9j0k1l2",
+      "commit_date": "2024-01-30T14:45:00Z",
       "name": "Export to CSV",
-      "description": "Convert GeoJSON to CSV format",
-      "category": "io",
-      "runtime": "javascript",
-      "script": "tools/io/export-csv.js",
-      "function": "exportCSV",
-      "inputs": [
-        {
-          "name": "features",
-          "type": "GeoJSON",
-          "description": "GeoJSON FeatureCollection to export"
-        }
-      ],
+      "labels": ["io", "export"],
+      "description": "Export GeoJSON features to CSV format with coordinates and properties",
+      "input_types": ["Feature", "FeatureCollection", "Point", "LineString", "Polygon"],
+      "output_types": ["string"],
+      "isTemporal": false,
       "parameters": [
         {
           "name": "include_properties",
           "type": "boolean",
-          "description": "Include feature properties in CSV",
-          "default": true
+          "default": false,
+          "description": "Include feature properties in CSV output"
         },
         {
           "name": "coordinate_format",
           "type": "string",
-          "description": "Format for coordinates",
-          "default": "separate",
-          "options": ["separate", "wkt"]
-        }
-      ],
-      "outputs": [
+          "default": "separate", 
+          "enum": ["separate", "wkt"],
+          "description": "How to format coordinates"
+        },
         {
-          "name": "content",
-          "type": "text",
-          "description": "CSV format text"
+          "name": "separator",
+          "type": "string",
+          "default": ",",
+          "description": "CSV field separator"
         }
       ],
-      "tags": ["export", "conversion", "csv"]
+      "examples": [
+        {
+          "name": "Basic CSV",
+          "parameters": { "include_properties": false }
+        },
+        {
+          "name": "CSV with properties",
+          "parameters": { "include_properties": true, "separator": ";" }
+        }
+      ]
+    },
+    {
+      "id": "export-rep",
+      "commit": "j0k1l2m3",
+      "commit_date": "2024-01-31T08:30:00Z",
+      "name": "Export to REP Format", 
+      "labels": ["io", "export", "maritime"],
+      "description": "Export GeoJSON features to Debrief REP format for vessel tracking",
+      "input_types": ["Feature", "FeatureCollection"],
+      "output_types": ["string"],
+      "isTemporal": false,
+      "parameters": [
+        {
+          "name": "precision",
+          "type": "number",
+          "default": 6,
+          "description": "Coordinate precision (decimal places)"
+        }
+      ],
+      "examples": [
+        {
+          "name": "Standard precision",
+          "parameters": { "precision": 6 }
+        },
+        {
+          "name": "High precision",
+          "parameters": { "precision": 8 }
+        }
+      ]
+    },
+    {
+      "id": "import-rep",
+      "commit": "k1l2m3n4",
+      "commit_date": "2024-01-31T12:00:00Z",
+      "name": "Import REP Format",
+      "labels": ["io", "import", "maritime"],
+      "description": "Import Debrief REP format files into GeoJSON FeatureCollection",
+      "input_types": ["string"],
+      "output_types": ["FeatureCollection"],
+      "isTemporal": false,
+      "parameters": [
+        {
+          "name": "encoding",
+          "type": "string",
+          "default": "utf-8", 
+          "description": "Text encoding for REP file"
+        }
+      ],
+      "examples": [
+        {
+          "name": "UTF-8 encoding",
+          "parameters": { "encoding": "utf-8" }
+        }
+      ]
     }
-  ]
+  ],
+  "dependencies": {
+    "runtime": "browser",
+    "javascript_version": "ES2020"
+  },
+  "test_coverage": {
+    "statements": "90.05%",
+    "branches": "78.20%", 
+    "functions": "85.71%",
+    "lines": "90.00%"
+  },
+  "bundle_size": "~25KB",
+  "created": "2024-01-19",
+  "last_updated": "2024-01-19"
 }

@@ -27,7 +27,7 @@
     
     if (input.type === 'Feature' && input.geometry.type === 'LineString') {
       coordinates = input.geometry.coordinates;
-      timestamps = input.geometry.properties?.timestamps || [];
+      timestamps = input.properties?.timestamps || [];
     } else if (input.type === 'LineString') {
       coordinates = input.coordinates;
       timestamps = input.properties?.timestamps || [];
@@ -58,9 +58,9 @@
     let averageSpeed = totalDistance / totalTime; // m/s
     
     if (time_unit === 'minutes') {
-      averageSpeed = averageSpeed * 60; // m/min
+      averageSpeed = averageSpeed / 60; // m/min
     } else if (time_unit === 'hours') {
-      averageSpeed = averageSpeed * 3600; // m/h
+      averageSpeed = averageSpeed / 3600; // m/h
     }
     
     return averageSpeed;

@@ -3,7 +3,7 @@
   window.ToolVault.tools = window.ToolVault.tools || {};
   
   window.ToolVault.tools.exportCSV = function(input, params) {
-    const { include_properties = true, coordinate_format = 'separate' } = params || {};
+    const { include_properties = false, coordinate_format = 'separate', separator = ',' } = params || {};
     
     const rows = [];
     const headers = [];
@@ -14,7 +14,7 @@
         return '';
       }
       value = String(value);
-      if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+      if (value.includes(separator) || value.includes('"') || value.includes('\n')) {
         return '"' + value.replace(/"/g, '""') + '"';
       }
       return value;
@@ -37,6 +37,11 @@
           })
           .join(',');
         return `POLYGON${rings}`;
+      } else if (geometry.type === 'MultiPoint') {
+        const points = geometry.coordinates
+          .map(c => `${c[0]} ${c[1]}`)
+          .join(',');
+        return `MULTIPOINT(${points})`;
       }
       return '';
     }
@@ -51,6 +56,8 @@
         points.push(...geometry.coordinates);
       } else if (geometry.type === 'Polygon') {
         points.push(...geometry.coordinates[0]); // Only outer ring
+      } else if (geometry.type === 'MultiPoint') {
+        points.push(...geometry.coordinates);
       }
       
       return points;
@@ -72,14 +79,20 @@
       }];
     }
     
-    // Collect all property keys for headers
+    // Check for timestamps - include when present
+    const hasTimestamps = features.some(f => f.properties?.timestamps && Array.isArray(f.properties.timestamps));
+    const shouldIncludeTimestamps = hasTimestamps;
+    
+    // Collect all property keys for headers (excluding timestamps which get special treatment)
     const propertyKeys = new Set();
     
     if (include_properties) {
       features.forEach(feature => {
         if (feature.properties) {
           Object.keys(feature.properties).forEach(key => {
-            propertyKeys.add(key);
+            if (key !== 'timestamps') { // Handle timestamps separately
+              propertyKeys.add(key);
+            }
           });
         }
       });
@@ -92,11 +105,16 @@
       headers.push('longitude', 'latitude');
     }
     
+    // Add timestamp header if timestamps should be included
+    if (shouldIncludeTimestamps) {
+      headers.push('timestamp');
+    }
+    
     if (include_properties) {
       headers.push(...Array.from(propertyKeys));
     }
     
-    rows.push(headers.map(escapeCSV).join(','));
+    rows.push(headers.map(escapeCSV).join(separator));
     
     // Process each feature
     features.forEach(feature => {
@@ -115,15 +133,21 @@
           });
         }
         
-        rows.push(row.join(','));
+        rows.push(row.join(separator));
       } else {
         // One row per coordinate pair
         const coordinates = flattenCoordinates(feature.geometry);
+        const timestamps = feature.properties?.timestamps || [];
         
-        coordinates.forEach(coord => {
+        coordinates.forEach((coord, index) => {
           const row = [];
           row.push(escapeCSV(coord[0])); // longitude
           row.push(escapeCSV(coord[1])); // latitude
+          
+          // Add timestamp if available for this coordinate
+          if (shouldIncludeTimestamps) {
+            row.push(escapeCSV(timestamps[index] || ''));
+          }
           
           if (include_properties && feature.properties) {
             propertyKeys.forEach(key => {
@@ -131,11 +155,11 @@
             });
           }
           
-          rows.push(row.join(','));
+          rows.push(row.join(separator));
         });
       }
     });
     
-    return rows.join('\n');
+    return rows.join('\n') + (rows.length === 1 ? '\n' : '');
   };
 })();

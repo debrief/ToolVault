@@ -27,7 +27,7 @@
     
     if (input.type === 'Feature' && input.geometry.type === 'LineString') {
       coordinates = input.geometry.coordinates;
-      timestamps = input.geometry.properties?.timestamps || [];
+      timestamps = input.properties?.timestamps || [];
     } else if (input.type === 'LineString') {
       coordinates = input.coordinates;
       timestamps = input.properties?.timestamps || [];
@@ -53,9 +53,9 @@
         let speed = distance / timeDiff; // m/s
         
         if (time_unit === 'minutes') {
-          speed = speed * 60; // m/min
+          speed = speed / 60; // m/min
         } else if (time_unit === 'hours') {
-          speed = speed * 3600; // m/h
+          speed = speed / 3600; // m/h
         }
         
         series.push({

@@ -3,87 +3,104 @@
   window.ToolVault.tools = window.ToolVault.tools || {};
   
   window.ToolVault.tools.smoothPolyline = function(input, params) {
-    const { algorithm = 'moving_average', window_size = 3 } = params || {};
-    
-    // Extract coordinates
-    let coordinates = [];
-    let inputType = null;
-    
-    if (input.type === 'Feature' && input.geometry.type === 'LineString') {
-      coordinates = input.geometry.coordinates;
-      inputType = 'Feature';
-    } else if (input.type === 'LineString') {
-      coordinates = input.coordinates;
-      inputType = 'LineString';
-    }
-    
-    if (coordinates.length < 2) {
-      return input; // Not enough points to smooth
-    }
+    const { algorithm = 'moving_average', window_size = 3, sigma = 1.0 } = params || {};
     
     // Deep clone the input
     const result = JSON.parse(JSON.stringify(input));
     
-    // Apply smoothing based on algorithm
-    let smoothedCoords = [];
-    
-    if (algorithm === 'moving_average') {
-      // Moving average smoothing
-      const halfWindow = Math.floor(window_size / 2);
+    // Helper function to apply moving average smoothing
+    function movingAverageSmooth(coordinates, windowSize) {
+      if (coordinates.length <= windowSize) {
+        return coordinates;
+      }
+      
+      const smoothed = [];
+      const halfWindow = Math.floor(windowSize / 2);
       
       for (let i = 0; i < coordinates.length; i++) {
-        let sumLon = 0;
-        let sumLat = 0;
-        let count = 0;
+        let sumLon = 0, sumLat = 0, count = 0;
         
-        for (let j = Math.max(0, i - halfWindow); 
-             j <= Math.min(coordinates.length - 1, i + halfWindow); 
-             j++) {
+        const start = Math.max(0, i - halfWindow);
+        const end = Math.min(coordinates.length - 1, i + halfWindow);
+        
+        for (let j = start; j <= end; j++) {
           sumLon += coordinates[j][0];
           sumLat += coordinates[j][1];
           count++;
         }
         
-        smoothedCoords.push([sumLon / count, sumLat / count]);
-      }
-    } else if (algorithm === 'gaussian') {
-      // Gaussian smoothing
-      const sigma = window_size / 3; // Standard deviation
-      
-      // Generate Gaussian weights
-      function gaussianWeight(distance, sigma) {
-        return Math.exp(-(distance * distance) / (2 * sigma * sigma));
+        smoothed.push([sumLon / count, sumLat / count]);
       }
       
-      for (let i = 0; i < coordinates.length; i++) {
-        let weightedSumLon = 0;
-        let weightedSumLat = 0;
-        let totalWeight = 0;
-        
-        for (let j = 0; j < coordinates.length; j++) {
-          const distance = Math.abs(i - j);
-          const weight = gaussianWeight(distance, sigma);
-          
-          weightedSumLon += coordinates[j][0] * weight;
-          weightedSumLat += coordinates[j][1] * weight;
-          totalWeight += weight;
-        }
-        
-        smoothedCoords.push([
-          weightedSumLon / totalWeight,
-          weightedSumLat / totalWeight
-        ]);
-      }
-    } else {
-      // Default to original coordinates if algorithm not recognized
-      smoothedCoords = coordinates;
+      return smoothed;
     }
     
-    // Update the result with smoothed coordinates
-    if (inputType === 'Feature') {
-      result.geometry.coordinates = smoothedCoords;
-    } else if (inputType === 'LineString') {
-      result.coordinates = smoothedCoords;
+    // Helper function to apply Gaussian smoothing
+    function gaussianSmooth(coordinates, sigma) {
+      if (coordinates.length < 3) {
+        return coordinates;
+      }
+      
+      const smoothed = [];
+      const kernelSize = Math.ceil(3 * sigma) * 2 + 1;
+      const halfKernel = Math.floor(kernelSize / 2);
+      
+      // Generate Gaussian kernel
+      const kernel = [];
+      let kernelSum = 0;
+      for (let i = -halfKernel; i <= halfKernel; i++) {
+        const weight = Math.exp(-(i * i) / (2 * sigma * sigma));
+        kernel.push(weight);
+        kernelSum += weight;
+      }
+      
+      // Normalize kernel
+      for (let i = 0; i < kernel.length; i++) {
+        kernel[i] /= kernelSum;
+      }
+      
+      // Apply convolution
+      for (let i = 0; i < coordinates.length; i++) {
+        let sumLon = 0, sumLat = 0;
+        
+        for (let j = 0; j < kernel.length; j++) {
+          const coordIndex = i - halfKernel + j;
+          
+          if (coordIndex >= 0 && coordIndex < coordinates.length) {
+            sumLon += coordinates[coordIndex][0] * kernel[j];
+            sumLat += coordinates[coordIndex][1] * kernel[j];
+          }
+        }
+        
+        smoothed.push([sumLon, sumLat]);
+      }
+      
+      return smoothed;
+    }
+    
+    // Apply smoothing to coordinates
+    function smoothCoordinates(coords) {
+      if (algorithm === 'moving_average') {
+        return movingAverageSmooth(coords, window_size);
+      } else if (algorithm === 'gaussian') {
+        return gaussianSmooth(coords, sigma);
+      }
+      return coords;
+    }
+    
+    // Process based on input type
+    if (result.type === 'FeatureCollection') {
+      result.features.forEach(feature => {
+        if (feature.geometry && feature.geometry.type === 'LineString') {
+          feature.geometry.coordinates = smoothCoordinates(feature.geometry.coordinates);
+        }
+      });
+    } else if (result.type === 'Feature') {
+      if (result.geometry && result.geometry.type === 'LineString') {
+        result.geometry.coordinates = smoothCoordinates(result.geometry.coordinates);
+      }
+    } else if (result.type === 'LineString') {
+      result.coordinates = smoothCoordinates(result.coordinates);
     }
     
     return result;

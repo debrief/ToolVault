@@ -1,0 +1,332 @@
+{
+  "translate": [
+    {
+      "commit": "a1b2c3d4",
+      "commit_date": "2024-01-15T14:30:00Z",
+      "message": "Fix coordinate drift in hyperspace jumps - Imperial tracking was exploiting precision errors in our fleet repositioning calculations",
+      "author": "Luke Skywalker <luke@rebellion.org>",
+      "changes": ["Fixed floating point precision in distance calculations", "Added coordinate validation for extreme distances"]
+    },
+    {
+      "commit": "5e6f7g8h",
+      "commit_date": "2022-11-08T09:15:00Z", 
+      "message": "Add polar coordinate support for Death Star approach vectors - Cartesian offsets weren't sufficient for orbital mechanics",
+      "author": "Wedge Antilles <wedge@rebellion.org>",
+      "changes": ["Implemented distance/direction parameter support", "Added proper spherical coordinate handling"]
+    },
+    {
+      "commit": "9i0j1k2l",
+      "commit_date": "2021-06-22T16:45:00Z",
+      "message": "Emergency patch: prevent translation beyond sensor range - lost 3 probe droids to coordinate overflow",
+      "author": "Mon Mothma <mothma@rebellion.org>",
+      "changes": ["Added bounds checking for translation distances", "Fixed coordinate overflow in large translations"]
+    },
+    {
+      "commit": "3m4n5o6p",
+      "commit_date": "2020-03-14T11:20:00Z",
+      "message": "Initial implementation for rebel fleet positioning - need to stay mobile to avoid Imperial patrols",
+      "author": "Princess Leia <leia@rebellion.org>", 
+      "changes": ["Basic geometric translation functionality", "Support for Feature and FeatureCollection inputs"]
+    }
+  ],
+  "flip-horizontal": [
+    {
+      "commit": "b2c3d4e5",
+      "commit_date": "2024-01-15T10:15:00Z",
+      "message": "Optimize reflection calculations for Star Destroyer evasion maneuvers - every microsecond counts when dodging turbolaser fire",
+      "author": "Han Solo <han@rebellion.org>",
+      "changes": ["Improved bounding box center calculation", "Fixed edge case for single-point geometries"]
+    },
+    {
+      "commit": "7q8r9s0t",
+      "commit_date": "2023-05-30T13:22:00Z",
+      "message": "Add latitude axis flipping for Death Star trench runs - original tool only worked for longitude, useless for polar approaches",
+      "author": "Biggs Darklighter <biggs@rebellion.org>",
+      "changes": ["Added axis parameter with longitude/latitude options", "Generalized flipping algorithm for both axes"]
+    },
+    {
+      "commit": "1u2v3w4x",
+      "commit_date": "2022-02-17T08:30:00Z",
+      "message": "Fix mirror point calculation - Imperial analysts figured out our fleet movements were perfectly predictable",
+      "author": "Admiral Ackbar <ackbar@rebellion.org>",
+      "changes": ["Corrected center point calculation for multi-geometry features", "Added proper coordinate transformation matrix"]
+    },
+    {
+      "commit": "5y6z7a8b",
+      "commit_date": "2019-12-03T19:45:00Z",
+      "message": "Create horizontal flip tool for confusing Imperial tracking sensors - mirror our formations to throw off their predictions",
+      "author": "Jyn Erso <jyn@rebellion.org>",
+      "changes": ["Initial horizontal reflection implementation", "Basic geometry support for Point and LineString"]
+    }
+  ],
+  "flip-vertical": [
+    {
+      "commit": "c3d4e5f6", 
+      "commit_date": "2024-01-15T10:15:00Z",
+      "message": "Simplify vertical flip to delegate to horizontal flip - code duplication was making maintenance difficult during the siege of Hoth",
+      "author": "C-3PO <threepio@rebellion.org>",
+      "changes": ["Refactored to use flip-horizontal with latitude axis", "Reduced code duplication and maintenance overhead"]
+    },
+    {
+      "commit": "9c0d1e2f",
+      "commit_date": "2023-04-12T14:18:00Z",
+      "message": "Fix inverted latitude calculations - our Y-wing formations were flying upside down relative to target coordinates",
+      "author": "Gold Leader <gold@rebellion.org>",
+      "changes": ["Corrected latitude coordinate inversion logic", "Added validation for proper north/south orientation"]
+    },
+    {
+      "commit": "3g4h5i6j",
+      "commit_date": "2021-09-25T12:33:00Z",
+      "message": "Add vertical flip capability for Imperial formation mimicry - they expect us to mirror horizontally, not vertically",
+      "author": "Cassian Andor <cassian@rebellion.org>",
+      "changes": ["Implemented vertical reflection around equatorial plane", "Support for flipping Y-coordinates of geometric features"]
+    }
+  ],
+  "speed-series": [
+    {
+      "commit": "d4e5f6g7",
+      "commit_date": "2024-01-18T16:20:00Z",
+      "message": "Critical fix: timestamp location bug causing hyperspace miscalculations - ships were arriving days early or late",
+      "author": "R2-D2 <artoo@rebellion.org>",
+      "changes": ["Fixed timestamps property location in GeoJSON features", "Corrected time unit conversion calculations"]
+    },
+    {
+      "commit": "7k8l9m0n",
+      "commit_date": "2023-08-14T11:45:00Z",
+      "message": "Add smoothing option to filter out sensor noise from Imperial jamming - raw speed data was too erratic for navigation",
+      "author": "Poe Dameron <poe@resistance.org>",
+      "changes": ["Implemented moving average smoothing algorithm", "Added configurable window size parameter"]
+    },
+    {
+      "commit": "1o2p3q4r",
+      "commit_date": "2022-07-09T09:12:00Z",
+      "message": "Support multiple time units - rebel pilots think in different scales than Imperial standardization",
+      "author": "Hera Syndulla <hera@rebellion.org>",
+      "changes": ["Added seconds, minutes, hours time unit options", "Proper unit conversion for speed calculations"]
+    },
+    {
+      "commit": "5s6t7u8v",
+      "commit_date": "2021-01-28T15:33:00Z",
+      "message": "Implement speed analysis for tracking TIE fighter patrol patterns - need to predict their intercept courses",
+      "author": "Kanan Jarrus <kanan@rebellion.org>",
+      "changes": ["Core speed calculation from GPS tracks", "Haversine distance formula for accurate measurements"]
+    },
+    {
+      "commit": "9w0x1y2z",
+      "commit_date": "2019-10-15T13:27:00Z",
+      "message": "Initial speed series tool for rebel fleet coordination - essential for synchronized hyperspace exits",
+      "author": "Ezra Bridger <ezra@rebellion.org>",
+      "changes": ["Basic time series speed calculation", "Support for timestamped GPS track analysis"]
+    }
+  ],
+  "direction-series": [
+    {
+      "commit": "e5f6g7h8",
+      "commit_date": "2024-01-20T12:10:00Z",
+      "message": "Handle edge case for stationary targets - direction calculations were failing on Imperial listening posts",
+      "author": "Sabine Wren <sabine@rebellion.org>",
+      "changes": ["Fixed division by zero in bearing calculations", "Added handling for zero-distance coordinate pairs"]
+    },
+    {
+      "commit": "3a4b5c6d", 
+      "commit_date": "2023-06-18T17:25:00Z",
+      "message": "Add circular smoothing for bearing data - regular smoothing was causing 359° to 1° transitions to break our autopilots",
+      "author": "Wedge Antilles <wedge@rebellion.org>",
+      "changes": ["Implemented circular mean for angular smoothing", "Fixed bearing discontinuity handling at 0°/360°"]
+    },
+    {
+      "commit": "7e8f9g0h",
+      "commit_date": "2022-03-11T14:52:00Z",
+      "message": "Correct bearing calculations for Imperial formation tracking - our intercept angles were consistently off by 180°",
+      "author": "Garven Dreis <red@rebellion.org>",
+      "changes": ["Fixed atan2 parameter order in bearing calculation", "Corrected coordinate system orientation"]
+    },
+    {
+      "commit": "1i2j3k4l",
+      "commit_date": "2020-11-07T10:18:00Z",
+      "message": "Create direction analysis tool for predicting Imperial patrol routes - knowing their heading patterns is crucial",
+      "author": "General Dodonna <dodonna@rebellion.org>",
+      "changes": ["Implemented bearing calculation from coordinate sequences", "Added true north bearing orientation"]
+    }
+  ],
+  "average-speed": [
+    {
+      "commit": "f6g7h8i9",
+      "commit_date": "2024-01-22T13:45:00Z",
+      "message": "Handle zero-time intervals gracefully - Imperial chronometer jamming was causing division by zero crashes",
+      "author": "General Rieekan <rieekan@rebellion.org>",
+      "changes": ["Added zero time interval detection", "Return zero speed for invalid time sequences"]
+    },
+    {
+      "commit": "5m6n7o8p",
+      "commit_date": "2023-09-03T08:30:00Z",
+      "message": "Optimize calculation for long Imperial patrol routes - processing 12-hour Star Destroyer tracks was too slow",
+      "author": "Commander Sato <sato@rebellion.org>",
+      "changes": ["Improved algorithm efficiency for large datasets", "Added early exit for single-point tracks"]
+    },
+    {
+      "commit": "9q0r1s2t",
+      "commit_date": "2022-04-26T16:15:00Z",
+      "message": "Fix time unit conversion bug - our interceptor speeds were calculated as impossibly fast, confused our pilots",
+      "author": "General Merrick <blue@rebellion.org>",
+      "changes": ["Corrected division vs multiplication in unit conversions", "Added validation for reasonable speed values"]
+    },
+    {
+      "commit": "3u4v5w6x",
+      "commit_date": "2021-08-19T11:22:00Z",
+      "message": "Add average speed calculation for Imperial fleet analysis - need baseline metrics for identifying ship classes",
+      "author": "Admiral Raddus <raddus@rebellion.org>",
+      "changes": ["Implemented total distance over total time calculation", "Support for multiple time unit outputs"]
+    }
+  ],
+  "speed-histogram": [
+    {
+      "commit": "g7h8i9j0",
+      "commit_date": "2024-01-25T09:30:00Z",
+      "message": "Fix dependency on speed-series tool - histogram was failing when speed calculation module wasn't loaded first",
+      "author": "Jyn Erso <jyn@rebellion.org>",
+      "changes": ["Added proper error handling for missing dependencies", "Improved tool loading validation"]
+    },
+    {
+      "commit": "1y2z3a4b",
+      "commit_date": "2023-12-08T14:20:00Z",
+      "message": "Add configurable bin count - default 10 bins wasn't granular enough to distinguish between different TIE fighter variants",
+      "author": "Nien Nunb <nien@rebellion.org>",
+      "changes": ["Made bin count configurable via parameters", "Added validation for minimum bin requirements"]
+    },
+    {
+      "commit": "5c6d7e8f",
+      "commit_date": "2022-10-14T12:45:00Z",
+      "message": "Implement speed distribution analysis for identifying Imperial ship signatures - each class has distinct speed profiles",
+      "author": "Captain Antilles <antilles@rebellion.org>",
+      "changes": ["Core histogram generation from speed data", "Statistical binning with min/max/count tracking"]
+    }
+  ],
+  "smooth-polyline": [
+    {
+      "commit": "h8i9j0k1",
+      "commit_date": "2024-01-28T15:50:00Z",
+      "message": "Add moving average algorithm - Gaussian smoothing was over-correcting our hyperspace exit coordinates",
+      "author": "Lando Calrissian <lando@rebellion.org>",
+      "changes": ["Implemented moving average smoothing option", "Added algorithm parameter for user selection"]
+    },
+    {
+      "commit": "9g0h1i2j",
+      "commit_date": "2023-07-22T11:33:00Z",
+      "message": "Fix coordinate preservation at endpoints - smoothing was causing our ships to overshoot landing pad boundaries",
+      "author": "Chewbacca <chewie@rebellion.org>",
+      "changes": ["Preserve original endpoint coordinates", "Improved edge handling in smoothing algorithms"]
+    },
+    {
+      "commit": "3k4l5m6n",
+      "commit_date": "2022-12-01T16:28:00Z",
+      "message": "Add Gaussian smoothing for cleaning up sensor tracks - Imperial jamming creates too much noise in our navigation data",
+      "author": "Admiral Holdo <holdo@resistance.org>",
+      "changes": ["Implemented Gaussian kernel smoothing", "Configurable window size for smoothing intensity"]
+    },
+    {
+      "commit": "7o8p9q0r",
+      "commit_date": "2020-05-17T13:11:00Z",
+      "message": "Create polyline smoothing tool for cleaning hyperspace route calculations - raw astrogation data too jittery for safe jumps",
+      "author": "General Cracken <cracken@rebellion.org>",
+      "changes": ["Basic coordinate smoothing for LineString geometries", "Support for Feature and FeatureCollection inputs"]
+    }
+  ],
+  "export-csv": [
+    {
+      "commit": "i9j0k1l2",
+      "commit_date": "2024-01-30T11:25:00Z",
+      "message": "Add custom separator support - Imperial data formats use semicolons, need compatibility for infiltration missions",
+      "author": "Kyle Katarn <kyle@rebellion.org>",
+      "changes": ["Configurable field separator parameter", "Proper escaping for special characters in separators"]
+    },
+    {
+      "commit": "5s6t7u8v",
+      "commit_date": "2023-11-16T09:42:00Z",
+      "message": "Fix timestamp handling for coordinate sequences - each position needs its own timestamp for Imperial patrol analysis",
+      "author": "Jan Dodonna <jan@rebellion.org>",
+      "changes": ["Individual timestamp per coordinate pair", "Proper handling of mismatched timestamp arrays"]
+    },
+    {
+      "commit": "9w0x1y2z",
+      "commit_date": "2022-08-23T14:17:00Z",
+      "message": "Add property inclusion control - sometimes we need to hide rebel ship identifiers when exporting data",
+      "author": "Bail Organa <bail@alderaan.gov>",
+      "changes": ["Configurable property inclusion/exclusion", "Clean coordinate-only export option"]
+    },
+    {
+      "commit": "3a4b5c6d",
+      "commit_date": "2021-04-09T10:55:00Z",
+      "message": "Implement CSV export for sharing navigation data with New Republic fleet - standardized format for interoperability",
+      "author": "General Cracken <cracken@rebellion.org>",
+      "changes": ["Basic GeoJSON to CSV conversion", "Support for Point, LineString, and Polygon geometries"]
+    }
+  ],
+  "export-rep": [
+    {
+      "commit": "j0k1l2m3",
+      "commit_date": "2024-01-31T14:18:00Z", 
+      "message": "Fix vessel name handling with special characters - some rebel ship names have hyphens that were breaking the format",
+      "author": "Admiral Ackbar <ackbar@rebellion.org>",
+      "changes": ["Improved vessel name parsing and validation", "Proper handling of quoted names with special characters"]
+    },
+    {
+      "commit": "7e8f9g0h",
+      "commit_date": "2023-10-05T16:30:00Z",
+      "message": "Add support for heading, speed, depth data - Imperial naval tracking requires full kinematic information",
+      "author": "Commander Sato <sato@rebellion.org>",
+      "changes": ["Extended REP format with kinematic parameters", "Support for per-coordinate heading/speed/depth values"]
+    },
+    {
+      "commit": "1i2j3k4l",
+      "commit_date": "2022-06-11T13:22:00Z",
+      "message": "Implement DMS coordinate conversion - Imperial navigation uses degrees/minutes/seconds, not decimal degrees",
+      "author": "Captain Antilles <antilles@rebellion.org>",
+      "changes": ["Accurate DMS coordinate conversion", "Proper hemisphere handling for N/S/E/W indicators"]
+    },
+    {
+      "commit": "5m6n7o8p",
+      "commit_date": "2020-09-28T12:08:00Z",
+      "message": "Create REP format exporter for compatibility with Imperial Debrief systems - need to infiltrate their tracking networks",
+      "author": "Cassian Andor <cassian@rebellion.org>",
+      "changes": ["Initial REP format implementation", "Basic vessel tracking with timestamps"]
+    }
+  ],
+  "import-rep": [
+    {
+      "commit": "k1l2m3n4",
+      "commit_date": "2024-01-31T14:18:00Z",
+      "message": "Fix quote parsing for vessel names - Imperial ship names like 'Executor Class' were being truncated",
+      "author": "General Dodonna <dodonna@rebellion.org>",
+      "changes": ["Simplified quote handling in vessel name parsing", "Robust parsing for names with embedded spaces"]
+    },
+    {
+      "commit": "9q0r1s2t",
+      "commit_date": "2023-12-20T10:44:00Z",
+      "message": "Add support for multiple vessel tracks - captured Imperial data files contain entire fleet movements",
+      "author": "Mon Mothma <mothma@rebellion.org>",
+      "changes": ["Multi-vessel track separation by name", "Proper GeoJSON FeatureCollection generation"]
+    },
+    {
+      "commit": "3u4v5w6x",
+      "commit_date": "2022-09-15T15:25:00Z",
+      "message": "Fix timestamp parsing for fractional seconds - Imperial chronometers have microsecond precision we were losing",
+      "author": "C-3PO <threepio@rebellion.org>",
+      "changes": ["Proper millisecond handling in timestamp parsing", "UTC timezone conversion for accurate timing"]
+    },
+    {
+      "commit": "7y8z9a0b",
+      "commit_date": "2021-03-06T11:17:00Z",
+      "message": "Implement REP format parser for analyzing captured Imperial tracking data - their Debrief files are treasure troves",
+      "author": "Princess Leia <leia@rebellion.org>",
+      "changes": ["Core REP format parsing with DMS coordinates", "Comment line filtering and error handling"]
+    },
+    {
+      "commit": "1c2d3e4f",
+      "commit_date": "2019-11-22T08:33:00Z",
+      "message": "Initial REP import capability for intelligence gathering - need to decode Imperial fleet movement patterns",
+      "author": "General Rieekan <rieekan@rebellion.org>",
+      "changes": ["Basic REP file structure recognition", "Timestamp and coordinate extraction"]
+    }
+  ]
+}

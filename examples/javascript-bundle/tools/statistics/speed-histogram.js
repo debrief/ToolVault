@@ -3,80 +3,57 @@
   window.ToolVault.tools = window.ToolVault.tools || {};
   
   window.ToolVault.tools.createSpeedHistogram = function(input, params) {
-    const { interval_minutes = 1, bins = 20 } = params || {};
+    const { bins = 10, time_unit = 'seconds' } = params || {};
     
-    // Use the calculateSpeedSeries function to get speeds
-    const speedSeries = window.ToolVault.tools.calculateSpeedSeries(input, { time_unit: 'seconds' });
+    // First get the speed series using the calculateSpeedSeries tool
+    // This requires the speed-series tool to be loaded
+    if (!window.ToolVault.tools.calculateSpeedSeries) {
+      throw new Error('Speed series tool not available. Please load speed-series.js first.');
+    }
     
-    if (!speedSeries || speedSeries.length === 0) {
+    const speedSeries = window.ToolVault.tools.calculateSpeedSeries(input, { time_unit });
+    
+    if (speedSeries.length === 0) {
       return {
         bins: [],
         counts: [],
         min: 0,
-        max: 0
+        max: 0,
+        total: 0
       };
     }
     
-    // Group speeds by time intervals
-    const intervalMs = interval_minutes * 60 * 1000;
-    const intervalGroups = {};
-    
-    speedSeries.forEach(point => {
-      const time = new Date(point.time);
-      const intervalKey = Math.floor(time.getTime() / intervalMs) * intervalMs;
-      
-      if (!intervalGroups[intervalKey]) {
-        intervalGroups[intervalKey] = [];
-      }
-      intervalGroups[intervalKey].push(point.speed);
-    });
-    
-    // Calculate average speed for each interval
-    const intervalSpeeds = Object.values(intervalGroups).map(speeds => {
-      const sum = speeds.reduce((a, b) => a + b, 0);
-      return sum / speeds.length;
-    });
-    
-    if (intervalSpeeds.length === 0) {
-      return {
-        bins: [],
-        counts: [],
-        min: 0,
-        max: 0
-      };
-    }
-    
-    // Find min and max speeds
-    const minSpeed = Math.min(...intervalSpeeds);
-    const maxSpeed = Math.max(...intervalSpeeds);
+    // Extract speeds
+    const speeds = speedSeries.map(s => s.speed);
+    const minSpeed = Math.min(...speeds);
+    const maxSpeed = Math.max(...speeds);
     
     // Create histogram bins
     const binWidth = (maxSpeed - minSpeed) / bins;
-    const histogram = {
-      bins: [],
-      counts: new Array(bins).fill(0),
-      min: minSpeed,
-      max: maxSpeed,
-      binWidth: binWidth
-    };
+    const histogramBins = [];
+    const counts = [];
     
-    // Create bin edges
     for (let i = 0; i < bins; i++) {
-      histogram.bins.push({
-        min: minSpeed + i * binWidth,
-        max: minSpeed + (i + 1) * binWidth,
-        center: minSpeed + (i + 0.5) * binWidth
+      const binStart = minSpeed + i * binWidth;
+      const binEnd = i === bins - 1 ? maxSpeed + 0.001 : binStart + binWidth; // Include max in last bin
+      
+      histogramBins.push({
+        min: binStart,
+        max: binEnd,
+        center: (binStart + binEnd) / 2
       });
+      
+      // Count speeds in this bin
+      const count = speeds.filter(speed => speed >= binStart && speed < binEnd).length;
+      counts.push(count);
     }
     
-    // Count speeds in each bin
-    intervalSpeeds.forEach(speed => {
-      const binIndex = Math.min(Math.floor((speed - minSpeed) / binWidth), bins - 1);
-      if (binIndex >= 0 && binIndex < bins) {
-        histogram.counts[binIndex]++;
-      }
-    });
-    
-    return histogram;
+    return {
+      bins: histogramBins,
+      counts: counts,
+      min: minSpeed,
+      max: maxSpeed,
+      total: speeds.length
+    };
   };
 })();

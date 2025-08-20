@@ -26,7 +26,7 @@
     
     if (input.type === 'Feature' && input.geometry.type === 'LineString') {
       coordinates = input.geometry.coordinates;
-      timestamps = input.geometry.properties?.timestamps || [];
+      timestamps = input.properties?.timestamps || [];
     } else if (input.type === 'LineString') {
       coordinates = input.coordinates;
       timestamps = input.properties?.timestamps || [];
