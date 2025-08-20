@@ -3,6 +3,9 @@
   border-radius: 0.5rem;
   overflow: hidden;
   background-color: white;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .io-tabs-title {
@@ -46,6 +49,9 @@
 .tab-content {
   padding: 1rem;
   min-height: 200px;
+  max-width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
 }
 
 /* Preview styles */

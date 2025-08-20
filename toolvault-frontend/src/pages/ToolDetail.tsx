@@ -31,6 +31,29 @@ function ToolDetail() {
     }
   }, [id]);
 
+  // Add full-width class for tool detail pages
+  useEffect(() => {
+    const mainContent = document.querySelector('.main-content');
+    const htmlElement = document.documentElement;
+    
+    if (mainContent) {
+      mainContent.classList.add('tool-detail-page');
+    }
+    if (htmlElement) {
+      htmlElement.classList.add('tool-detail-page');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (mainContent) {
+        mainContent.classList.remove('tool-detail-page');
+      }
+      if (htmlElement) {
+        htmlElement.classList.remove('tool-detail-page');
+      }
+    };
+  }, []);
+
   useEffect(() => {
     // Handle tab query parameter
     const tabParam = searchParams.get('tab');
