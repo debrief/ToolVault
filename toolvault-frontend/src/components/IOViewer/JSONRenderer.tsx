@@ -4,7 +4,7 @@ import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './JSONRenderer.css';
 
 interface JSONRendererProps {
-  data: any;
+  data: unknown;
   title?: string;
   collapsible?: boolean;
   maxHeight?: string;
@@ -22,7 +22,7 @@ export const JSONRenderer: React.FC<JSONRendererProps> = ({
   const formatData = () => {
     try {
       return JSON.stringify(data, null, 2);
-    } catch (error) {
+    } catch {
       return 'Unable to format data';
     }
   };
@@ -32,7 +32,7 @@ export const JSONRenderer: React.FC<JSONRendererProps> = ({
       await navigator.clipboard.writeText(formatData());
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('idle'), 2000);
-    } catch (error) {
+    } catch {
       setCopyStatus('error');
       setTimeout(() => setCopyStatus('idle'), 2000);
     }

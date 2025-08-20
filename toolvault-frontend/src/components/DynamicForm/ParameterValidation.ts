@@ -9,8 +9,8 @@ export interface ValidationResult {
 
 export interface ParameterSchema {
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array';
-  default?: any;
+  type: 'string' | 'number' | 'boolean' | 'array' | 'enum';
+  default?: string | number | boolean | unknown[];
   min?: number;
   max?: number;
   step?: number;
@@ -20,8 +20,8 @@ export interface ParameterSchema {
   description?: string;
 }
 
-export class ParameterValidation {
-  static validateParameter(value: any, schema: ParameterSchema): ValidationResult {
+export const ParameterValidation = {
+  validateParameter(value: unknown, schema: ParameterSchema): ValidationResult {
     // Handle empty/undefined values
     if (value === undefined || value === null || value === '') {
       if (schema.required) {
@@ -39,12 +39,14 @@ export class ParameterValidation {
         return this.validateBoolean(value, schema);
       case 'array':
         return this.validateArray(value, schema);
+      case 'enum':
+        return this.validateString(value, schema); // Enums are validated as strings
       default:
         return { isValid: true };
     }
-  }
+  },
 
-  private static validateNumber(value: any, schema: ParameterSchema): ValidationResult {
+  validateNumber(value: unknown, schema: ParameterSchema): ValidationResult {
     const num = Number(value);
     
     if (isNaN(num)) {
@@ -64,9 +66,9 @@ export class ParameterValidation {
     }
 
     return { isValid: true };
-  }
+  },
 
-  private static validateString(value: any, schema: ParameterSchema): ValidationResult {
+  validateString(value: unknown, schema: ParameterSchema): ValidationResult {
     const str = String(value);
 
     if (schema.pattern) {
@@ -81,23 +83,23 @@ export class ParameterValidation {
     }
 
     return { isValid: true };
-  }
+  },
 
-  private static validateBoolean(value: any, schema: ParameterSchema): ValidationResult {
+  validateBoolean(value: unknown, schema: ParameterSchema): ValidationResult {
     if (typeof value !== 'boolean') {
       return { isValid: false, error: `${schema.name} must be true or false` };
     }
     return { isValid: true };
-  }
+  },
 
-  private static validateArray(value: any, schema: ParameterSchema): ValidationResult {
+  validateArray(value: unknown, schema: ParameterSchema): ValidationResult {
     if (!Array.isArray(value)) {
       return { isValid: false, error: `${schema.name} must be an array` };
     }
     return { isValid: true };
-  }
+  },
 
-  static validateForm(values: Record<string, any>, schemas: ParameterSchema[]): Record<string, string> {
+  validateForm(values: Record<string, unknown>, schemas: ParameterSchema[]): Record<string, string> {
     const errors: Record<string, string> = {};
 
     schemas.forEach(schema => {
@@ -109,4 +111,4 @@ export class ParameterValidation {
 
     return errors;
   }
-}
+};

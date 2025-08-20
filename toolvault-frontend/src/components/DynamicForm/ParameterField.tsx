@@ -4,8 +4,8 @@ import './ParameterField.css';
 
 interface ParameterFieldProps {
   schema: ParameterSchema;
-  value: any;
-  onChange: (value: any) => void;
+  value: unknown;
+  onChange: (value: unknown) => void;
   error?: string;
   compact?: boolean; // Only render the input field, no label or description
 }
@@ -24,7 +24,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="number"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
             onChange={(e) => {
               const val = e.target.value;
               if (val === '') {
@@ -46,7 +46,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           return (
             <select
               className={`parameter-select ${error ? 'error' : ''}`}
-              value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+              value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
               onChange={(e) => onChange(e.target.value)}
             >
               {schema.enum.map(option => (
@@ -62,7 +62,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           return (
             <textarea
               className={`parameter-textarea ${error ? 'error' : ''}`}
-              value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+              value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
               onChange={(e) => onChange(e.target.value)}
               placeholder={String(schema.default !== undefined ? schema.default : '')}
               rows={3}
@@ -74,7 +74,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="text"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
             onChange={(e) => onChange(e.target.value)}
             placeholder={String(schema.default !== undefined ? schema.default : '')}
             pattern={schema.pattern}
@@ -87,11 +87,11 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
             <input
               type="checkbox"
               className="parameter-checkbox"
-              checked={value !== undefined ? value : (schema.default || false)}
+              checked={value !== undefined ? Boolean(value) : Boolean(schema.default || false)}
               onChange={(e) => onChange(e.target.checked)}
             />
             <span className="checkbox-text">
-              {value !== undefined ? value : (schema.default || false) ? 'Yes' : 'No'}
+              {(value !== undefined ? Boolean(value) : Boolean(schema.default || false)) ? 'Yes' : 'No'}
             </span>
           </label>
         );
@@ -112,7 +112,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="text"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+            value={value !== undefined && value !== null ? String(value) : (schema.default !== undefined ? String(schema.default) : '')}
             onChange={(e) => onChange(e.target.value)}
             placeholder={String(schema.default !== undefined ? schema.default : '')}
           />

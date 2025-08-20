@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import type { ToolMetadata, ToolHistoryCommit } from '../types/tools';
+import type { ToolMetadata, ToolHistoryCommit, ToolInputData, ToolOutputData, ToolParameterValues, ToolParameter } from '../types/tools';
 import { toolService } from '../services/toolService';
 import { bundleLoader } from '../services/bundleLoader';
 import { ParameterField } from '../components/DynamicForm';
@@ -18,9 +18,9 @@ function ToolDetail() {
   const [activeTab, setActiveTab] = useState<'overview' | 'example' | 'history'>('overview');
   
   // Execution state
-  const [inputData, setInputData] = useState<any>(null);
-  const [outputData, setOutputData] = useState<any>(null);
-  const [paramValues, setParamValues] = useState<Record<string, any>>({});
+  const [inputData, setInputData] = useState<ToolInputData>(null);
+  const [outputData, setOutputData] = useState<ToolOutputData>(null);
+  const [paramValues, setParamValues] = useState<ToolParameterValues>({});
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionError, setExecutionError] = useState<string | null>(null);
   const [executionTime, setExecutionTime] = useState<number | undefined>();
@@ -31,12 +31,6 @@ function ToolDetail() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [expandedChanges, setExpandedChanges] = useState<Set<string>>(new Set());
   const [allExpanded, setAllExpanded] = useState(false);
-
-  useEffect(() => {
-    if (id) {
-      loadTool(id);
-    }
-  }, [id]);
 
   // Add full-width class for tool detail pages
   useEffect(() => {
@@ -78,7 +72,7 @@ function ToolDetail() {
     }
   }, [expandedChanges, historyData]);
 
-  const loadTool = async (toolId: string) => {
+  const loadTool = useCallback(async (toolId: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -102,7 +96,13 @@ function ToolDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (id) {
+      loadTool(id);
+    }
+  }, [id, loadTool]);
 
   const loadToolHistory = async (toolId: string) => {
     try {
@@ -172,7 +172,7 @@ function ToolDetail() {
     }
   };
 
-  const convertParametersToSchema = (params: any[]): ParameterSchema[] => {
+  const convertParametersToSchema = (params: ToolParameter[]): ParameterSchema[] => {
     return params.map(param => ({
       name: param.name,
       type: param.type,

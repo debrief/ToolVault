@@ -4,13 +4,13 @@ import { FileHandler } from './FileHandler';
 import './IOTabs.css';
 
 interface IOTabsProps {
-  data: any;
+  data: unknown;
   title?: string;
   showRaw?: boolean;
   showPreview?: boolean;
   showDownload?: boolean;
   filename?: string;
-  renderPreview?: (data: any) => React.ReactNode;
+  renderPreview?: (data: unknown) => React.ReactNode;
   onFileSelect?: (file: File) => void;
 }
 
@@ -78,7 +78,7 @@ export const IOTabs: React.FC<IOTabsProps> = ({
     }
   };
 
-  const renderDefaultPreview = (data: any) => {
+  const renderDefaultPreview = (data: unknown) => {
     if (data === null || data === undefined) {
       return <div className="empty-data">No data</div>;
     }
@@ -98,7 +98,7 @@ export const IOTabs: React.FC<IOTabsProps> = ({
             {data.type === 'Feature' && data.geometry && (
               <p>Geometry: {data.geometry.type}</p>
             )}
-            {data.coordinates && (
+            {data.coordinates !== undefined && data.coordinates !== null && (
               <p>Coordinates: {Array.isArray(data.coordinates) ? data.coordinates.length : 'Single point'}</p>
             )}
           </div>
@@ -169,9 +169,17 @@ export const IOTabs: React.FC<IOTabsProps> = ({
     );
   };
 
-  const isGeoJSON = (data: any): boolean => {
-    return data && typeof data === 'object' && 
-           ['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes(data.type);
+  interface GeoJSONBase {
+    type: string;
+    features?: unknown[];
+    geometry?: { type: string };
+    coordinates?: unknown;
+  }
+
+  const isGeoJSON = (data: unknown): data is GeoJSONBase => {
+    return data !== null && typeof data === 'object' && 'type' in data && 
+           typeof (data as { type: unknown }).type === 'string' &&
+           ['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes((data as { type: string }).type);
   };
 
   if (tabs.length === 0) {

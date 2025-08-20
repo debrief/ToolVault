@@ -3,14 +3,14 @@ import { IOTabs } from './IOTabs';
 import './OutputViewer.css';
 
 interface OutputViewerProps {
-  data: any;
+  data: unknown;
   outputTypes?: string[];
   title?: string;
   filename?: string;
   isLoading?: boolean;
   error?: string;
   executionTime?: number;
-  renderCustomPreview?: (data: any) => React.ReactNode;
+  renderCustomPreview?: (data: unknown) => React.ReactNode;
 }
 
 export const OutputViewer: React.FC<OutputViewerProps> = ({
@@ -78,7 +78,7 @@ export const OutputViewer: React.FC<OutputViewerProps> = ({
     );
   };
 
-  const getDataSize = (data: any): string => {
+  const getDataSize = (data: unknown): string => {
     try {
       const jsonString = JSON.stringify(data);
       const bytes = new TextEncoder().encode(jsonString).length;
@@ -90,7 +90,7 @@ export const OutputViewer: React.FC<OutputViewerProps> = ({
       } else {
         return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
       }
-    } catch (error) {
+    } catch {
       return 'Unknown size';
     }
   };

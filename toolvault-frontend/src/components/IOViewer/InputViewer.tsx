@@ -4,9 +4,9 @@ import './InputViewer.css';
 
 interface InputViewerProps {
   inputTypes?: string[];
-  onDataChange?: (data: any) => void;
+  onDataChange?: (data: unknown) => void;
   onFileSelect?: (file: File) => void;
-  currentData?: any;
+  currentData?: unknown;
   title?: string;
   placeholder?: string;
 }
@@ -35,7 +35,7 @@ export const InputViewer: React.FC<InputViewerProps> = ({
     try {
       const parsed = JSON.parse(value);
       onDataChange?.(parsed);
-    } catch (error) {
+    } catch {
       setParseError('Invalid JSON format');
       onDataChange?.(value); // Pass as raw string
     }
@@ -52,7 +52,7 @@ export const InputViewer: React.FC<InputViewerProps> = ({
         const parsed = JSON.parse(content);
         onDataChange?.(parsed);
         setTextInput(JSON.stringify(parsed, null, 2));
-      } catch (error) {
+      } catch {
         // If not JSON, use as raw text
         onDataChange?.(content);
         setTextInput(content);
@@ -181,7 +181,7 @@ export const InputViewer: React.FC<InputViewerProps> = ({
       </div>
 
       <div className="input-data-display">
-        {currentData && (
+        {currentData !== null && currentData !== undefined && (
           <div className="current-data-preview">
             Data loaded successfully
           </div>

@@ -3,14 +3,14 @@ import './FileHandler.css';
 
 interface FileHandlerProps {
   onFileSelect?: (file: File) => void;
-  onDataDownload?: (data: any, filename: string, format: string) => void;
-  data?: any;
+  onDataDownload?: (data: unknown, filename: string, format: string) => void;
+  data?: unknown;
   filename?: string;
   acceptedTypes?: string;
   maxSize?: number; // in MB
   showUpload?: boolean;
   showDownload?: boolean;
-  downloadFormats?: Array<{ format: string; label: string; mimeType: string }>;
+  downloadFormats?: { format: string; label: string; mimeType: string }[];
 }
 
 export const FileHandler: React.FC<FileHandlerProps> = ({
@@ -90,7 +90,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
     onDataDownload?.(data, downloadFilename, format);
   };
 
-  const convertToCSV = (data: any): string => {
+  const convertToCSV = (data: unknown): string => {
     if (!data) return '';
 
     // Handle arrays of objects
@@ -152,7 +152,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
         </div>
       )}
 
-      {showDownload && data && (
+      {showDownload && data !== undefined && data !== null && (
         <div className="download-section">
           <span className="download-label">Download as:</span>
           <div className="download-buttons">

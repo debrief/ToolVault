@@ -6,9 +6,9 @@ import './ParameterForm.css';
 
 interface ParameterFormProps {
   parameters: ParameterSchema[];
-  initialValues?: Record<string, any>;
-  onChange?: (values: Record<string, any>, isValid: boolean) => void;
-  onSubmit?: (values: Record<string, any>) => void;
+  initialValues?: Record<string, unknown>;
+  onChange?: (values: Record<string, unknown>, isValid: boolean) => void;
+  onSubmit?: (values: Record<string, unknown>) => void;
   showSubmitButton?: boolean;
   submitLabel?: string;
 }
@@ -21,14 +21,14 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
   showSubmitButton = false,
   submitLabel = 'Submit'
 }) => {
-  const [values, setValues] = useState<Record<string, any>>({});
+  const [values, setValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const isUpdatingRef = useRef(false);
 
   // Initialize form values with defaults
   useEffect(() => {
-    const defaultValues: Record<string, any> = {};
+    const defaultValues: Record<string, unknown> = {};
     
     parameters.forEach(param => {
       if (initialValues[param.name] !== undefined) {
@@ -76,7 +76,7 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
     onChange?.(values, isValid);
   }, [values, validateForm, onChange]);
 
-  const handleFieldChange = (paramName: string, value: any) => {
+  const handleFieldChange = (paramName: string, value: unknown) => {
     setValues(prev => ({
       ...prev,
       [paramName]: value

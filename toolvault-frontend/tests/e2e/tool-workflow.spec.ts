@@ -38,7 +38,7 @@ test.describe('Tool Execution Workflow', () => {
     // Try to catch the executing state, but don't fail if it's too fast
     try {
       await expect(executeButton).toContainText('Executing...', { timeout: 1000 });
-    } catch (e) {
+    } catch {
       // If execution is too fast, that's okay - just continue
       console.log('Execution was too fast to catch "Executing..." state');
     }

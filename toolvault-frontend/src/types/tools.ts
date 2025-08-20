@@ -7,6 +7,8 @@ export interface ToolParameter {
   description: string;
   min?: number;
   max?: number;
+  step?: number;
+  pattern?: string;
   enum?: string[];
 }
 
@@ -50,9 +52,7 @@ export interface ToolHistoryCommit {
   changes: string[];
 }
 
-export interface ToolHistory {
-  [toolId: string]: ToolHistoryCommit[];
-}
+export type ToolHistory = Record<string, ToolHistoryCommit[]>;
 
 export interface ToolRegistryEntry {
   metadata: ToolMetadata;
@@ -80,4 +80,17 @@ export interface GeoJSONFeature {
 export interface GeoJSONFeatureCollection {
   type: 'FeatureCollection';
   features: GeoJSONFeature[];
+}
+
+// Common data types for tool inputs and outputs
+export type ToolInputData = unknown;
+export type ToolOutputData = unknown;
+export type ParameterValue = string | number | boolean | unknown;
+export type ToolParameterValues = Record<string, ParameterValue>;
+
+// File handling types
+export interface FileDownload {
+  name: string;
+  data: string | Blob;
+  type: string;
 }
