@@ -119,7 +119,8 @@
       "Bash(yarn preview:*)",
       "Bash(open http://localhost:5174/tool/translate?tab=example)",
       "Bash(open http://localhost:5174/tool/translate)",
-      "Bash(GITHUB_PAGES=true yarn build)"
+      "Bash(GITHUB_PAGES=true yarn build)",
+      "Bash(gh run list:*)"
     ]
   }
 }
