@@ -103,7 +103,11 @@
       "Bash(open http://localhost:5175/tools/change-color-to-red)",
       "WebFetch(domain:modelcontextprotocol.io)",
       "Bash(npm run coverage:*)",
-      "WebFetch(domain:debrief.github.io)"
+      "WebFetch(domain:debrief.github.io)",
+      "Bash(npm create:*)",
+      "Bash(npm run prepare:*)",
+      "Bash(open http://localhost:*)",
+      "Bash(open http://127.0.0.1:*)"
     ]
   }
 }

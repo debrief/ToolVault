@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd toolvault-frontend
+npm run typecheck
+npm run test:e2e
