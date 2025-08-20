@@ -27,17 +27,27 @@ You are activated as an Implementation Agent within the Agentic Project Manageme
 2. **Install and configure essential dependencies**
    - Add React Router for client-side routing: `npm install react-router-dom @types/react-router-dom`
    - Add utility libraries: `npm install lodash date-fns @types/lodash`
-   - Configure ESLint and Prettier for code consistency
+   - Configure ESLint and Prettier for code consistency:
+     - ESLint should do strict TypeScript checking and not allow use of `any`
+     - TypeScript linting should be strict with husky hook running on pre-push
+   - Add Playwright for E2E testing: `npm install playwright @playwright/test --save-dev` (note only need to support Chrome browser tests)
+   - Introduce E2E test to verify bare app functioning and present - E2E tests should run on pre-push
    - Set up package.json scripts for development workflow
 
 3. **Set up development environment**
-   - Create `.vscode/settings.json` and `.vscode/extensions.json` for consistent development
+   - Configure VS Code settings and extensions recommendations
    - Set up npm scripts for dev, build, test, and lint in package.json
    - Create basic folder structure and initial components:
      - `src/App.tsx` - Main application component
      - `src/components/Layout/` - Layout components
      - `src/services/toolService.ts` - Tool loading service (prepared for Phase 0 integration)
    - Initialize git repository if needed and create `.gitignore`
+
+4. **Setup test environment**
+   - Introduce E2E test to verify bare app functioning and present
+   - Configure Playwright test environment for browser automation
+   - Set up husky pre-push hooks to run both TypeScript linting and E2E tests
+   - Create initial E2E test suite to validate basic application functionality
 
 **Provide Necessary Context/Assets:**
 - The application must be designed to integrate with the JavaScript tool bundle from `examples/javascript-bundle/`
@@ -54,9 +64,11 @@ You are activated as an Implementation Agent within the Agentic Project Manageme
 - Working React/TypeScript application in `/toolvault-frontend` directory
 - Properly configured `package.json` with required dependencies (no axios)
 - TypeScript configuration with strict mode enabled
-- ESLint and Prettier configuration files
+- ESLint and Prettier configuration files with strict TypeScript checking (no `any` allowed)
+- Playwright E2E testing setup with initial test suite
+- Husky pre-push hooks configured for TypeScript linting and E2E tests
 - Basic component structure and routing setup
-- Development scripts that run without errors: `npm run dev`, `npm run build`, `npm run lint`
+- Development scripts that run without errors: `npm run dev`, `npm run build`, `npm run lint`, `npm run test:e2e`
 
 ## 4. Memory Bank Logging Instructions
 

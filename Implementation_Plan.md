@@ -154,11 +154,14 @@ Objective: Establish the core frontend application infrastructure using modern w
    - Add React Router for client-side routing
    - Install Axios for HTTP requests
    - Add utility libraries: lodash, date-fns
-   - Configure ESLint and Prettier for code consistency
+   - Configure ESLint and Prettier for code consistency. ESLint should do strict TS checking, and not allow use of `any`.  TS linting should be struct, with husky hook running on pre-push.
+   - Add `playwright` and `@playwright/test`, introduce e2e test to verify bare app functioning and present.  e2e tests should run on pre-push 
 3. Set up development environment.
    - Configure VS Code settings and extensions recommendations
    - Set up npm scripts for dev, build, test, and lint
    - Create basic folder structure and initial components
+4. Setup test environment.
+   - Introduce e2e test to verify bare app functioning and present.   
 
 ### Task 1.2 - Agent_Frontend_Lead: Load Standard Bundle from Phase 0
 Objective: Integrate the JavaScript toolbox created in Phase 0 as the standard tool bundle.
