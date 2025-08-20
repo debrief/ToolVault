@@ -36,10 +36,11 @@ export class BundleLoader {
   }
 
   async loadPhase0Bundle(): Promise<ToolBundle> {
-    // Load the Phase 0 JavaScript bundle from the original location
+    // Load the Phase 0 JavaScript bundle from the correct location
+    const basePath = import.meta.env.BASE_URL || '/';
     const bundlePath = import.meta.env.DEV 
       ? '/examples/javascript-bundle/index.json'  // Vite dev server can serve parent directories with fs.allow
-      : '/examples/javascript-bundle/index.json'; // In production, this will be bundled
+      : `${basePath}examples/javascript-bundle/index.json`; // In production, use the base path
     
     return this.loadBundle(bundlePath);
   }
@@ -74,9 +75,10 @@ export class BundleLoader {
     }
 
     try {
+      const basePath = import.meta.env.BASE_URL || '/';
       const historyPath = import.meta.env.DEV 
         ? '/examples/javascript-bundle/history.json'
-        : '/examples/javascript-bundle/history.json';
+        : `${basePath}examples/javascript-bundle/history.json`;
       
       const response = await fetch(historyPath);
       if (!response.ok) {

@@ -71,9 +71,10 @@ export class ScriptLoader {
     return new Promise((resolve, reject) => {
       // Determine script path based on tool category
       const category = this.getToolCategory(toolMetadata);
+      const basePath = import.meta.env.BASE_URL || '/';
       const scriptPath = import.meta.env.DEV
         ? `/examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`  // Vite dev server can serve parent directories with fs.allow
-        : `/examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`; // In production, this will be bundled
+        : `${basePath}examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`; // In production, use the base path
 
       // Create script element
       const script = document.createElement('script');
