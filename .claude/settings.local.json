@@ -2,7 +2,6 @@
   "permissions": {
     "allow": [
       "Bash(yarn init:*)",
-      "Bash(yarn add:*)",
       "Bash(mkdir:*)",
       "Bash(yarn build-plugin:*)",
       "Bash(rm:*)",
