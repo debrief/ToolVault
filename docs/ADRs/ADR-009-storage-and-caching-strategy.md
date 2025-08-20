@@ -25,7 +25,6 @@ ToolVault requires a storage and caching strategy that supports:
 
 ### Core Components
 - **Tool Bundles**: File system storage managed by FastAPI backend
-- **Execution History**: Session-only, no persistence across restarts
 - **Browser Storage**: Completely avoided - no LocalStorage/IndexedDB usage
 - **Updates**: Multi-modal approach (manual + startup check + background)
 

@@ -33,7 +33,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 
 **FR-1.4** The system SHALL provide an interactive tool detail page allowing users to test tools with sample data.
 
-**FR-1.5** The system SHALL display version history for individual tools and tool collections.
+**FR-1.5** The system SHALL display git version history for individual tools and tool collections.
 
 ### 2.2 Input Management
 
@@ -328,7 +328,7 @@ ToolVault SHALL provide a metadata-driven interface for tool discovery, executio
 **Tech-1.4** The system SHALL organize code using domain-driven structure:
 - `/tools/` - Tool discovery, metadata, and browsing
 - `/execution/` - Tool execution and parameter management  
-- `/history/` - Execution history and provenance tracking
+- `/history/` - Source history and provenance tracking (from git)
 - `/visualization/` - Spatial output rendering with LeafletJS
 - `/shared/` - Common components, types, and utilities
 

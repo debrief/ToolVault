@@ -2,7 +2,7 @@
 
 ToolVault is a portable, self-contained service that delivers curated collections of analysis tools
 for scientists, analysts, and developers. It provides an interactive browser-based interface for
-discovering, running, and understanding tools — complete with history, legacy version access, and
+discovering, running, and understanding tools — complete with git history, legacy version access, and
 spatial output visualisation.
 
 ## Key Features
@@ -24,7 +24,7 @@ We are in the **early UI mockup phase**, focusing on:
 1. **Phase 1 – UI Mockup**  
    - Bare static UI from `index.json` (browse tools, view details, inputs/outputs, run button).  
    - Mock tool calls with placeholder outputs.  
-   - Full browsing UI with LeafletJS output rendering and history view placeholder.  
+   - Full browsing UI with LeafletJS output rendering and git history view placeholder.  
 
 2. **Phase 2 – Indexer Development**  
    - ToolVault indexer to scan a Git repo of tools, generate `index.json` and metadata.  

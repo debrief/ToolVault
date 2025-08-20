@@ -179,43 +179,43 @@ Objective: Integrate the JavaScript toolbox created in Phase 0 as the standard t
    - Handle script loading errors gracefully
    - Test integration with all 10-15 tools from Phase 0
 
-### Task 1.3 - Agent_Frontend_Lead: Metadata-Driven UI from index.json
-Objective: Create dynamic UI components that generate interfaces directly from Phase 0 tool metadata.
+### Task 1.3 - Agent_Frontend_Lead: Tool Discovery and Browsing Interface
+Objective: Build intuitive interface for browsing and discovering Phase 0 JavaScript tools.
 
 1. Parse tool metadata from Phase 0 index.json.
    - Load and validate index.json structure with runtime field
    - Create TypeScript interfaces for tool definitions and parameters
    - Support parameter constraints and validation rules
    - Handle metadata parsing errors and validation
-2. Implement dynamic form generation.
-   - Generate forms dynamically based on Phase 0 parameter schemas
-   - Support all parameter types used in Phase 0 tools (number, string, boolean, enum)
-   - Implement form state management with validation
-   - Add parameter help text and validation error display
-3. Create output rendering system.
-   - Support output formats from Phase 0: GeoJSON, JSON, Files
-   - Implement tabbed output viewer (Raw, Preview, Download)
-   - Add syntax highlighting for JSON/GeoJSON outputs
-   - Handle file output generation and download triggers
-
-### Task 1.4 - Agent_Frontend_Lead: Tool Discovery and Browsing Interface
-Objective: Build intuitive interface for browsing and discovering Phase 0 JavaScript tools.
-
-1. Implement tool browser component.
+2. Implement tool browser component.
    - Create grid/list view showing Phase 0 tools with metadata cards
    - Display tool categories: Transform, Analysis, Statistics, Processing, I/O
    - Show tool name, description, parameter count, and runtime type
    - Implement responsive design for different screen sizes
-2. Add search and filtering capabilities.
+3. Add search and filtering capabilities.
    - Implement text search across Phase 0 tool names and descriptions
    - Add category-based filtering matching Phase 0 tool organization
    - Support runtime type filtering (JavaScript initially)
    - Create clear/reset filters functionality
-3. Design tool detail view.
+4. Design tool detail view.
    - Show complete tool information from Phase 0 metadata
    - Display input/output specifications and parameter details
    - Add "Try Tool" button to navigate to execution interface
    - Include tool metadata like version and runtime requirements
+
+### Task 1.4 - Agent_Frontend_Lead: Metadata-Driven UI from index.json
+Objective: Create dynamic UI components that generate interfaces directly from Phase 0 tool metadata.
+
+1. Implement dynamic form generation.
+   - Generate forms dynamically based on Phase 0 parameter schemas
+   - Support all parameter types used in Phase 0 tools (number, string, boolean, enum)
+   - Implement form state management with validation
+   - Add parameter help text and validation error display
+2. Create input/output rendering system.
+   - Support input/output formats from Phase 0: GeoJSON, JSON, Files
+   - Implement tabbed input/output viewer (Raw, Preview, Download)
+   - Add syntax highlighting for JSON/GeoJSON input/outputs
+   - Handle file input/output generation and download triggers
 
 ### Task 1.5 - Agent_Frontend_Lead: Dynamic Input Forms and Output Renderers
 Objective: Create the execution interface that works with Phase 0 tool specifications.
@@ -231,8 +231,8 @@ Objective: Create the execution interface that works with Phase 0 tool specifica
    - Support different input types including Phase 0 sample data
    - Implement execution timeout and error recovery
 3. Create results display system.
-   - Multi-tab output viewer for Phase 0 tool outputs
-   - Support GeoJSON, JSON, and file download outputs from Phase 0
+   - Multi-tab input/output viewer for Phase 0 tool inputs/outputs
+   - Support GeoJSON, JSON, and file download inputs/outputs from Phase 0
    - Prepare for LeafletJS integration for GeoJSON visualization
    - Add execution history tracking (local storage initially)
 

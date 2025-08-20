@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ToolVault is a portable, self-contained service that delivers curated collections of analysis tools for scientists, analysts, and developers. It provides an interactive browser-based interface for discovering, running, and understanding tools with history tracking, version awareness, and spatial output visualization.
+ToolVault is a portable, self-contained service that delivers curated collections of analysis tools for scientists, analysts, and developers. It provides an interactive browser-based interface for discovering, running, and understanding tools version awareness, and spatial output visualization.
 
 ## Project Structure
 

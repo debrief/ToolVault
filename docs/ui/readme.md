@@ -40,7 +40,7 @@ Based on user journey: Homepage → Browse Tools → Tool Detail → Execution
 - **ToolTabs**: Tab interface (Overview, Example, History)
 - **ToolOverview**: Description, metadata, inputs/outputs
 - **ToolExample**: Input/Output components, plus trigger button.
-- **ToolHistory**: Execution history display (placeholder initially)
+- **ToolHistory**: Git source history display (placeholder initially)
 - **InputOutputVisualization**: Shows data types and formats
 - **ExecutionInterface**: Run button positioned between input/output visualizations
 
@@ -57,7 +57,6 @@ Based on user journey: Homepage → Browse Tools → Tool Detail → Execution
 - **RunButton**: Central execution trigger
 - **ExecutionStatus**: Progress indicator and status display
 - **ResultDisplay**: Container for tool execution results
-- **HistoryEntry**: Individual execution record
 
 ### 7. Utility Components
 - **LoadingSpinner**: Loading states

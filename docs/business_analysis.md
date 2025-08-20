@@ -115,7 +115,7 @@ ToolVault addresses the organization's need for reproducible, accessible, and st
 **Tool Discovery**
 - Find appropriate tools through search and browsing
 - Interactive testing before application
-- Version history shows tool evolution
+- Version history shows tool evolution from git log
 - Related tools and common patterns visible
 
 **Pipeline Templates**
