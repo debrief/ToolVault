@@ -22,12 +22,20 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="number"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value || schema.default || ''}
-            onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '') {
+                onChange(undefined);
+              } else {
+                const parsed = parseFloat(val);
+                onChange(isNaN(parsed) ? undefined : parsed);
+              }
+            }}
             min={schema.min}
             max={schema.max}
             step={schema.step || 'any'}
-            placeholder={String(schema.default || '')}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
           />
         );
 
@@ -36,7 +44,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           return (
             <select
               className={`parameter-select ${error ? 'error' : ''}`}
-              value={value || schema.default || ''}
+              value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
               onChange={(e) => onChange(e.target.value)}
             >
               {schema.enum.map(option => (
@@ -52,9 +60,9 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           return (
             <textarea
               className={`parameter-textarea ${error ? 'error' : ''}`}
-              value={value || schema.default || ''}
+              value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
               onChange={(e) => onChange(e.target.value)}
-              placeholder={String(schema.default || '')}
+              placeholder={String(schema.default !== undefined ? schema.default : '')}
               rows={3}
             />
           );
@@ -64,9 +72,9 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="text"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value || schema.default || ''}
+            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={String(schema.default || '')}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
             pattern={schema.pattern}
           />
         );
@@ -90,7 +98,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
         return (
           <textarea
             className={`parameter-textarea ${error ? 'error' : ''}`}
-            value={Array.isArray(value) ? value.join(', ') : (schema.default ? schema.default.join(', ') : '')}
+            value={Array.isArray(value) ? value.join(', ') : (Array.isArray(schema.default) ? schema.default.join(', ') : '')}
             onChange={(e) => onChange(e.target.value.split(',').map(item => item.trim()).filter(item => item))}
             placeholder="Enter comma-separated values"
             rows={2}
@@ -102,9 +110,9 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
           <input
             type="text"
             className={`parameter-input ${error ? 'error' : ''}`}
-            value={value || schema.default || ''}
+            value={value !== undefined && value !== null ? value : (schema.default !== undefined ? schema.default : '')}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={String(schema.default || '')}
+            placeholder={String(schema.default !== undefined ? schema.default : '')}
           />
         );
     }

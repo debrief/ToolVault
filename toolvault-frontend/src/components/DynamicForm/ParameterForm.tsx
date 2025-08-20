@@ -37,7 +37,15 @@ export const ParameterForm: React.FC<ParameterFormProps> = ({
       }
     });
 
-    setValues(defaultValues);
+    // Only set values if they haven't been initialized yet or if parameters changed
+    setValues(prev => {
+      // Check if we need to update
+      const needsUpdate = parameters.some(param => !(param.name in prev));
+      if (needsUpdate || Object.keys(prev).length === 0) {
+        return { ...prev, ...defaultValues };
+      }
+      return prev;
+    });
   }, [parameters, initialValues]);
 
   // Validate form whenever values change

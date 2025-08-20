@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import type { ToolMetadata } from '../types/tools';
 import { toolService } from '../services/toolService';
@@ -101,6 +101,11 @@ function ToolDetail() {
       description: param.description
     }));
   };
+
+  // Memoize parameter schema conversion to prevent unnecessary re-renders
+  const parameterSchema = useMemo(() => {
+    return tool ? convertParametersToSchema(tool.parameters) : [];
+  }, [tool]);
 
   const loadExampleData = (exampleIndex: number) => {
     if (!tool || !tool.examples || !tool.examples[exampleIndex]) return;
@@ -270,7 +275,7 @@ function ToolDetail() {
           <div className="parameters-section">
             <h4>Parameters</h4>
             <ParameterForm
-              parameters={convertParametersToSchema(tool.parameters)}
+              parameters={parameterSchema}
               onChange={(values) => setParamValues(values)}
             />
             
