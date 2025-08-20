@@ -7,8 +7,11 @@ import ToolBrowser from './components/ToolBrowser/ToolBrowser';
 import './App.css';
 
 function App() {
+  // Get the base path from Vite's configuration
+  const basename = import.meta.env.BASE_URL;
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
