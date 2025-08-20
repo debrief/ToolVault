@@ -333,12 +333,12 @@ function ToolDetail() {
   );
 
   const renderExampleTab = () => (
-    <div className="example-tab">
+    <div className="example-tab execution-interface">
       <div className="workflow-container">        
         {/* Step 1: Input Configuration */}
-        <div className="input-configuration">
+        <div className="input-configuration interface-grid">
           <div className="input-config-grid">
-            <div className="input-data-section">
+            <div className="input-data-section input-section">
               <InputViewer
                 inputTypes={tool.input_types}
                 onDataChange={setInputData}
@@ -347,7 +347,7 @@ function ToolDetail() {
               />
             </div>
 
-            <div className="parameters-config-section">
+            <div className="parameters-config-section parameters-section">
               <div className="parameters-header">
                 <h4>Parameters</h4>
                 {tool.examples && tool.examples.length > 0 && (
@@ -372,28 +372,30 @@ function ToolDetail() {
                 <p className="no-parameters">This tool requires no parameters.</p>
               ) : (
                 <div className="parameters-table-container">
-                  <table className="parameters-form-table">
-                    <tbody>
-                      {tool.parameters.map(param => (
-                        <tr key={param.name}>
-                          <td className="param-name">
-                            <strong>{param.name}</strong>
-                          </td>
-                          <td className="param-description">
-                            {param.description || '—'}
-                          </td>
-                          <td className="param-input">
-                            <ParameterField
-                              schema={convertParametersToSchema([param])[0]}
-                              value={paramValues[param.name]}
-                              onChange={(value) => setParamValues(prev => ({ ...prev, [param.name]: value }))}
-                              compact={true}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <div className="parameter-form">
+                    <table className="parameters-form-table">
+                      <tbody>
+                        {tool.parameters.map(param => (
+                          <tr key={param.name} className="parameter-field">
+                            <td className="param-name">
+                              <span className="parameter-label"><strong>{param.name}</strong></span>
+                            </td>
+                            <td className="param-description">
+                              {param.description || '—'}
+                            </td>
+                            <td className="param-input">
+                              <ParameterField
+                                schema={convertParametersToSchema([param])[0]}
+                                value={paramValues[param.name]}
+                                onChange={(value) => setParamValues(prev => ({ ...prev, [param.name]: value }))}
+                                compact={true}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
@@ -407,7 +409,7 @@ function ToolDetail() {
             onClick={executeTool}
             disabled={!inputData || isExecuting}
           >
-            {isExecuting ? '⏳ Executing...' : '▶ Run Tool'}
+            {isExecuting ? 'Executing...' : '▶ Run Tool'}
           </button>
         </div>
 
@@ -421,6 +423,11 @@ function ToolDetail() {
             error={executionError || undefined}
             executionTime={executionTime}
           />
+          {executionError && (
+            <div className="output-error error-message">
+              {executionError}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -511,6 +518,12 @@ function ToolDetail() {
   return (
     <div className="tool-detail">
       <div className="tool-header-nav">
+        <button
+          className="back-button"
+          onClick={() => window.location.href = '/browse'}
+        >
+          ← Back to Browse
+        </button>
       </div>
 
       <div className="tool-header">

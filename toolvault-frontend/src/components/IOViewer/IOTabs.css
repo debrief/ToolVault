@@ -16,13 +16,13 @@
   color: #111827;
 }
 
-.tabs-header {
+.io-tabs-header {
   display: flex;
   border-bottom: 1px solid #e5e7eb;
   background-color: #f9fafb;
 }
 
-.tab-button {
+.io-tab-button {
   flex: 1;
   background: none;
   border: none;
@@ -35,12 +35,12 @@
   border-bottom: 2px solid transparent;
 }
 
-.tab-button:hover {
+.io-tab-button:hover {
   color: #374151;
   background-color: #f3f4f6;
 }
 
-.tab-button.active {
+.io-tab-button.io-tab-active {
   color: #3b82f6;
   background-color: white;
   border-bottom-color: #3b82f6;
@@ -177,11 +177,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .tabs-header {
+  .io-tabs-header {
     overflow-x: auto;
   }
   
-  .tab-button {
+  .io-tab-button {
     flex-shrink: 0;
     min-width: 100px;
   }

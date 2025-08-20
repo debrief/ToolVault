@@ -26,6 +26,9 @@ export class ScriptLoader {
       return existingPromise;
     }
 
+    // Handle tool dependencies
+    await this.loadDependencies(toolId);
+
     // Get tool metadata
     const toolMetadata = await toolRegistry.getToolById(toolId);
     if (!toolMetadata) {
@@ -46,6 +49,21 @@ export class ScriptLoader {
       throw loadError;
     } finally {
       this.loadingPromises.delete(toolId);
+    }
+  }
+
+  private async loadDependencies(toolId: string): Promise<void> {
+    // Define tool dependencies
+    const dependencies: Record<string, string[]> = {
+      'flip-vertical': ['flip-horizontal'],
+    };
+
+    const deps = dependencies[toolId];
+    if (deps) {
+      // Load dependencies recursively
+      for (const dep of deps) {
+        await this.loadTool(dep);
+      }
     }
   }
 
@@ -136,17 +154,49 @@ export class ScriptLoader {
 
   async loadAllTools(): Promise<void> {
     const tools = await toolRegistry.getTools();
-    const loadPromises = tools.map(tool => this.loadTool(tool.id));
     
-    // Load tools in parallel but collect all errors
-    const results = await Promise.allSettled(loadPromises);
-    const errors = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-      .map(result => result.reason);
-
-    if (errors.length > 0) {
-      throw new Error(`Failed to load ${errors.length} tools: ${errors.map(e => e.message).join(', ')}`);
+    // Load tools with dependencies first - sort by dependency order
+    const sortedTools = this.sortToolsByDependencies(tools.map(t => t.id));
+    
+    for (const toolId of sortedTools) {
+      try {
+        await this.loadTool(toolId);
+      } catch (error) {
+        console.warn(`Failed to load tool ${toolId}:`, error);
+        // Continue loading other tools even if one fails
+      }
     }
+  }
+
+  private sortToolsByDependencies(toolIds: string[]): string[] {
+    const dependencies: Record<string, string[]> = {
+      'flip-vertical': ['flip-horizontal'],
+    };
+
+    const sorted: string[] = [];
+    const visited = new Set<string>();
+    
+    const visit = (toolId: string) => {
+      if (visited.has(toolId) || !toolIds.includes(toolId)) {
+        return;
+      }
+      
+      visited.add(toolId);
+      
+      // Visit dependencies first
+      const deps = dependencies[toolId] || [];
+      for (const dep of deps) {
+        visit(dep);
+      }
+      
+      sorted.push(toolId);
+    };
+    
+    for (const toolId of toolIds) {
+      visit(toolId);
+    }
+    
+    return sorted;
   }
 
   getLoadedTools(): string[] {

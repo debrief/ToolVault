@@ -110,16 +110,16 @@ test.describe('Metadata-Driven Form Generation', () => {
     await page.goto('/tool/translate?tab=example');
     
     // Should have parameter fields based on translate tool metadata
-    const distanceField = page.locator('.parameter-field').filter({ hasText: 'distance' });
+    const distanceField = page.locator('.parameters-form-table tr').filter({ hasText: 'distance' }).first();
     await expect(distanceField).toBeVisible();
     await expect(distanceField.locator('input[type="number"]')).toBeVisible();
     
-    const unitsField = page.locator('.parameter-field').filter({ hasText: 'units' });
+    const unitsField = page.locator('.parameters-form-table tr').filter({ hasText: 'units' });
     await expect(unitsField).toBeVisible();
     await expect(unitsField.locator('select')).toBeVisible();
     
-    // Verify parameter descriptions are shown
-    await expect(distanceField.locator('.parameter-description')).toContainText('Distance to translate');
+    // Verify parameter descriptions are shown in table cell
+    await expect(distanceField.locator('.param-description')).toContainText('Distance to translate');
   });
   
   test('should show input/output viewers', async ({ page }) => {

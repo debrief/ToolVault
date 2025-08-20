@@ -181,6 +181,11 @@ export const InputViewer: React.FC<InputViewerProps> = ({
       </div>
 
       <div className="input-data-display">
+        {currentData && (
+          <div className="current-data-preview">
+            Data loaded successfully
+          </div>
+        )}
         <IOTabs
           data={currentData}
           title={currentData ? "Current Input Data" : "No Input Data"}

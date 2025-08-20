@@ -182,11 +182,11 @@ export const IOTabs: React.FC<IOTabsProps> = ({
     <div className="io-tabs">
       {title && <h3 className="io-tabs-title">{title}</h3>}
       
-      <div className="tabs-header">
+      <div className="io-tabs-header">
         {tabs.map(tab => (
           <button
             key={tab.id}
-            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+            className={`io-tab-button ${activeTab === tab.id ? 'io-tab-active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
           >
             {tab.label}
