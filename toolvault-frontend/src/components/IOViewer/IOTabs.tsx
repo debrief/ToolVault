@@ -67,7 +67,7 @@ export const IOTabs: React.FC<IOTabsProps> = ({
               data={data}
               filename={filename}
               showUpload={!!onFileSelect}
-              showDownload={true}
+              showDownload={!!data}
               onFileSelect={onFileSelect}
             />
           </div>

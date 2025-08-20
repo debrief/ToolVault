@@ -180,29 +180,29 @@ export const InputViewer: React.FC<InputViewerProps> = ({
         {renderInputContent()}
       </div>
 
-      {currentData && (
-        <div className="current-data-preview">
-          <IOTabs
-            data={currentData}
-            title="Current Input"
-            showDownload={false}
-            showRaw={false}
-            onFileSelect={inputMode === 'file' ? handleFileSelect : undefined}
-          />
-        </div>
-      )}
-
-      {!currentData && inputMode === 'file' && (
-        <div className="upload-placeholder">
-          <IOTabs
-            data={null}
-            showPreview={false}
-            showRaw={false}
-            showDownload={false}
-            onFileSelect={handleFileSelect}
-          />
-        </div>
-      )}
+      <div className="input-data-display">
+        <IOTabs
+          data={currentData}
+          title={currentData ? "Current Input Data" : "No Input Data"}
+          showPreview={true}
+          showRaw={true}
+          showDownload={!!currentData}
+          filename="input-data"
+          onFileSelect={handleFileSelect}
+          renderPreview={currentData ? undefined : () => (
+            <div className="no-input-placeholder">
+              <div className="placeholder-icon">📄</div>
+              <div className="placeholder-title">No Input Data</div>
+              <div className="placeholder-message">
+                Use the controls above to load input data for this tool
+              </div>
+              <div className="accepted-types-info">
+                <strong>Accepted types:</strong> {inputTypes.length > 0 ? inputTypes.join(', ') : 'Any format'}
+              </div>
+            </div>
+          )}
+        />
+      </div>
     </div>
   );
 };

@@ -114,7 +114,9 @@
       "Bash(open http://localhost:5179/test-tools)",
       "Bash(open http://localhost:5179/tool/translate)",
       "Bash(yarn playwright test:*)",
-      "Bash(open http://localhost:5179/tool/direction-series)"
+      "Bash(open http://localhost:5179/tool/direction-series)",
+      "Bash(open http://localhost:5173/tool/translate?tab=example)",
+      "Bash(yarn preview:*)"
     ]
   }
 }
