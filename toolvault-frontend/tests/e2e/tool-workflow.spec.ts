@@ -88,11 +88,11 @@ test.describe('Tool Execution Workflow', () => {
     await page.click('text=Sample Data');
     await page.click('text=Load Sample GeoJSON Data');
     
-    // Modify parameters
-    const distanceInput = page.locator('.parameter-field').filter({ hasText: 'distance' }).locator('input');
+    // Modify parameters using table structure
+    const distanceInput = page.locator('.parameters-form-table tr').filter({ hasText: 'distance' }).locator('input');
     await distanceInput.fill('1000');
     
-    const unitsSelect = page.locator('.parameter-field').filter({ hasText: 'units' }).locator('select');
+    const unitsSelect = page.locator('.parameters-form-table tr').filter({ hasText: 'units' }).locator('select');
     await unitsSelect.selectOption('meters');
     
     await page.click('.execute-button');
@@ -180,8 +180,10 @@ test.describe('Tool Execution Workflow', () => {
     // Should preserve tab state
     await expect(page.locator('.tab-button.active')).toContainText('Try It');
     
-    // Navigate back to browse
-    await page.click('.back-button');
+    // need to find, and click on `Browse Tools` link
+    const browseLink = page.locator('.nav-link').filter({ hasText: 'Browse Tools' });
+    await expect(browseLink).toBeVisible();
+    browseLink.click();
     await expect(page).toHaveURL('/browse');
     
     // Navigate to tool again

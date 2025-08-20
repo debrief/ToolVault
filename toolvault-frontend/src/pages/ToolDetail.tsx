@@ -1,16 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import type { ToolMetadata, ToolHistoryCommit } from '../types/tools';
 import { toolService } from '../services/toolService';
 import { bundleLoader } from '../services/bundleLoader';
-import { ParameterForm, ParameterField } from '../components/DynamicForm';
+import { ParameterField } from '../components/DynamicForm';
 import { InputViewer, OutputViewer } from '../components/IOViewer';
 import type { ParameterSchema } from '../components/DynamicForm';
 import './ToolDetail.css';
 
 function ToolDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
   const [tool, setTool] = useState<ToolMetadata | null>(null);
@@ -187,10 +186,6 @@ function ToolDetail() {
     }));
   };
 
-  // Memoize parameter schema conversion to prevent unnecessary re-renders
-  const parameterSchema = useMemo(() => {
-    return tool ? convertParametersToSchema(tool.parameters) : [];
-  }, [tool]);
 
   const loadExampleData = (exampleIndex: number) => {
     if (!tool || !tool.examples || !tool.examples[exampleIndex]) return;
@@ -237,9 +232,6 @@ function ToolDetail() {
       <div className="tool-detail-error">
         <h2>Error</h2>
         <p>{error}</p>
-        <button onClick={() => navigate('/browse')}>
-          ← Back to Browse Tools
-        </button>
       </div>
     );
   }
@@ -251,6 +243,7 @@ function ToolDetail() {
   const renderOverviewTab = () => (
     <div className="overview-tab">
       <div className="tool-metadata">
+        <p className="tool-description">{tool.description}</p>
         <div className="metadata-row">
           <span className="metadata-label">Category:</span>
           <span className="metadata-value">{tool.labels.join(', ')}</span>
@@ -341,9 +334,7 @@ function ToolDetail() {
 
   const renderExampleTab = () => (
     <div className="example-tab">
-      <div className="workflow-container">
-        <h3>Try the Tool</h3>
-        
+      <div className="workflow-container">        
         {/* Step 1: Input Configuration */}
         <div className="input-configuration">
           <div className="input-config-grid">
@@ -520,14 +511,10 @@ function ToolDetail() {
   return (
     <div className="tool-detail">
       <div className="tool-header-nav">
-        <button className="back-button" onClick={() => navigate('/browse')}>
-          ← Back to Browse Tools
-        </button>
       </div>
 
       <div className="tool-header">
         <h1>{tool.name}</h1>
-        <p className="tool-description">{tool.description}</p>
       </div>
 
       <div className="tool-tabs">

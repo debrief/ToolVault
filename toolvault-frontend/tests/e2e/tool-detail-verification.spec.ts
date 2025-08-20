@@ -75,7 +75,6 @@ test.describe('Tool Detail Page - Core Verification', () => {
     
     // Should have back button
     await expect(page.locator('.back-button')).toBeVisible();
-    await expect(page.locator('.back-button')).toContainText('Back to Browse Tools');
     
     // Click back button
     await page.click('.back-button');

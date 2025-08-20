@@ -6,45 +6,45 @@ test.describe('Metadata-Driven UI Generation', () => {
   test('should generate correct form for translate tool (multiple param types)', async ({ page }) => {
     await page.goto('/tool/translate?tab=example');
     
-    // Should show all parameter fields based on metadata
-    const paramFields = page.locator('.parameter-field');
-    await expect(paramFields).toHaveCount(5);
+    // Should show all parameter rows based on metadata
+    const paramRows = page.locator('.parameters-form-table tr');
+    await expect(paramRows).toHaveCount(5);
     
     // Check specific parameter types are rendered correctly
     // Distance - number field
-    const distanceField = page.locator('.parameter-field').filter({ hasText: 'distance' });
-    await expect(distanceField.locator('input[type="number"]')).toBeVisible();
+    const distanceRow = page.locator('.parameters-form-table tr').filter({ hasText: 'distance' });
+    await expect(distanceRow.locator('input[type="number"]')).toBeVisible();
     
     // Direction - number field
-    const directionField = page.locator('.parameter-field').filter({ hasText: 'direction' });
-    await expect(directionField.locator('input[type="number"]')).toBeVisible();
+    const directionRow = page.locator('.parameters-form-table tr').filter({ hasText: 'direction' });
+    await expect(directionRow.locator('input[type="number"]')).toBeVisible();
     
     // Units - enum/select field
-    const unitsField = page.locator('.parameter-field').filter({ hasText: 'units' });
-    await expect(unitsField.locator('select')).toBeVisible();
+    const unitsRow = page.locator('.parameters-form-table tr').filter({ hasText: 'units' });
+    await expect(unitsRow.locator('select')).toBeVisible();
     
     // Should have default values populated
-    const unitsSelect = unitsField.locator('select');
+    const unitsSelect = unitsRow.locator('select');
     await expect(unitsSelect).toHaveValue('meters');
   });
   
   test('should generate correct form for speed-series tool (boolean params)', async ({ page }) => {
     await page.goto('/tool/speed-series?tab=example');
     
-    // Should show parameter fields
-    const paramFields = page.locator('.parameter-field');
-    await expect(paramFields).toHaveCount(3);
+    // Should show parameter rows
+    const paramRows = page.locator('.parameters-form-table tr');
+    await expect(paramRows).toHaveCount(3);
     
     // Check boolean parameter is rendered as checkbox
-    const smoothingField = page.locator('.parameter-field').filter({ hasText: 'smoothing' });
-    await expect(smoothingField.locator('input[type="checkbox"]')).toBeVisible();
+    const smoothingRow = page.locator('.parameters-form-table tr').filter({ hasText: 'smoothing' });
+    await expect(smoothingRow.locator('input[type="checkbox"]')).toBeVisible();
     
     // Check enum parameter for time_unit
-    const timeUnitField = page.locator('.parameter-field').filter({ hasText: 'time_unit' });
-    await expect(timeUnitField.locator('select')).toBeVisible();
+    const timeUnitRow = page.locator('.parameters-form-table tr').filter({ hasText: 'time_unit' });
+    await expect(timeUnitRow.locator('select')).toBeVisible();
     
     // Should have options: seconds, minutes, hours
-    const timeUnitSelect = timeUnitField.locator('select');
+    const timeUnitSelect = timeUnitRow.locator('select');
     await expect(timeUnitSelect.locator('option')).toHaveCount(3);
   });
   
@@ -52,7 +52,7 @@ test.describe('Metadata-Driven UI Generation', () => {
     await page.goto('/tool/flip-vertical?tab=example');
     
     // Should show no parameters message
-    await expect(page.locator('text=No parameters required for this tool')).toBeVisible();
+    await expect(page.locator('text=This tool requires no parameters')).toBeVisible();
     
     // Should still show execute button
     await expect(page.locator('.execute-button')).toBeVisible();
@@ -61,18 +61,15 @@ test.describe('Metadata-Driven UI Generation', () => {
   test('should validate parameter inputs correctly', async ({ page }) => {
     await page.goto('/tool/translate?tab=example');
     
-    // Test number field validation
-    const distanceInput = page.locator('.parameter-field').filter({ hasText: 'distance' }).locator('input');
+    // Test number field - can enter valid numeric values
+    const distanceInput = page.locator('.parameters-form-table tr').filter({ hasText: 'distance' }).locator('input');
     
-    // Enter invalid value
-    await distanceInput.fill('invalid');
-    await distanceInput.blur();
-    
-    // Should reset to valid value or show error
-    // (The exact behavior depends on how we implemented validation)
+    // Enter valid value
+    await distanceInput.fill('100');
+    await expect(distanceInput).toHaveValue('100');
     
     // Test enum field shows correct options
-    const unitsSelect = page.locator('.parameter-field').filter({ hasText: 'units' }).locator('select');
+    const unitsSelect = page.locator('.parameters-form-table tr').filter({ hasText: 'units' }).locator('select');
     const options = await unitsSelect.locator('option').allTextContents();
     expect(options).toContain('meters');
     expect(options).toContain('kilometers');
@@ -82,14 +79,14 @@ test.describe('Metadata-Driven UI Generation', () => {
     // Test tool that accepts FeatureCollection
     await page.goto('/tool/translate?tab=example');
     
-    // Should show accepted input types
-    await expect(page.locator('text=Feature, FeatureCollection')).toBeVisible();
+    // Should show accepted input types (use more specific selector to avoid strict mode violation)
+    await expect(page.locator('.input-data-section').first()).toContainText('Feature, FeatureCollection');
     
     // Test tool that accepts string input  
     await page.goto('/tool/import-rep?tab=example');
     
     // Should show string input type
-    await expect(page.locator('text=string')).toBeVisible();
+    await expect(page.locator('.input-data-section').first()).toContainText('string');
   });
   
   test('should generate correct output viewers for different output types', async ({ page }) => {
@@ -113,26 +110,26 @@ test.describe('Metadata-Driven UI Generation', () => {
     const previewTab = page.locator('.output-section .tab-button').filter({ hasText: 'Preview' });
     if (await previewTab.isVisible()) {
       await previewTab.click();
-      await expect(page.locator('text=GeoJSON Data')).toBeVisible();
+      await expect(page.locator('.output-section h4').filter({ hasText: 'GeoJSON Data' })).toBeVisible();
     }
   });
   
   test('should show parameter descriptions and help text', async ({ page }) => {
     await page.goto('/tool/translate?tab=example');
     
-    // Should show parameter descriptions
-    const distanceField = page.locator('.parameter-field').filter({ hasText: 'distance' });
-    await expect(distanceField.locator('.parameter-description')).toContainText('Distance to translate (meters)');
+    // Should show parameter descriptions in table
+    const distanceRow = page.locator('.parameters-form-table tr').filter({ has: page.locator('.param-name strong', { hasText: 'distance' }) });
+    await expect(distanceRow.locator('.param-description')).toContainText('Distance to translate (meters)');
     
-    const directionField = page.locator('.parameter-field').filter({ hasText: 'direction' });
-    await expect(directionField.locator('.parameter-description')).toContainText('Direction in degrees (0=North, 90=East)');
+    const directionRow = page.locator('.parameters-form-table tr').filter({ has: page.locator('.param-name strong', { hasText: 'direction' }) });
+    await expect(directionRow.locator('.param-description')).toContainText('Direction in degrees (0=North, 90=East)');
   });
   
   test('should load example parameters when clicking example buttons', async ({ page }) => {
     await page.goto('/tool/translate?tab=example');
     
     // Should have example buttons if examples exist
-    const exampleButtons = page.locator('.example-button');
+    const exampleButtons = page.locator('.example-button-small');
     const exampleCount = await exampleButtons.count();
     
     if (exampleCount > 0) {
@@ -140,7 +137,7 @@ test.describe('Metadata-Driven UI Generation', () => {
       await exampleButtons.first().click();
       
       // Should populate parameter values
-      const distanceInput = page.locator('.parameter-field').filter({ hasText: 'distance' }).locator('input');
+      const distanceInput = page.locator('.parameters-form-table tr').filter({ hasText: 'distance' }).locator('input');
       const distanceValue = await distanceInput.inputValue();
       expect(distanceValue).not.toBe('0'); // Should be populated with example value
     }
