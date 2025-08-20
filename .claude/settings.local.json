@@ -106,11 +106,15 @@
       "WebFetch(domain:debrief.github.io)",
       "Bash(npm create:*)",
       "Bash(npm run prepare:*)",
-      "Bash(open http://localhost:*)",
-      "Bash(open http://127.0.0.1:*)",
+      "Bash(open http://localhost:*/test-tools)",
+      "Bash(open http://127.0.0.1:*/test-tools)",
       "Bash(ln:*)",
       "Bash(kill:*)",
-      "Bash(yarn install)"
+      "Bash(yarn install)",
+      "Bash(open http://localhost:5179/test-tools)",
+      "Bash(open http://localhost:5179/tool/translate)",
+      "Bash(yarn playwright test:*)",
+      "Bash(open http://localhost:5179/tool/direction-series)"
     ]
   }
 }

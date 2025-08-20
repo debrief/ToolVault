@@ -50,10 +50,35 @@ export class ToolService {
         await this.loadToolScript(toolId);
       }
 
-      // Execute tool via window.ToolVault.tools
-      const toolFunction = window.ToolVault?.tools?.[toolId];
+      // Map tool IDs to their actual function names in the JavaScript files
+      const functionNameMap: Record<string, string> = {
+        // Transform tools
+        'translate': 'translate',
+        'flip-horizontal': 'flipHorizontal', 
+        'flip-vertical': 'flipVertical',
+        
+        // Analysis tools
+        'speed-series': 'calculateSpeedSeries',
+        'direction-series': 'calculateDirectionSeries',
+        
+        // Statistics tools
+        'average-speed': 'calculateAverageSpeed',
+        'speed-histogram': 'createSpeedHistogram',
+        
+        // Processing tools
+        'smooth-polyline': 'smoothPolyline',
+        
+        // I/O tools
+        'export-csv': 'exportCSV',
+        'export-rep': 'exportREP',
+        'import-rep': 'importREP',
+      };
+
+      // Execute tool via window.ToolVault.tools using the correct function name
+      const functionName = functionNameMap[toolId] || toolId;
+      const toolFunction = window.ToolVault?.tools?.[functionName];
       if (!toolFunction) {
-        throw new Error(`Tool ${toolId} is not available`);
+        throw new Error(`Tool ${toolId} is not available (function: ${functionName})`);
       }
 
       const output = toolFunction(input, parameters);

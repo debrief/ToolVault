@@ -1,5 +1,12 @@
 .test-tools {
   padding: 2rem;
+  max-width: 100%;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .loading {
@@ -55,6 +62,11 @@
   cursor: not-allowed;
 }
 
+.tools-list h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -67,6 +79,19 @@
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tool-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.tool-card.selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .tool-card h3 {
@@ -114,4 +139,100 @@
 .tool-params li {
   margin-bottom: 0.25rem;
   color: #555;
+}
+
+.tool-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease;
+}
+
+.action-button.primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.action-button.primary:hover {
+  background-color: #2563eb;
+}
+
+.action-button.secondary {
+  background-color: #10b981;
+  color: white;
+}
+
+.action-button.secondary:hover {
+  background-color: #059669;
+}
+
+/* Test completion note */
+.test-note {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.test-note h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.test-note p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+.navigation-info {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.navigation-info p {
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.navigation-info ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.navigation-info li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .test-tools {
+    padding: 1rem;
+  }
+  
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tool-interface {
+    padding: 1rem;
+  }
 }

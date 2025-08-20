@@ -106,7 +106,32 @@ export class ScriptLoader {
   }
 
   private isToolAvailable(toolId: string): boolean {
-    return !!(window.ToolVault?.tools?.[toolId]);
+    // Map tool IDs to their actual function names in the JavaScript files
+    const functionNameMap: Record<string, string> = {
+      // Transform tools
+      'translate': 'translate',
+      'flip-horizontal': 'flipHorizontal', 
+      'flip-vertical': 'flipVertical',
+      
+      // Analysis tools
+      'speed-series': 'calculateSpeedSeries',
+      'direction-series': 'calculateDirectionSeries',
+      
+      // Statistics tools
+      'average-speed': 'calculateAverageSpeed',
+      'speed-histogram': 'createSpeedHistogram',
+      
+      // Processing tools
+      'smooth-polyline': 'smoothPolyline',
+      
+      // I/O tools
+      'export-csv': 'exportCSV',
+      'export-rep': 'exportREP',
+      'import-rep': 'importREP',
+    };
+
+    const functionName = functionNameMap[toolId] || toolId;
+    return !!(window.ToolVault?.tools?.[functionName]);
   }
 
   async loadAllTools(): Promise<void> {

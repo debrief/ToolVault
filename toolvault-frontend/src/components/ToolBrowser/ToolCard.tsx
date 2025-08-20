@@ -65,7 +65,7 @@ function ToolCard({ tool, viewMode }: ToolCardProps) {
           <Link to={`/tool/${tool.id}`} className="btn btn-primary">
             View Details
           </Link>
-          <Link to={`/execute/${tool.id}`} className="btn btn-secondary">
+          <Link to={`/tool/${tool.id}?tab=example`} className="btn btn-secondary">
             Try Tool
           </Link>
         </div>
@@ -140,7 +140,7 @@ function ToolCard({ tool, viewMode }: ToolCardProps) {
         <Link to={`/tool/${tool.id}`} className="btn btn-primary btn-sm">
           Details
         </Link>
-        <Link to={`/execute/${tool.id}`} className="btn btn-secondary btn-sm">
+        <Link to={`/tool/${tool.id}?tab=example`} className="btn btn-secondary btn-sm">
           Try Tool
         </Link>
       </div>
