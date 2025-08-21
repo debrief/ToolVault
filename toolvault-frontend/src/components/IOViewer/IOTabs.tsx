@@ -1,7 +1,53 @@
 import React, { useState } from 'react';
 import { JSONRenderer } from './JSONRenderer';
 import { FileHandler } from './FileHandler';
+import { MapViewer } from '../MapViewer';
+import { ChartViewer, TableViewer } from '../DataVisualization';
 import './IOTabs.css';
+
+interface GeoJSONBase {
+  type: string;
+  features?: unknown[];
+  geometry?: { type: string };
+  coordinates?: unknown;
+}
+
+const isGeoJSON = (data: unknown): data is GeoJSONBase => {
+  return data !== null && typeof data === 'object' && 'type' in data && 
+         typeof (data as { type: unknown }).type === 'string' &&
+         ['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes((data as { type: string }).type);
+};
+
+const isTimeSeriesData = (data: unknown): boolean => {
+  if (!Array.isArray(data) || data.length === 0) return false;
+  
+  const firstItem = data[0];
+  return (
+    typeof firstItem === 'object' &&
+    firstItem !== null &&
+    ('timestamp' in firstItem || 'time' in firstItem) &&
+    ('value' in firstItem || 'speed' in firstItem || 'direction' in firstItem)
+  );
+};
+
+const isHistogramData = (data: unknown): boolean => {
+  if (!Array.isArray(data) || data.length === 0) return false;
+  
+  const firstItem = data[0];
+  return (
+    typeof firstItem === 'object' &&
+    firstItem !== null &&
+    'bin' in firstItem &&
+    'count' in firstItem
+  );
+};
+
+const isTableData = (data: unknown): boolean => {
+  if (!Array.isArray(data) || data.length === 0) return false;
+  
+  const firstItem = data[0];
+  return typeof firstItem === 'object' && firstItem !== null && !isTimeSeriesData(data) && !isHistogramData(data);
+};
 
 interface IOTabsProps {
   data: unknown;
@@ -22,15 +68,25 @@ export const IOTabs: React.FC<IOTabsProps> = ({
   showDownload = true,
   filename = 'data',
   renderPreview,
-  onFileSelect
+  onFileSelect,
 }) => {
-  const [activeTab, setActiveTab] = useState<'raw' | 'preview' | 'download'>(() => {
+  const hasMapData = isGeoJSON(data);
+  const hasChartData = isTimeSeriesData(data) || isHistogramData(data);
+  const hasTableData = isTableData(data);
+  
+  const [activeTab, setActiveTab] = useState<'raw' | 'preview' | 'download' | 'map' | 'chart' | 'table'>(() => {
+    if (hasMapData) return 'map';
+    if (hasChartData) return 'chart';
+    if (hasTableData) return 'table';
     if (showPreview) return 'preview';
     if (showRaw) return 'raw';
     return 'download';
   });
 
   const tabs = [
+    { id: 'map' as const, label: '🗺️ Map', show: hasMapData },
+    { id: 'chart' as const, label: '📊 Chart', show: hasChartData },
+    { id: 'table' as const, label: '📋 Table', show: hasTableData },
     { id: 'preview' as const, label: 'Preview', show: showPreview },
     { id: 'raw' as const, label: 'Raw Data', show: showRaw },
     { id: 'download' as const, label: 'Download', show: showDownload }
@@ -38,6 +94,27 @@ export const IOTabs: React.FC<IOTabsProps> = ({
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'map':
+        return (
+          <div className="tab-content">
+            <MapViewer data={data} height={500} />
+          </div>
+        );
+
+      case 'chart':
+        return (
+          <div className="tab-content">
+            <ChartViewer data={data} height={400} />
+          </div>
+        );
+
+      case 'table':
+        return (
+          <div className="tab-content">
+            <TableViewer data={data} maxRows={1000} />
+          </div>
+        );
+
       case 'preview':
         return (
           <div className="tab-content">
@@ -103,7 +180,7 @@ export const IOTabs: React.FC<IOTabsProps> = ({
             )}
           </div>
           <div className="preview-note">
-            🗺️ Map visualization will be available in a future release
+            💡 Interactive map visualization is available in the Map tab
           </div>
         </div>
       );
@@ -169,18 +246,6 @@ export const IOTabs: React.FC<IOTabsProps> = ({
     );
   };
 
-  interface GeoJSONBase {
-    type: string;
-    features?: unknown[];
-    geometry?: { type: string };
-    coordinates?: unknown;
-  }
-
-  const isGeoJSON = (data: unknown): data is GeoJSONBase => {
-    return data !== null && typeof data === 'object' && 'type' in data && 
-           typeof (data as { type: unknown }).type === 'string' &&
-           ['Feature', 'FeatureCollection', 'Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiLineString', 'MultiPolygon', 'GeometryCollection'].includes((data as { type: string }).type);
-  };
 
   if (tabs.length === 0) {
     return null;

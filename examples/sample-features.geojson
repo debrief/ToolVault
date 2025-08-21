@@ -1,0 +1,47 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Central Park",
+        "type": "park"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.9857, 40.7484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Brooklyn Bridge",
+        "type": "bridge"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.0059, 40.7061],
+          [-73.9969, 40.7061]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Manhattan",
+        "type": "borough"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-74.0479, 40.7000],
+          [-73.9067, 40.7000],
+          [-73.9067, 40.8820],
+          [-74.0479, 40.8820],
+          [-74.0479, 40.7000]
+        ]]
+      }
+    }
+  ]
+}

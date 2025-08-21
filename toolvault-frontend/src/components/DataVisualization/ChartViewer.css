@@ -1,0 +1,80 @@
+.chart-viewer {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.chart-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.chart-info {
+  font-size: 0.875rem;
+  color: #6c757d;
+  background: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.chart-viewer-error {
+  padding: 2rem;
+  text-align: center;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+}
+
+.chart-viewer-error p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.chart-viewer-error small {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Recharts customization */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.recharts-legend-item {
+  font-size: 12px !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-size: 12px !important;
+}
+
+.recharts-label {
+  font-size: 12px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .chart-info {
+    font-size: 0.75rem;
+  }
+}

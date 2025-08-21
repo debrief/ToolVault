@@ -121,7 +121,8 @@
       "Bash(GITHUB_PAGES=true yarn build)",
       "Bash(gh run list:*)",
       "Bash(npm run validate:*)",
-      "Bash(gh repo view:*)"
+      "Bash(gh repo view:*)",
+      "Bash(yarn add:*)"
     ]
   }
 }
