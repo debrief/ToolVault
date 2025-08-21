@@ -2,7 +2,6 @@
   "permissions": {
     "allow": [
       "Bash(yarn init:*)",
-      "Bash(yarn add:*)",
       "Bash(mkdir:*)",
       "Bash(yarn build-plugin:*)",
       "Bash(rm:*)",
@@ -120,7 +119,9 @@
       "Bash(open http://localhost:5174/tool/translate?tab=example)",
       "Bash(open http://localhost:5174/tool/translate)",
       "Bash(GITHUB_PAGES=true yarn build)",
-      "Bash(gh run list:*)"
+      "Bash(gh run list:*)",
+      "Bash(npm run validate:*)",
+      "Bash(gh repo view:*)"
     ]
   }
 }
