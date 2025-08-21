@@ -18,7 +18,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'yarn preview --port 4173',
+    command: 'VITE_PREVIEW_MODE=true yarn preview --port 4173',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 30 * 1000, // 30 seconds

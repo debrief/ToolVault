@@ -38,9 +38,13 @@ export class BundleLoader {
   async loadPhase0Bundle(): Promise<ToolBundle> {
     // Load the Phase 0 JavaScript bundle from the correct location
     const basePath = import.meta.env.BASE_URL || '/';
+    const isPreviewMode = import.meta.env.VITE_PREVIEW_MODE === 'true';
+    
     const bundlePath = import.meta.env.DEV 
       ? '/examples/javascript-bundle/index.json'  // Vite dev server can serve parent directories with fs.allow
-      : `${basePath}examples/javascript-bundle/index.json`; // In production, use the base path
+      : isPreviewMode 
+        ? '/examples/javascript-bundle/index.json'  // Preview mode serves from root
+        : `${basePath}examples/javascript-bundle/index.json`; // GitHub Pages production
     
     return this.loadBundle(bundlePath);
   }
@@ -76,9 +80,13 @@ export class BundleLoader {
 
     try {
       const basePath = import.meta.env.BASE_URL || '/';
+      const isPreviewMode = import.meta.env.VITE_PREVIEW_MODE === 'true';
+      
       const historyPath = import.meta.env.DEV 
         ? '/examples/javascript-bundle/history.json'
-        : `${basePath}examples/javascript-bundle/history.json`;
+        : isPreviewMode 
+          ? '/examples/javascript-bundle/history.json'  // Preview mode serves from root
+          : `${basePath}examples/javascript-bundle/history.json`; // GitHub Pages production
       
       const response = await fetch(historyPath);
       if (!response.ok) {

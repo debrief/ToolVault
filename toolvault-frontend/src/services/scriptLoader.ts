@@ -72,9 +72,13 @@ export class ScriptLoader {
       // Determine script path based on tool category
       const category = this.getToolCategory(toolMetadata);
       const basePath = import.meta.env.BASE_URL || '/';
+      const isPreviewMode = import.meta.env.VITE_PREVIEW_MODE === 'true';
+      
       const scriptPath = import.meta.env.DEV
         ? `/examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`  // Vite dev server can serve parent directories with fs.allow
-        : `${basePath}examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`; // In production, use the base path
+        : isPreviewMode
+          ? `/examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`  // Preview mode serves from root
+          : `${basePath}examples/javascript-bundle/tools/${category}/${toolMetadata.id}.js`; // GitHub Pages production
 
       // Create script element
       const script = document.createElement('script');
